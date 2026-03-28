@@ -1,0 +1,29 @@
+---
+// src/components/AuthCheck.astro
+---
+
+<slot />
+
+<script>
+  // Vérifier si l'utilisateur est connecté
+  const token = localStorage.getItem('token');
+  
+  if (!token) {
+    // Rediriger vers la page de connexion
+    window.location.href = '/connexion';
+  } else {
+    // Vérifier si le token est valide
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const exp = payload.exp * 1000; // Convertir en millisecondes
+      
+      if (Date.now() >= exp) {
+        localStorage.removeItem('token');
+        window.location.href = '/connexion';
+      }
+    } catch (e) {
+      localStorage.removeItem('token');
+      window.location.href = '/connexion';
+    }
+  }
+</script>

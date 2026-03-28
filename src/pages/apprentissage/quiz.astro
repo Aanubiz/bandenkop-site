@@ -1,0 +1,410 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import AuthCheck from '../../components/AuthCheck.astro';
+import { getToken, getAuthHeader } from '../../utils/auth';
+---
+
+<Layout title="Quiz - Apprentissage Bandenkop">
+  <AuthCheck>
+    <div class="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
+      <!-- Header -->
+      <header class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="px-4 max-w-7xl mx-auto h-16 flex items-center justify-between">
+          <a href="/apprentissage" class="flex items-center text-gray-600 hover:text-orange-600">
+            <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            Retour
+          </a>
+          <h1 class="text-lg font-semibold text-gray-800">Quiz culturel</h1>
+          <div class="w-20"></div>
+        </div>
+      </header>
+
+      <!-- Conteneur principal -->
+      <div class="px-4 py-6 max-w-3xl mx-auto" id="app">
+        <!-- Loading -->
+        <div id="loading" class="text-center py-12">
+          <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-600 border-t-transparent"></div>
+          <p class="mt-4 text-gray-600">Chargement des questions...</p>
+        </div>
+
+        <!-- Quiz -->
+        <div id="quiz-container" class="hidden space-y-6">
+          <!-- En-tête avec progression -->
+          <div class="bg-white rounded-xl shadow-sm p-4">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <span class="text-sm text-gray-500" id="question-counter">Question 1/5</span>
+                <span class="ml-2 px-2 py-1 bg-orange-100 text-orange-800 rounded-full text-xs" id="niveau-badge">Débutant</span>
+              </div>
+              <div class="flex items-center space-x-4">
+                <div class="text-right">
+                  <div class="text-xs text-gray-500">Score</div>
+                  <div class="text-xl font-bold text-orange-600" id="score">0</div>
+                </div>
+                <div class="text-right">
+                  <div class="text-xs text-gray-500">Série</div>
+                  <div class="text-xl font-bold text-green-600" id="serie">0</div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Barre de progression -->
+            <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div id="progress-bar" class="h-full bg-gradient-to-r from-orange-500 to-red-500 rounded-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <!-- Carte question -->
+          <div class="bg-white rounded-2xl shadow-lg p-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-6" id="question-text">
+              Chargement...
+            </h2>
+
+            <!-- Options -->
+            <div id="options-container" class="space-y-3 mb-6">
+              <!-- Rempli par JS -->
+            </div>
+
+            <!-- Bouton -->
+            <button id="submit-btn" class="w-full bg-gradient-to-r from-orange-600 to-red-600 text-white py-4 rounded-xl font-semibold hover:shadow-lg transition-all duration-300">
+              Vérifier
+            </button>
+          </div>
+        </div>
+
+        <!-- Résultat final -->
+        <div id="result-container" class="hidden bg-white rounded-2xl shadow-xl p-8 text-center">
+          <div class="text-5xl mb-4" id="result-emoji">🎉</div>
+          <h2 class="text-2xl font-bold text-gray-800 mb-2" id="result-title">Quiz terminé !</h2>
+          <p class="text-gray-600 mb-4" id="result-text"></p>
+          
+          <!-- Graphique de résultats -->
+          <div class="w-48 h-48 mx-auto mb-6 relative">
+            <svg viewBox="0 0 100 100" class="transform -rotate-90 w-full h-full">
+              <circle cx="50" cy="50" r="40" fill="none" stroke="#e5e7eb" stroke-width="10"/>
+              <circle id="result-circle" cx="50" cy="50" r="40" fill="none" stroke="#f97316" stroke-width="10" stroke-dasharray="251.2" stroke-dashoffset="251.2" stroke-linecap="round"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center">
+              <span id="result-percentage" class="text-3xl font-bold text-gray-800">0%</span>
+            </div>
+          </div>
+
+          <!-- Statistiques -->
+          <div class="grid grid-cols-3 gap-4 mb-6">
+            <div class="p-3 bg-green-50 rounded-lg">
+              <div class="text-xs text-gray-500">Bonnes</div>
+              <div class="text-xl font-bold text-green-600" id="stats-bonnes">0</div>
+            </div>
+            <div class="p-3 bg-red-50 rounded-lg">
+              <div class="text-xs text-gray-500">Mauvaises</div>
+              <div class="text-xl font-bold text-red-600" id="stats-mauvaises">0</div>
+            </div>
+            <div class="p-3 bg-orange-50 rounded-lg">
+              <div class="text-xs text-gray-500">Points</div>
+              <div class="text-xl font-bold text-orange-600" id="stats-points">0</div>
+            </div>
+          </div>
+
+          <div class="flex space-x-3">
+            <button onclick="location.reload()" class="flex-1 bg-gradient-to-r from-orange-600 to-red-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all">
+              Recommencer
+            </button>
+            <a href="/apprentissage" class="flex-1 bg-gray-100 text-gray-800 py-3 rounded-xl font-semibold hover:bg-gray-200 transition-all text-center">
+              Autres rubriques
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </AuthCheck>
+
+  <script>
+    import { getToken } from '../../utils/auth';
+
+    declare global {
+      interface Window {
+        quizApp: QuizApp;
+      }
+    }
+
+    class QuizApp {
+      questions: any[];
+      currentIndex: number;
+      score: number;
+      serie: number;
+      responses: any[];
+      userId: string | null;
+      token: string | null;
+
+      constructor() {
+        this.questions = [];
+        this.currentIndex = 0;
+        this.score = 0;
+        this.serie = 0;
+        this.responses = [];
+        this.userId = null;
+        this.token = null;
+        
+        this.init();
+      }
+
+      async init() {
+        this.token = getToken();
+        if (!this.token) {
+          window.location.href = '/connexion';
+          return;
+        }
+
+        try {
+          const payload = JSON.parse(atob(this.token.split('.')[1]));
+          this.userId = payload.userId;
+          
+          await this.loadQuestions();
+          this.hideLoading();
+          this.showQuiz();
+          this.displayQuestion();
+        } catch (error) {
+          console.error('Erreur init:', error);
+          this.showError();
+        }
+      }
+
+      async loadQuestions() {
+        try {
+          const response = await fetch(`http://localhost:3001/api/quiz/questions/quiz?niveau=debutant&limite=5`, {
+  headers: {
+    'Authorization': `Bearer ${this.token}`
+  }
+});
+          
+          if (!response.ok) throw new Error('Erreur chargement');
+          
+          this.questions = await response.json();
+          
+          if (this.questions.length === 0) {
+            // Questions par défaut
+            this.questions = [
+              {
+                _id: '1',
+                question: { fr: "Que signifie 'Bandenkop' ?" },
+                options: ["Ceux qui ont traversé la montagne", "Le village sacré", "La terre des ancêtres"],
+                points: 10
+              },
+              {
+                _id: '2',
+                question: { fr: "Quel est le symbole du chef ?" },
+                options: ["Le léopard", "L'éléphant", "Le buffle"],
+                points: 10
+              },
+              {
+                _id: '3',
+                question: { fr: "Comment s'appelle le tambour royal ?" },
+                options: ["Nkul", "Mengu", "Tchagha"],
+                points: 10
+              }
+            ];
+          }
+        } catch (error) {
+          console.error('Erreur chargement questions:', error);
+          throw error;
+        }
+      }
+
+      displayQuestion() {
+        const q = this.questions[this.currentIndex];
+        
+        const questionText = document.getElementById('question-text');
+        const questionCounter = document.getElementById('question-counter');
+        const progressBar = document.getElementById('progress-bar');
+        const optionsContainer = document.getElementById('options-container');
+        
+        if (questionText) questionText.textContent = q.question.fr;
+        if (questionCounter) questionCounter.textContent = `Question ${this.currentIndex + 1}/${this.questions.length}`;
+        
+        const progress = ((this.currentIndex) / this.questions.length) * 100;
+        if (progressBar) progressBar.style.width = `${progress}%`;
+        
+        const optionsHtml = q.options.map((opt: any, idx: number) => `
+          <label class="flex items-center space-x-3 p-4 rounded-xl border border-gray-200 hover:bg-orange-50 cursor-pointer transition-all option-label">
+            <input type="radio" name="reponse" value="${opt}" class="w-4 h-4 text-orange-600">
+            <span class="text-gray-700">${opt}</span>
+          </label>
+        `).join('');
+        
+        if (optionsContainer) optionsContainer.innerHTML = optionsHtml;
+      }
+
+      async submitAnswer() {
+  const selected = document.querySelector('input[name="reponse"]:checked') as HTMLInputElement;
+  if (!selected) {
+    alert('Choisis une réponse !');
+    return;
+  }
+
+  const q = this.questions[this.currentIndex];
+  console.log('📤 Envoi réponse pour question:', q._id);
+
+  // Désactiver les options
+  document.querySelectorAll('.option-label').forEach(label => {
+    label.classList.add('opacity-50', 'pointer-events-none');
+  });
+
+  // Feedback visuel immédiat
+  const estJuste = selected.value === (q.reponse || q.options[0]); // Simulation
+
+  if (estJuste) {
+    document.querySelector(`label:has(input[value="${selected.value}"])`)?.classList.add('bg-green-100', 'border-green-500');
+    this.score += q.points || 10;
+    this.serie++;
+  } else {
+    document.querySelector(`label:has(input[value="${selected.value}"])`)?.classList.add('bg-red-100', 'border-red-500');
+    this.serie = 0;
+    document.querySelector(`label:has(input[value="${q.options[0]}"])`)?.classList.add('bg-green-100', 'border-green-500');
+  }
+
+  // Mettre à jour l'affichage
+  const scoreElement = document.getElementById('score');
+  const serieElement = document.getElementById('serie');
+  
+  if (scoreElement) scoreElement.textContent = this.score.toString();
+  if (serieElement) serieElement.textContent = this.serie.toString();
+
+  // Sauvegarder la réponse
+  this.responses.push({
+    questionId: q._id,
+    estJuste,
+    reponse: selected.value
+  });
+
+  // Envoyer au serveur
+  try {
+    console.log('📤 Envoi au serveur...');
+    
+    // 👇 URL COMPLÈTE AVEC PORT 3001
+    const response = await fetch('http://localhost:3001/api/quiz/repondre', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${this.token}`
+      },
+      body: JSON.stringify({
+        questionId: q._id,
+        reponse: selected.value,
+        rubrique: 'quiz',
+        tempsReponse: 5
+      })
+    });
+
+    console.log('📥 Statut réponse:', response.status);
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('❌ Erreur HTTP:', response.status, errorText);
+    } else {
+      const data = await response.json();
+      console.log('📥 Données reçues:', data);
+    }
+  } catch (error) {
+    console.error('❌ Erreur fetch:', error);
+  }
+
+  // Passer à la question suivante
+  setTimeout(() => {
+    this.currentIndex++;
+    
+    if (this.currentIndex < this.questions.length) {
+      this.displayQuestion();
+      document.querySelectorAll('.option-label').forEach(label => {
+        label.classList.remove('opacity-50', 'pointer-events-none', 'bg-green-100', 'bg-red-100', 'border-green-500', 'border-red-500');
+      });
+    } else {
+      this.showResults();
+    }
+  }, 1500);
+}
+
+      showResults() {
+        const quizContainer = document.getElementById('quiz-container');
+        const resultContainer = document.getElementById('result-container');
+        
+        if (quizContainer) quizContainer.classList.add('hidden');
+        if (resultContainer) resultContainer.classList.remove('hidden');
+
+        const bonnes = this.responses.filter(r => r.estJuste).length;
+        const pourcentage = (bonnes / this.responses.length) * 100;
+
+        // Mettre à jour les stats
+        const statsBonnes = document.getElementById('stats-bonnes');
+        const statsMauvaises = document.getElementById('stats-mauvaises');
+        const statsPoints = document.getElementById('stats-points');
+        const resultPercentage = document.getElementById('result-percentage');
+        const resultText = document.getElementById('result-text');
+        
+        if (statsBonnes) statsBonnes.textContent = bonnes.toString();
+        if (statsMauvaises) statsMauvaises.textContent = (this.responses.length - bonnes).toString();
+        if (statsPoints) statsPoints.textContent = this.score.toString();
+        if (resultPercentage) resultPercentage.textContent = `${Math.round(pourcentage)}%`;
+        if (resultText) resultText.textContent = `Tu as obtenu ${bonnes}/${this.responses.length} bonnes réponses`;
+
+        // Animer le cercle
+        const circle = document.getElementById('result-circle') as unknown as SVGCircleElement;
+        if (circle) {
+          const circumference = 251.2;
+          const offset = circumference - (pourcentage / 100) * circumference;
+          circle.style.strokeDashoffset = offset.toString();
+        }
+
+        // Emoji selon le score
+        const resultEmoji = document.getElementById('result-emoji');
+        const resultTitle = document.getElementById('result-title');
+        
+        if (pourcentage >= 80) {
+          if (resultEmoji) resultEmoji.textContent = '🏆';
+          if (resultTitle) resultTitle.textContent = 'Félicitations !';
+        } else if (pourcentage >= 50) {
+          if (resultEmoji) resultEmoji.textContent = '👍';
+          if (resultTitle) resultTitle.textContent = 'Bien joué !';
+        } else {
+          if (resultEmoji) resultEmoji.textContent = '💪';
+          if (resultTitle) resultTitle.textContent = 'Continue comme ça !';
+        }
+      }
+
+      hideLoading() {
+        const loading = document.getElementById('loading');
+        if (loading) loading.classList.add('hidden');
+      }
+
+      showQuiz() {
+        const quizContainer = document.getElementById('quiz-container');
+        if (quizContainer) quizContainer.classList.remove('hidden');
+      }
+
+      showError() {
+        const loading = document.getElementById('loading');
+        if (loading) {
+          loading.innerHTML = `
+            <div class="text-red-600">
+              <p class="text-xl mb-2">❌ Erreur de chargement</p>
+              <p class="text-sm">Vérifie ta connexion et réessaie</p>
+              <button onclick="location.reload()" class="mt-4 bg-orange-600 text-white px-6 py-2 rounded-lg">
+                Réessayer
+              </button>
+            </div>
+          `;
+        }
+      }
+    }
+
+    // Démarrer l'application
+    document.addEventListener('DOMContentLoaded', () => {
+      (window as any).quizApp = new QuizApp();
+      
+      document.getElementById('submit-btn')?.addEventListener('click', () => {
+        (window as any).quizApp.submitAnswer();
+      });
+    });
+  </script>
+</Layout>

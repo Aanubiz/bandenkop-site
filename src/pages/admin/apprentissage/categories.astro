@@ -1,0 +1,261 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { getToken } from '../../../utils/auth';
+import AuthCheck from '../../../components/AuthCheck.astro';
+---
+
+<Layout title="Admin - Catégories">
+  <AuthCheck>
+    <div class="p-6 mt-24">
+      <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">Gestion des catégories de prononciation</h1>
+        <button onclick="openAddModal()" class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700">
+          + Nouvelle catégorie
+        </button>
+      </div>
+
+      <!-- Liste des catégories -->
+      <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+        <table class="w-full">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Icône</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nom</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ordre</th>
+              <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="categories-list" class="divide-y divide-gray-200">
+            <tr>
+              <td colspan="5" class="px-6 py-4 text-center text-gray-500">Chargement...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Modal d'ajout/édition -->
+    <div id="categorieModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+      <div class="bg-white rounded-xl p-6 max-w-md w-full">
+        <h2 id="modalTitle" class="text-xl font-bold mb-4">Ajouter une catégorie</h2>
+        
+        <form id="categorieForm" class="space-y-4">
+          <input type="hidden" id="categorieId" name="id">
+          
+          <div>
+            <label class="block text-sm font-medium mb-1">Nom *</label>
+            <input type="text" id="nom" name="nom" required class="w-full px-3 py-2 border rounded-lg">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium mb-1">Description</label>
+            <textarea id="description" name="description" rows="2" class="w-full px-3 py-2 border rounded-lg"></textarea>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium mb-1">Icône (emoji)</label>
+            <input type="text" id="icone" name="icone" placeholder="ex: 🐘" class="w-full px-3 py-2 border rounded-lg">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium mb-1">Ordre</label>
+            <input type="number" id="ordre" name="ordre" value="1" min="1" class="w-full px-3 py-2 border rounded-lg">
+          </div>
+          
+          <div class="flex space-x-3 pt-4">
+            <button type="submit" class="flex-1 bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700">
+              Enregistrer
+            </button>
+            <button type="button" onclick="closeModal()" class="flex-1 bg-gray-200 py-2 rounded-lg hover:bg-gray-300">
+              Annuler
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </AuthCheck>
+
+  <script>
+    import { getToken } from '../../../utils/auth';
+
+    const API_URL = 'http://localhost:3001';
+    const token = getToken();
+
+    async function loadCategories() {
+      try {
+        const response = await fetch(`${API_URL}/api/prononciation/admin/categories`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        const tbody = document.getElementById('categories-list') as HTMLTableSectionElement | null;
+        if (!tbody) return;
+
+        if (!response.ok) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="5" class="px-6 py-8 text-center text-red-600">
+                Erreur de chargement des catégories
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        const categories = await response.json();
+        if (!Array.isArray(categories) || categories.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+                Aucune catégorie. Cliquez sur "Nouvelle catégorie" pour commencer.
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        tbody.innerHTML = categories.map((cat: any) => `
+          <tr>
+            <td class="px-6 py-4 text-2xl">${cat.icone || '📁'}</td>
+            <td class="px-6 py-4 font-medium">${cat.nom}</td>
+            <td class="px-6 py-4 text-gray-600">${cat.description || '-'}</td>
+            <td class="px-6 py-4">${cat.ordre}</td>
+            <td class="px-6 py-4 text-right space-x-2">
+              <button onclick="editCategorie('${cat._id}')" class="text-blue-600 hover:text-blue-800">✏️</button>
+              <button onclick="deleteCategorie('${cat._id}')" class="text-red-600 hover:text-red-800">🗑️</button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (error) {
+        console.error('Erreur chargement:', error);
+      }
+    }
+
+    const closeModal = () => {
+      const modal = document.getElementById('categorieModal');
+      if (!modal) return;
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    };
+
+    (window as any).openAddModal = () => {
+      const modalTitle = document.getElementById('modalTitle');
+      const categorieId = document.getElementById('categorieId') as HTMLInputElement | null;
+      const form = document.getElementById('categorieForm') as HTMLFormElement | null;
+      const modal = document.getElementById('categorieModal');
+      if (!modalTitle || !categorieId || !form || !modal) return;
+
+      modalTitle.textContent = 'Ajouter une catégorie';
+      categorieId.value = '';
+      form.reset();
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    };
+
+    (window as any).closeModal = closeModal;
+
+    (window as any).editCategorie = async (id: string) => {
+      try {
+        const response = await fetch(`${API_URL}/api/prononciation/admin/categories/${id}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!response.ok) {
+          alert('Erreur chargement catégorie');
+          return;
+        }
+
+        const cat = await response.json();
+
+        const modalTitle = document.getElementById('modalTitle');
+        const categorieId = document.getElementById('categorieId') as HTMLInputElement | null;
+        const nom = document.getElementById('nom') as HTMLInputElement | null;
+        const description = document.getElementById('description') as HTMLTextAreaElement | null;
+        const icone = document.getElementById('icone') as HTMLInputElement | null;
+        const ordre = document.getElementById('ordre') as HTMLInputElement | null;
+        const modal = document.getElementById('categorieModal');
+        if (!modalTitle || !categorieId || !nom || !description || !icone || !ordre || !modal) return;
+
+        modalTitle.textContent = 'Modifier la catégorie';
+        categorieId.value = cat._id;
+        nom.value = cat.nom;
+        description.value = cat.description || '';
+        icone.value = cat.icone || '';
+        ordre.value = String(cat.ordre || 1);
+
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      } catch (error) {
+        alert('Erreur chargement catégorie');
+      }
+    };
+
+    (window as any).deleteCategorie = async (id: string) => {
+      if (!confirm('Supprimer cette catégorie ? Les mots associés devront être recatégorisés.')) return;
+
+      try {
+        const response = await fetch(`${API_URL}/api/prononciation/admin/categories/${id}`, {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        if (response.ok) {
+          loadCategories();
+        } else {
+          const error = await response.json();
+          alert(error.error || 'Erreur suppression');
+        }
+      } catch (error) {
+        alert('Erreur suppression');
+      }
+    };
+
+    const categorieForm = document.getElementById('categorieForm') as HTMLFormElement | null;
+    if (categorieForm) {
+      categorieForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const idInput = document.getElementById('categorieId') as HTMLInputElement | null;
+        const nomInput = document.getElementById('nom') as HTMLInputElement | null;
+        const descriptionInput = document.getElementById('description') as HTMLTextAreaElement | null;
+        const iconeInput = document.getElementById('icone') as HTMLInputElement | null;
+        const ordreInput = document.getElementById('ordre') as HTMLInputElement | null;
+        if (!idInput || !nomInput || !descriptionInput || !iconeInput || !ordreInput) return;
+
+        const id = idInput.value;
+        const data = {
+          nom: nomInput.value,
+          description: descriptionInput.value,
+          icone: iconeInput.value,
+          ordre: parseInt(ordreInput.value, 10) || 1
+        };
+
+        try {
+          const url = id
+            ? `${API_URL}/api/prononciation/admin/categories/${id}`
+            : `${API_URL}/api/prononciation/admin/categories`;
+
+          const response = await fetch(url, {
+            method: id ? 'PUT' : 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify(data)
+          });
+
+          if (response.ok) {
+            closeModal();
+            loadCategories();
+          } else {
+            const error = await response.json();
+            alert(error.error || 'Erreur');
+          }
+        } catch (error) {
+          alert('Erreur');
+        }
+      });
+    }
+
+    loadCategories();
+  </script>
+</Layout>

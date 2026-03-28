@@ -1,0 +1,143 @@
+---
+// src/components/Footer.astro
+const currentYear = new Date().getFullYear();
+
+const liens = {
+  rubriques: ['Histoire', 'Culture', 'Apprentissage', 'Actualités', 'Découverte', 'Projets'],
+  legaux: ['Mentions légales', 'Politique de confidentialité', 'CGU', 'Cookies']
+};
+---
+
+<footer class="bg-gray-900 text-white relative overflow-hidden">
+  <!-- Pattern décoratif -->
+  <div class="absolute inset-0 opacity-5">
+    <div class="absolute top-0 left-0 w-64 h-64 bg-orange-600 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-0 right-0 w-96 h-96 bg-red-600 rounded-full blur-3xl"></div>
+  </div>
+
+  <div class="relative px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <!-- Newsletter - avec padding interne -->
+    <div class="py-8 sm:py-10 md:py-12 lg:py-16">
+      <div class="bg-gradient-to-r from-orange-600 to-red-600 rounded-2xl sm:rounded-3xl p-5 sm:p-6 md:p-8 lg:p-10">
+        <div class="grid sm:grid-cols-2 gap-4 sm:gap-6 items-center">
+          <div>
+            <h3 class="text-lg sm:text-xl md:text-2xl font-bold mb-1 sm:mb-2">Restez connecté</h3>
+            <p class="text-xs sm:text-sm md:text-base text-orange-100">
+              Recevez les dernières actualités de Bandenkop
+            </p>
+          </div>
+          <form class="flex flex-col sm:flex-row gap-2 sm:gap-3" onsubmit="handleNewsletter(event)">
+            <input 
+              type="email" 
+              placeholder="Votre email" 
+              class="flex-1 px-3 sm:px-4 py-2 sm:py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-white/50 text-sm focus:outline-none focus:ring-2 focus:ring-white"
+              required
+            />
+            <button type="submit" class="bg-white text-orange-600 px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-semibold hover:bg-orange-50 transition-colors whitespace-nowrap text-sm">
+              S'inscrire
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Grille de liens - avec padding interne -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 pb-8 sm:pb-10 md:pb-12">
+      <!-- Logo et description - occupe 2 colonnes sur mobile -->
+      <div class="col-span-2 md:col-span-1">
+        <div class="flex items-center space-x-2 sm:space-x-3 mb-3 sm:mb-4">
+          <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-orange-600 to-red-600 rounded-lg sm:rounded-xl flex items-center justify-center font-black text-base sm:text-lg">
+            B
+          </div>
+          <span class="text-base sm:text-lg font-black">Bandenkop</span>
+        </div>
+        <p class="text-xs sm:text-sm text-gray-400 leading-relaxed">
+          Village de 2ème degré situé dans l'arrondissement de Bangou, au cœur des Hauts Plateaux de l'Ouest Cameroun.
+        </p>
+      </div>
+
+      <!-- Rubriques -->
+      <div>
+        <h4 class="font-bold mb-3 sm:mb-4 text-xs uppercase tracking-wider text-gray-400">Rubriques</h4>
+        <ul class="space-y-1.5 sm:space-y-2">
+          {liens.rubriques.map((lien) => (
+            <li>
+              <a href={`/${lien.toLowerCase()}`} class="text-xs sm:text-sm text-gray-300 hover:text-white transition-colors">
+                {lien}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Liens légaux -->
+      <div>
+        <h4 class="font-bold mb-3 sm:mb-4 text-xs uppercase tracking-wider text-gray-400">Informations</h4>
+        <ul class="space-y-1.5 sm:space-y-2">
+          {liens.legaux.map((lien) => (
+            <li>
+              <a href="#" class="text-xs sm:text-sm text-gray-300 hover:text-white transition-colors">
+                {lien}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Contact -->
+      <div class="col-span-2 md:col-span-1">
+        <h4 class="font-bold mb-3 sm:mb-4 text-xs uppercase tracking-wider text-gray-400">Contact</h4>
+        <ul class="space-y-2 sm:space-y-3">
+          <li class="flex items-start space-x-2">
+            <svg class="w-3 h-3 sm:w-4 sm:h-4 mt-0.5 text-orange-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+            <span class="text-xs sm:text-sm text-gray-300">Bandenkop, Cameroun</span>
+          </li>
+          <li class="flex items-center space-x-2">
+            <svg class="w-3 h-3 sm:w-4 sm:h-4 text-orange-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+            </svg>
+            <span class="text-xs sm:text-sm text-gray-300">contact@bandenkoponline.com</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Social et copyright - avec padding interne -->
+    <div class="py-6 sm:py-8 border-t border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex space-x-3 sm:space-x-4">
+        <a href="#" class="w-8 h-8 sm:w-10 sm:h-10 bg-gray-800 rounded-lg sm:rounded-xl flex items-center justify-center hover:bg-orange-600 transition-colors">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+          </svg>
+        </a>
+        <a href="#" class="w-8 h-8 sm:w-10 sm:h-10 bg-gray-800 rounded-lg sm:rounded-xl flex items-center justify-center hover:bg-orange-600 transition-colors">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.937 4.937 0 004.604 3.417 9.868 9.868 0 01-6.102 2.104c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 0021.775-5.804 14.01 14.01 0 001.543-5.932c0-.21-.005-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+          </svg>
+        </a>
+        <a href="#" class="w-8 h-8 sm:w-10 sm:h-10 bg-gray-800 rounded-lg sm:rounded-xl flex items-center justify-center hover:bg-orange-600 transition-colors">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 0C5.373 0 0 5.373 0 12c0 5.302 3.438 9.8 8.205 11.387.6.113.82-.26.82-.58 0-.287-.01-1.05-.015-2.06-3.338.726-4.042-1.61-4.042-1.61-.546-1.39-1.335-1.76-1.335-1.76-1.09-.746.082-.73.082-.73 1.205.085 1.84 1.237 1.84 1.237 1.07 1.834 2.807 1.304 3.492.997.108-.776.418-1.306.762-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.468-2.38 1.235-3.22-.123-.3-.535-1.52.117-3.16 0 0 1.008-.322 3.3 1.23.96-.267 1.98-.4 3-.405 1.02.005 2.04.138 3 .405 2.29-1.552 3.297-1.23 3.297-1.23.653 1.64.24 2.86.118 3.16.768.84 1.233 1.91 1.233 3.22 0 4.61-2.804 5.62-5.476 5.92.43.37.824 1.102.824 2.22 0 1.602-.015 2.894-.015 3.287 0 .322.216.698.83.578C20.565 21.795 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+          </svg>
+        </a>
+      </div>
+      
+      <p class="text-xs sm:text-sm text-gray-400">
+        © {currentYear} Bandenkop. Tous droits réservés.
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function handleNewsletter(e: SubmitEvent) {
+    e.preventDefault();
+    alert('✨ Merci de votre inscription ! Vous recevrez bientôt nos actualités.');
+    if (e.target && typeof (e.target as HTMLFormElement).reset === 'function') {
+      (e.target as HTMLFormElement).reset();
+    }
+  }
+</script>

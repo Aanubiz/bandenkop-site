@@ -1,0 +1,376 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+---
+
+<Layout title="Admin - Prononciation">
+  <div class="p-6 mt-24">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-2xl font-bold">Gestion de la prononciation</h1>
+      <button onclick="openAddModal()" class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700"> + Ajouter un mot </button>
+    </div>
+
+    <!-- Formulaire d'ajout (modal) -->
+    <div id="addModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+      <div class="bg-white rounded-xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <h2 class="text-xl font-bold mb-4">Ajouter un mot</h2>
+
+        <form id="prononciationForm" class="space-y-4" enctype="multipart/form-data">
+          <div>
+            <label class="block text-sm font-medium mb-1">Mot en français *</label>
+            <input type="text" name="motFrancais" required class="w-full px-3 py-2 border rounded-lg" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-1">Mot en Bandenkop *</label>
+            <input type="text" name="motBandenkop" required class="w-full px-3 py-2 border rounded-lg" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-1">Niveau</label>
+            <select name="niveau" class="w-full px-3 py-2 border rounded-lg">
+              <option value="debutant">Débutant</option>
+              <option value="intermediaire">Intermédiaire</option>
+              <option value="avance">Avancé</option>
+            </select>
+          </div>
+
+          <!-- Upload audio -->
+          <div class="p-4 bg-gray-50 rounded-lg">
+            <label class="block text-sm font-medium mb-2">Fichier audio (MP3, M4A, etc.) *</label>
+            <input type="file" id="audioFile" name="audioFile" accept="audio/*" required class="w-full" />
+            <div id="upload-progress" class="hidden mt-2">
+              <div class="flex items-center">
+                <div class="animate-spin rounded-full h-4 w-4 border-2 border-orange-600 border-t-transparent mr-2"></div>
+                <span class="text-sm">Upload en cours...</span>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-1">Transcription phonétique (optionnel)</label>
+            <input type="text" name="transcriptionPhonetique" class="w-full px-3 py-2 border rounded-lg" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-1">Exemple de phrase (français)</label>
+            <input type="text" name="exempleFrancais" class="w-full px-3 py-2 border rounded-lg" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-1">Exemple de phrase (bandenkop)</label>
+            <input type="text" name="exempleBandenkop" class="w-full px-3 py-2 border rounded-lg" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium mb-1">Difficulté (1-5)</label>
+              <input type="number" name="difficulte" min="1" max="5" value="1" class="w-full px-3 py-2 border rounded-lg" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Points</label>
+              <input type="number" name="points" value="5" class="w-full px-3 py-2 border rounded-lg" />
+            </div>
+          </div>
+
+          <div class="flex space-x-3 pt-4">
+            <button type="submit" id="submitBtn" class="flex-1 bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700"> Enregistrer </button>
+            <button type="button" onclick="closeAddModal()" class="flex-1 bg-gray-200 py-2 rounded-lg hover:bg-gray-300"> Annuler </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Liste des mots -->
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+      <table class="w-full">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Mot</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Audio</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Niveau</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Points</th>
+            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="prononciation-list" class="divide-y divide-gray-200">
+          <tr>
+            <td colspan="5" class="px-6 py-4 text-center text-gray-500">Chargement...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    import { getToken } from "../../../utils/auth";
+
+    declare global {
+      interface Window {
+        playAudio: (url: string) => void;
+        deleteItem: (id: string) => Promise<void>;
+        editItem: (id: string) => void;
+        openAddModal: () => void;
+        closeAddModal: () => void;
+      }
+    }
+
+    type PrononciationItem = {
+      _id: string;
+      motBandenkop: string;
+      motFrancais: string;
+      audioUrl: string;
+      niveau: "debutant" | "intermediaire" | "avance";
+      points: number;
+    };
+
+    type UploadResponse = {
+      audioUrl: string;
+    };
+
+    const API_URL = "http://localhost:3001";
+    const token = getToken();
+
+    if (!token) window.location.href = "/connexion";
+
+    async function loadPrononciation() {
+      console.log("📥 Chargement des mots de prononciation...");
+
+      try {
+        const response = await fetch(`${API_URL}/api/admin/prononciation`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const data = await response.json();
+        const tbody = document.getElementById("prononciation-list");
+        if (!tbody) return;
+
+        if (!Array.isArray(data)) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="5" class="px-6 py-8 text-center text-red-600">
+                ❌ Erreur: ${data.error || "Format de données invalide"}
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        if (data.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+                Aucun mot de prononciation trouvé
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        tbody.innerHTML = data
+          .map(
+            (item: PrononciationItem) => `
+              <tr>
+                <td class="px-6 py-4">
+                  <div class="font-medium">${item.motBandenkop}</div>
+                  <div class="text-sm text-gray-500">${item.motFrancais}</div>
+                </td>
+                <td class="px-6 py-4">
+                  <button onclick="playAudio('${item.audioUrl}')" class="text-orange-600 hover:text-orange-800">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                  </button>
+                </td>
+                <td class="px-6 py-4">
+                  <span class="px-2 py-1 text-xs rounded-full ${
+                    item.niveau === "debutant"
+                      ? "bg-green-100 text-green-800"
+                      : item.niveau === "intermediaire"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : "bg-red-100 text-red-800"
+                  }">${item.niveau}</span>
+                </td>
+                <td class="px-6 py-4">${item.points}</td>
+                <td class="px-6 py-4 text-right space-x-2">
+                  <button onclick="editItem('${item._id}')" class="text-blue-600 hover:text-blue-800">✏️</button>
+                  <button onclick="deleteItem('${item._id}')" class="text-red-600 hover:text-red-800">🗑️</button>
+                </td>
+              </tr>
+            `,
+          )
+          .join("");
+      } catch (error) {
+        console.error("❌ Erreur chargement:", error);
+        const tbody = document.getElementById("prononciation-list");
+        if (tbody) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="5" class="px-6 py-8 text-center text-red-600">
+                ❌ Erreur de chargement: ${error instanceof Error ? error.message : "Erreur inconnue"}
+              </td>
+            </tr>
+          `;
+        }
+      }
+    }
+
+    window.playAudio = (url: string) => {
+      const audio = new Audio(url);
+      audio.play().catch(err => console.error("Erreur lecture audio:", err));
+    };
+
+    window.deleteItem = async (id: string) => {
+      if (!confirm("Supprimer cet élément ?")) return;
+
+      try {
+        await fetch(`${API_URL}/api/admin/prononciation/${id}`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        loadPrononciation();
+      } catch (error) {
+        console.error("Erreur suppression:", error);
+      }
+    };
+
+    window.editItem = (id: string) => {
+      window.location.href = `/admin/apprentissage/prononciation/${id}`;
+    };
+
+    // Gestion du modal
+    window.openAddModal = () => {
+      const modal = document.getElementById("addModal");
+      if (!modal) return;
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    };
+
+    window.closeAddModal = () => {
+      const modal = document.getElementById("addModal");
+      if (!modal) return;
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+      
+      // Réinitialiser le formulaire
+      const form = document.getElementById("prononciationForm") as HTMLFormElement;
+      if (form) form.reset();
+      
+      // Réinitialiser le champ file
+      const fileInput = document.getElementById("audioFile") as HTMLInputElement;
+      if (fileInput) fileInput.value = "";
+    };
+
+    // Upload et soumission
+    const prononciationForm = document.getElementById("prononciationForm");
+    if (prononciationForm) {
+      prononciationForm.addEventListener("submit", handleSubmit);
+    }
+
+    async function handleSubmit(e: Event) {
+      e.preventDefault();
+      
+      const submitBtn = document.getElementById("submitBtn") as HTMLButtonElement;
+      if (submitBtn) submitBtn.disabled = true;
+
+      const form = e.currentTarget as HTMLFormElement;
+      const formData = new FormData(form);
+      const fileInput = document.getElementById("audioFile") as HTMLInputElement;
+      const uploadProgress = document.getElementById("upload-progress");
+
+      if (!fileInput?.files || fileInput.files.length === 0) {
+        alert("Veuillez sélectionner un fichier audio");
+        if (submitBtn) submitBtn.disabled = false;
+        return;
+      }
+
+      const audioFile = fileInput.files[0];
+      
+      // Vérifier la taille du fichier (max 10MB)
+      if (audioFile.size > 10 * 1024 * 1024) {
+        alert("Le fichier audio est trop volumineux (max 10MB)");
+        if (submitBtn) submitBtn.disabled = false;
+        return;
+      }
+
+      if (uploadProgress) uploadProgress.classList.remove("hidden");
+
+      try {
+        // 1. Upload du fichier audio
+        const uploadFormData = new FormData();
+        uploadFormData.append("audio", audioFile);
+
+        const uploadResponse = await fetch(`${API_URL}/api/admin/prononciation/upload/audio`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: uploadFormData,
+        });
+
+        if (!uploadResponse.ok) {
+          const errorText = await uploadResponse.text();
+          let errorMessage = `Erreur upload: ${uploadResponse.status}`;
+          try {
+            const errorJson = JSON.parse(errorText);
+            errorMessage = errorJson.error || errorMessage;
+          } catch {
+            errorMessage = errorText || errorMessage;
+          }
+          throw new Error(errorMessage);
+        }
+
+        const uploadData = await uploadResponse.json();
+
+        // 2. Création de l'entrée
+        const motFrancais = formData.get("motFrancais");
+        const motBandenkop = formData.get("motBandenkop");
+        const niveau = formData.get("niveau");
+        const transcriptionPhonetique = formData.get("transcriptionPhonetique");
+        const exempleFrancais = formData.get("exempleFrancais");
+        const exempleBandenkop = formData.get("exempleBandenkop");
+        const difficulte = formData.get("difficulte");
+        const points = formData.get("points");
+
+        const data = {
+          motFrancais: motFrancais,
+          motBandenkop: motBandenkop,
+          niveau: niveau,
+          audioUrl: uploadData.audioUrl,
+          transcriptionPhonetique: transcriptionPhonetique || "",
+          exemplePhrase: {
+            francais: exempleFrancais || "",
+            bandenkop: exempleBandenkop || "",
+          },
+          difficulte: parseInt(difficulte ? difficulte.toString() : "1", 10),
+          points: parseInt(points ? points.toString() : "5", 10),
+        };
+
+        const response = await fetch(`${API_URL}/api/admin/prononciation`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(data),
+        });
+
+        if (response.ok) {
+          window.closeAddModal();
+          loadPrononciation();
+        } else {
+          const error = await response.json();
+          alert("Erreur: " + (error.error || "Erreur inconnue"));
+        }
+      } catch (error) {
+        console.error("❌ Erreur:", error);
+        alert("Erreur: " + (error instanceof Error ? error.message : "Erreur inconnue"));
+      } finally {
+        if (uploadProgress) uploadProgress.classList.add("hidden");
+        if (submitBtn) submitBtn.disabled = false;
+      }
+    }
+
+    loadPrononciation();
+  </script>
+</Layout>

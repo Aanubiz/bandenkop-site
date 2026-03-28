@@ -1,0 +1,268 @@
+---
+// src/components/Apprentissage/GameHub.astro
+---
+
+<div class="space-y-8 sm:space-y-10 md:space-y-12">
+  <!-- En-tête -->
+  <div class="text-center">
+    <h2 class="font-['Playfair_Display'] text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-2">Apprentissage interactif</h2>
+    <p class="text-sm sm:text-base text-gray-600">Teste tes connaissances sur la culture Bandenkop</p>
+  </div>
+
+  <!-- Quiz interactif -->
+  <div class="bg-white rounded-2xl shadow-xl p-4 sm:p-6 md:p-8">
+    <h3 class="text-lg sm:text-xl font-bold text-gray-800 mb-4 flex items-center">
+      <span class="text-2xl mr-2">📝</span>
+      Quiz culturel
+    </h3>
+    
+    <div id="quiz-container" class="space-y-4">
+      <!-- Question 1 -->
+      <div class="quiz-item border border-gray-200 rounded-xl p-4" data-question="1">
+        <p class="font-medium text-gray-800 mb-3">1. Que signifie "Bandenkop" ?</p>
+        <div class="space-y-2">
+          <label class="flex items-center space-x-3 p-2 rounded-lg hover:bg-orange-50 cursor-pointer">
+            <input type="radio" name="q1" value="a" class="w-4 h-4 text-orange-600">
+            <span class="text-sm sm:text-base text-gray-700">Ceux qui ont traversé la montagne</span>
+          </label>
+          <label class="flex items-center space-x-3 p-2 rounded-lg hover:bg-orange-50 cursor-pointer">
+            <input type="radio" name="q1" value="b" class="w-4 h-4 text-orange-600">
+            <span class="text-sm sm:text-base text-gray-700">Le village sacré</span>
+          </label>
+          <label class="flex items-center space-x-3 p-2 rounded-lg hover:bg-orange-50 cursor-pointer">
+            <input type="radio" name="q1" value="c" class="w-4 h-4 text-orange-600">
+            <span class="text-sm sm:text-base text-gray-700">La terre des ancêtres</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Question 2 -->
+      <div class="quiz-item border border-gray-200 rounded-xl p-4" data-question="2">
+        <p class="font-medium text-gray-800 mb-3">2. Quel est le symbole du chef à Bandenkop ?</p>
+        <div class="space-y-2">
+          <label class="flex items-center space-x-3 p-2 rounded-lg hover:bg-orange-50 cursor-pointer">
+            <input type="radio" name="q2" value="a" class="w-4 h-4 text-orange-600">
+            <span class="text-sm sm:text-base text-gray-700">Le léopard</span>
+          </label>
+          <label class="flex items-center space-x-3 p-2 rounded-lg hover:bg-orange-50 cursor-pointer">
+            <input type="radio" name="q2" value="b" class="w-4 h-4 text-orange-600">
+            <span class="text-sm sm:text-base text-gray-700">L'éléphant</span>
+          </label>
+          <label class="flex items-center space-x-3 p-2 rounded-lg hover:bg-orange-50 cursor-pointer">
+            <input type="radio" name="q2" value="c" class="w-4 h-4 text-orange-600">
+            <span class="text-sm sm:text-base text-gray-700">Le buffle</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Question 3 -->
+      <div class="quiz-item border border-gray-200 rounded-xl p-4" data-question="3">
+        <p class="font-medium text-gray-800 mb-3">3. Comment s'appelle le tambour royal ?</p>
+        <div class="space-y-2">
+          <label class="flex items-center space-x-3 p-2 rounded-lg hover:bg-orange-50 cursor-pointer">
+            <input type="radio" name="q3" value="a" class="w-4 h-4 text-orange-600">
+            <span class="text-sm sm:text-base text-gray-700">Nkul</span>
+          </label>
+          <label class="flex items-center space-x-3 p-2 rounded-lg hover:bg-orange-50 cursor-pointer">
+            <input type="radio" name="q3" value="b" class="w-4 h-4 text-orange-600">
+            <span class="text-sm sm:text-base text-gray-700">Mengu</span>
+          </label>
+          <label class="flex items-center space-x-3 p-2 rounded-lg hover:bg-orange-50 cursor-pointer">
+            <input type="radio" name="q3" value="c" class="w-4 h-4 text-orange-600">
+            <span class="text-sm sm:text-base text-gray-700">Tchagha</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Bouton de validation -->
+      <button id="submitQuiz" class="w-full bg-gradient-to-r from-orange-600 to-red-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-300">
+        Vérifier mes réponses
+      </button>
+
+      <!-- Résultat -->
+      <div id="quizResult" class="hidden text-center p-4 rounded-xl"></div>
+    </div>
+  </div>
+
+  <!-- Jeu de prononciation -->
+  <div class="bg-white rounded-2xl shadow-xl p-4 sm:p-6 md:p-8">
+    <h3 class="text-lg sm:text-xl font-bold text-gray-800 mb-4 flex items-center">
+      <span class="text-2xl mr-2">🎤</span>
+      Prononciation
+    </h3>
+    
+    <div class="space-y-4">
+      <div class="grid grid-cols-2 gap-3">
+        <button class="word-btn p-3 bg-orange-50 rounded-xl text-center hover:bg-orange-100 transition-colors" data-word="Mba'a le">
+          <span class="block font-medium text-gray-800">Mba'a le</span>
+          <span class="text-xs text-gray-500">Comment ça va ?</span>
+        </button>
+        <button class="word-btn p-3 bg-orange-50 rounded-xl text-center hover:bg-orange-100 transition-colors" data-word="A nyu">
+          <span class="block font-medium text-gray-800">A nyu</span>
+          <span class="text-xs text-gray-500">Bien</span>
+        </button>
+        <button class="word-btn p-3 bg-orange-50 rounded-xl text-center hover:bg-orange-100 transition-colors" data-word="Mbo'a">
+          <span class="block font-medium text-gray-800">Mbo'a</span>
+          <span class="text-xs text-gray-500">Merci</span>
+        </button>
+        <button class="word-btn p-3 bg-orange-50 rounded-xl text-center hover:bg-orange-100 transition-colors" data-word="Fo'o">
+          <span class="block font-medium text-gray-800">Fo'o</span>
+          <span class="text-xs text-gray-500">Chef</span>
+        </button>
+      </div>
+      
+      <div id="pronunciationMessage" class="text-sm text-center text-gray-600 min-h-[40px]">
+        Clique sur un mot pour écouter sa prononciation
+      </div>
+    </div>
+  </div>
+
+  <!-- Jeu d'association -->
+  <div class="bg-white rounded-2xl shadow-xl p-4 sm:p-6 md:p-8">
+    <h3 class="text-lg sm:text-xl font-bold text-gray-800 mb-4 flex items-center">
+      <span class="text-2xl mr-2">🎯</span>
+      Association mot-image
+    </h3>
+    
+    <div class="grid grid-cols-2 gap-4">
+      <div class="space-y-2">
+        <div class="drop-target p-4 bg-orange-50 rounded-xl text-center border-2 border-dashed border-orange-200" data-target="chef">
+          <span class="block text-2xl mb-1">👑</span>
+          <span class="text-sm font-medium">Chef</span>
+        </div>
+        <div class="drop-target p-4 bg-orange-50 rounded-xl text-center border-2 border-dashed border-orange-200" data-target="tambour">
+          <span class="block text-2xl mb-1">🥁</span>
+          <span class="text-sm font-medium">Tambour</span>
+        </div>
+      </div>
+      <div class="space-y-2">
+        <div class="drop-target p-4 bg-orange-50 rounded-xl text-center border-2 border-dashed border-orange-200" data-target="masque">
+          <span class="block text-2xl mb-1">🎭</span>
+          <span class="text-sm font-medium">Masque</span>
+        </div>
+        <div class="drop-target p-4 bg-orange-50 rounded-xl text-center border-2 border-dashed border-orange-200" data-target="case">
+          <span class="block text-2xl mb-1">🏠</span>
+          <span class="text-sm font-medium">Case</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="mt-4 grid grid-cols-4 gap-2">
+      <div class="draggable p-2 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-lg text-center cursor-move" draggable="true" data-word="Fo'o">Fo'o</div>
+      <div class="draggable p-2 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-lg text-center cursor-move" draggable="true" data-word="Nkul">Nkul</div>
+      <div class="draggable p-2 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-lg text-center cursor-move" draggable="true" data-word="Khe">Khe</div>
+      <div class="draggable p-2 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-lg text-center cursor-move" draggable="true" data-word="Nda">Nda</div>
+    </div>
+    
+    <div id="associationMessage" class="mt-4 text-sm text-center text-gray-600"></div>
+  </div>
+</div>
+
+<script>
+  // Quiz
+  const correctAnswers = {
+    q1: 'a',
+    q2: 'a',
+    q3: 'a'
+  };
+
+  document.getElementById('submitQuiz')?.addEventListener('click', () => {
+    let score = 0;
+    const total = 3;
+    
+    for (let i = 1; i <= total; i++) {
+      const selected = document.querySelector(`input[name="q${i}"]:checked`) as HTMLInputElement;
+      const questionDiv = document.querySelector(`[data-question="${i}"]`);
+      if (selected && selected.value === correctAnswers[`q${i}` as keyof typeof correctAnswers]) {
+        score++;
+        questionDiv?.classList.add('bg-green-50', 'border-green-300');
+      } else {
+        questionDiv?.classList.add('bg-red-50', 'border-red-300');
+      }
+    }
+    
+    const resultDiv = document.getElementById('quizResult');
+    if (resultDiv) {
+      resultDiv.classList.remove('hidden');
+      resultDiv.className = `text-center p-4 rounded-xl ${score === total ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'}`;
+      resultDiv.textContent = `Résultat : ${score}/${total} - ${score === total ? 'Parfait ! 🎉' : 'Continue comme ça ! 💪'}`;
+    }
+  });
+
+  // Prononciation
+  document.querySelectorAll('.word-btn').forEach(btn => {
+    btn.addEventListener('click', function(this: HTMLElement) {
+      const word = this.dataset.word;
+      const msg = document.getElementById('pronunciationMessage');
+      
+      if (msg && word) {
+        // Simulation de prononciation (dans un vrai projet, tu utiliserais Web Speech API)
+        msg.innerHTML = `🔊 Prononciation de "${word}" (simulation)`;
+        msg.classList.add('text-orange-600', 'font-medium');
+        
+        // Animation de feedback
+        this.classList.add('scale-95');
+        setTimeout(() => this.classList.remove('scale-95'), 200);
+      }
+    });
+  });
+
+  // Drag & drop simple
+  const draggables = document.querySelectorAll('.draggable');
+  const dropTargets = document.querySelectorAll('.drop-target');
+  let draggedWord = null;
+
+  draggables.forEach(draggable => {
+    draggable.addEventListener('dragstart', (e) => {
+      const word = (draggable as HTMLElement).dataset.word;
+      const dataTransfer = (e as DragEvent).dataTransfer;
+      if (word && dataTransfer) {
+        draggedWord = {
+          element: draggable,
+          word: word
+        };
+        dataTransfer.setData('text/plain', word);
+      }
+    });
+
+    draggable.addEventListener('dragend', () => {
+      draggedWord = null;
+    });
+  });
+
+  dropTargets.forEach(target => {
+    target.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      target.classList.add('border-orange-500', 'bg-orange-100');
+    });
+
+    target.addEventListener('dragleave', () => {
+      target.classList.remove('border-orange-500', 'bg-orange-100');
+    });
+
+    target.addEventListener('drop', (e) => {
+      e.preventDefault();
+      target.classList.remove('border-orange-500', 'bg-orange-100');
+      
+      const word = (e as DragEvent).dataTransfer?.getData('text/plain');
+      const targetWord = (target as HTMLElement).dataset.target;
+      
+      // Correspondances simples
+      const matches: Record<string, string> = {
+        'Foo': 'chef',
+        'Nkul': 'tambour',
+        'Khe': 'masque',
+        'Nda': 'case'
+      };
+      
+      const message = document.getElementById('associationMessage');
+      if (message && word && targetWord && matches[word] === targetWord) {
+        message.innerHTML = '✅ Bonne association !';
+        message.className = 'mt-4 text-sm text-center text-green-600 font-medium';
+      } else if (message) {
+        message.innerHTML = '❌ Essaie encore !';
+        message.className = 'mt-4 text-sm text-center text-red-600 font-medium';
+      }
+    });
+  });
+</script>

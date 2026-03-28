@@ -1,0 +1,291 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getToken } from '../utils/auth';
+
+interface Quartier {
+  nom: string;
+  couleur: string;
+  bg: string;
+  bgFonce: string;
+  texte: string;
+  bordure: string;
+  point: string;
+  badge: string;
+}
+
+const quartiers: Quartier[] = [
+  { 
+    nom: 'Denkeng', 
+    couleur: 'from-emerald-500 to-emerald-600',
+    bg: 'bg-emerald-50',
+    bgFonce: 'bg-emerald-600',
+    texte: 'text-emerald-700',
+    bordure: 'border-emerald-200',
+    point: 'bg-emerald-500',
+    badge: 'bg-emerald-100 text-emerald-800'
+  },
+  { 
+    nom: 'Tsèmeuhia', 
+    couleur: 'from-orange-500 to-orange-600',
+    bg: 'bg-orange-50',
+    bgFonce: 'bg-orange-600',
+    texte: 'text-orange-700',
+    bordure: 'border-orange-200',
+    point: 'bg-orange-500',
+    badge: 'bg-orange-100 text-orange-800'
+  },
+  { 
+    nom: 'Tsèla', 
+    couleur: 'from-blue-700 to-blue-800',
+    bg: 'bg-blue-50',
+    bgFonce: 'bg-blue-700',
+    texte: 'text-blue-800',
+    bordure: 'border-blue-200',
+    point: 'bg-blue-700',
+    badge: 'bg-blue-100 text-blue-800'
+  }
+];
+---
+
+<Layout title="Classement - Bandenkop">
+  <div class="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 pt-24 pb-12">
+    <div class="px-4 max-w-7xl mx-auto">
+      
+      <!-- En-tête -->
+      <div class="text-center mb-10">
+        <h1 class="font-['Playfair_Display'] text-3xl sm:text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+          Performances par quartiers
+        </h1>
+        <p class="text-gray-600 max-w-2xl mx-auto">
+          Suis en temps réel quel est le meilleur quartier de Bandenkop!
+        </p>
+      </div>
+
+      <!-- Cartes des quartiers avec leurs couleurs -->
+      <div class="grid md:grid-cols-3 gap-6 mb-12">
+        {quartiers.map((quartier, index) => (
+          <div class={`${quartier.bg} rounded-2xl shadow-lg overflow-hidden border ${quartier.bordure} transform hover:scale-105 transition-all duration-300`}>
+            <!-- En-tête avec la couleur du quartier -->
+            <div class={`${quartier.bgFonce} px-4 py-3 flex items-center justify-between`}>
+              <div class="flex items-center space-x-2">
+                <span class="text-2xl">
+                  {index === 0 && '🥇'}
+                  {index === 1 && '🥈'}
+                  {index === 2 && '🥉'}
+                </span>
+                <h2 class="text-xl font-bold text-white">{quartier.nom}</h2>
+              </div>
+              <span class="text-white text-sm bg-white/20 px-3 py-1 rounded-full" id={`membres-${quartier.nom}`}>
+                0
+              </span>
+            </div>
+            
+            <!-- Corps de la carte -->
+            <div class="p-6">
+              <div class="text-center mb-4">
+                <div class="text-4xl font-bold text-gray-800" id={`points-${quartier.nom}`}>0</div>
+                <div class="text-sm text-gray-500">points</div>
+              </div>
+              
+              <div class="space-y-2">
+                <div class="flex justify-between text-sm">
+                  <span class="text-gray-600">Moyenne</span>
+                  <span class="font-semibold text-gray-800" id={`moyenne-${quartier.nom}`}>0</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                  <span class="text-gray-600">Meilleur score</span>
+                  <span class="font-semibold text-gray-800" id={`meilleur-${quartier.nom}`}>0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <!-- Classement détaillé des utilisateurs -->
+      <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div class="bg-gradient-to-r from-orange-600 to-red-600 px-6 py-4">
+          <h2 class="text-xl font-bold text-white flex items-center">
+            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
+            Performances Individuelles
+          </h2>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rang</th>
+                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Apprenant</th>
+                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quartier</th>
+                <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Points</th>
+                <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Niveau</th>
+              </tr>
+            </thead>
+            <tbody id="classement-body" class="divide-y divide-gray-200">
+              <!-- Rempli par JavaScript -->
+              <tr>
+                <td colspan="6" class="px-6 py-8 text-center text-gray-500">
+                  Chargement du classement...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Légende des quartiers -->
+      <div class="mt-8 flex justify-center space-x-6">
+        {quartiers.map(quartier => (
+          <div class="flex items-center space-x-2">
+            <span class={`w-3 h-3 rounded-full ${quartier.point}`}></span>
+            <span class="text-sm text-gray-600">{quartier.nom}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <script>
+    import { getToken } from '../utils/auth';
+
+    type QuartierData = {
+      nom: string;
+      points: number;
+      membres: number;
+      moyenne: number;
+      meilleurScore: number;
+    };
+
+    type UserData = {
+      prenom: string;
+      nom: string;
+      email: string;
+      quartier: string;
+      points: number;
+      niveau: string;
+    };
+
+    const buildUserRow = (user: UserData, index: number) => {
+      const quartierClass =
+        user.quartier === 'Dnkeng'
+          ? 'bg-emerald-100 text-emerald-800'
+          : user.quartier === 'Tsèmeuhia'
+          ? 'bg-orange-100 text-orange-800'
+          : user.quartier === 'Tsèla'
+          ? 'bg-blue-100 text-blue-800'
+          : '';
+
+      const rangIcon = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
+
+      return `
+        <tr class="hover:bg-gray-50 transition-colors">
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center">
+              <span class="text-lg mr-2">${rangIcon}</span>
+              <span class="text-sm font-medium text-gray-900">#${index + 1}</span>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center">
+              <div class="flex-shrink-0 h-10 w-10">
+                <div class="h-10 w-10 rounded-full bg-gradient-to-br from-orange-100 to-red-100 flex items-center justify-center text-orange-700 font-bold">
+                  ${user.prenom ? user.prenom[0] : ''}${user.nom ? user.nom[0] : ''}
+                </div>
+              </div>
+              <div class="ml-4">
+                <div class="text-sm font-medium text-gray-900">${user.prenom} ${user.nom}</div>
+                <div class="text-sm text-gray-500">${user.email}</div>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${quartierClass}">
+              ${user.quartier}
+            </span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-right">
+            <span class="text-sm font-bold text-orange-600">${user.points}</span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-right">
+            <span class="px-2 py-1 text-xs rounded-full ${
+              user.niveau === 'avance'
+                ? 'bg-purple-100 text-purple-800'
+                : user.niveau === 'intermediaire'
+                ? 'bg-blue-100 text-blue-800'
+                : 'bg-gray-100 text-gray-800'
+            }">
+              ${user.niveau}
+            </span>
+          </td>
+        </tr>
+      `;
+    };
+
+    async function chargerClassement() {
+      const token = getToken();
+      if (!token) {
+        window.location.href = '/connexion';
+        return;
+      }
+
+      const tbody = document.getElementById('classement-body');
+      if (!tbody) return;
+
+      try {
+        const response = await fetch('http://localhost:3001/api/classement/global', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) throw new Error('Erreur chargement');
+
+        const data = await response.json();
+
+        if (Array.isArray(data.quartiers)) {
+          (data.quartiers as QuartierData[]).forEach((quartier) => {
+            const pointsEl = document.getElementById(`points-${quartier.nom}`);
+            const membresEl = document.getElementById(`membres-${quartier.nom}`);
+            const moyenneEl = document.getElementById(`moyenne-${quartier.nom}`);
+            const meilleurEl = document.getElementById(`meilleur-${quartier.nom}`);
+
+            if (pointsEl) pointsEl.textContent = String(quartier.points);
+            if (membresEl) membresEl.textContent = String(quartier.membres);
+            if (moyenneEl) moyenneEl.textContent = String(quartier.moyenne);
+            if (meilleurEl) meilleurEl.textContent = String(quartier.meilleurScore);
+          });
+        }
+
+        if (Array.isArray(data.utilisateurs) && data.utilisateurs.length > 0) {
+          tbody.innerHTML = (data.utilisateurs as UserData[])
+            .map((user, index) => buildUserRow(user, index))
+            .join('');
+        } else {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="6" class="px-6 py-8 text-center text-gray-500">
+                Aucun utilisateur pour le moment
+              </td>
+            </tr>
+          `;
+        }
+      } catch (error) {
+        console.error('Erreur chargement classement:', error);
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="px-6 py-8 text-center text-red-600">
+              ❌ Erreur de chargement du classement
+            </td>
+          </tr>
+        `;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', chargerClassement);
+    // Recharger toutes les 60 secondes
+    setInterval(chargerClassement, 60000);
+  </script>
+</Layout>

@@ -1,17 +1,43 @@
 {
-  "name": "bandenkop",
+  "name": "bandenkop-site",
   "type": "module",
-  "version": "0.0.1",
-  "engines": {
-    "node": ">=22.12.0"
-  },
+  "version": "1.0.0",
+  "description": "Site officiel du village Bandenkop - Histoire, culture et communauté",
   "scripts": {
     "dev": "astro dev",
+    "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "server": "node server/server.js",
+    "dev:all": "concurrently \"npm run dev\" \"npm run server\"",
+    "server:dev": "nodemon server/server.js"
   },
   "dependencies": {
-    "astro": "^6.0.4"
+    "@astrojs/node": "^8.2.0",
+    "@astrojs/react": "^3.3.0",
+    "@astrojs/tailwind": "^5.1.5",
+    "astro": "^4.4.0",
+    "bcryptjs": "^2.4.3",
+    "concurrently": "^8.2.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.18.2",
+    "framer-motion": "^11.0.3",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.23.0",
+    "multer": "^2.1.1",
+    "nodemailer": "^8.0.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "resend": "^6.9.4",
+    "socket.io": "^4.7.4",
+    "socket.io-client": "^4.7.4",
+    "tailwindcss": "^3.4.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.48",
+    "@types/react-dom": "^18.2.18",
+    "knip": "^6.0.2",
+    "nodemon": "^3.1.14"
   }
 }

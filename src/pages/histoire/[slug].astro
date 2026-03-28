@@ -1,0 +1,1011 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ScrollToTop from "../../components/ScrollToTop.astro";
+
+interface ArticleHistoire {
+  titre: string;
+  periode: string;
+  auteur: string;
+  contenu: string;
+}
+
+// Les contenus des articles (dans le code pour l'instant)
+const articles: Record<string, ArticleHistoire> = {
+  origines: {
+    titre: "Origines de Bandenkop",
+    periode: "",
+    auteur: "Tiré des récits oraux",
+    contenu: `
+      <h2>Bandenkop : Origines d'un royaume — conquêtes, pactes et ambitions fondatrices</h2>
+      
+      <p>Dans les contreforts des hautes terres de l'Ouest Cameroun, le village de Bandenkop porte en lui une histoire 
+        fondatrice riche de conquêtes, de stratégies et de pactes. Une histoire qui commence par les pas d'un seul homme, 
+        un chasseur intrépide parti à la recherche de terres giboyeuses.
+      </p>
+      [image:droite:/images/histoire/stele_bouagang.png:Stèle de Bouagang]
+      
+      <h3>L'homme venu de Bankwop</h3>
+      <p>Tout commença à Bankwop, une localité de l'actuel village de Fotouni, dans le département du Haut-Nkam. 
+        C'est de là que partit Bouagang, chasseur nomade au tempérament aventurier, guidé non par la guerre ou l'exil, 
+        mais par l'instinct du territoire et la quête d'abondance. Suivant les pistes du gibier à travers les collines 
+        et les vallées de l'Ouest, il finit par poser ses bagages dans une contrée généreuse qu'il jugea propice à 
+        l'établissement d'un foyer durable.
+        Ce lieu, il le nomma Djimgou. C'est là, avec sa famille, qu'il posa les premières pierres d'une chefferie appelée 
+        à grandir. De simple campement de chasseur, Djimgou devint le berceau d'une dynastie naissante, celle qui allait 
+        forger, au fil des générations et des batailles, l'identité du peuple Bandenkop.
+      </p>
+      
+      <h3>La montée en puissance d'une dynastie conquérante</h3>
+      <p>Au fil des règnes successifs, la chefferie de Bandenkop affirma progressivement son autorité sur les territoires 
+        environnants. Les guerres d'expansion devinrent le principal instrument de cette croissance, repoussant toujours plus
+        loin les frontières du nouveau royaume. Mais c'est avec l'avènement du cinquième chef de la dynastie, Boufang, 
+        que cette dynamique conquérante atteignit son apogée.
+        Boufang prit une décision aussi audacieuse que symbolique : déplacer le siège de la chefferie depuis le berceau 
+        originel de Djimgou vers un nouveau site, celui de Hiala. Ce choix n'était pas anodin. Moins enclavé que Djimgou, 
+        plus central et mieux positionné pour administrer les territoires déjà soumis, Hiala offrait les conditions idéales 
+        pour gouverner un royaume en pleine expansion. Ce déplacement marqua une rupture fondatrice : Bandenkop cessait 
+        d'être un établissement pionnier pour devenir un véritable État en construction.
+      </p>
+      
+      <blockquote>
+        "Nos ancêtres ont choisi cette terre parce que l'eau y était pure et la terre généreuse. Ici, ils pouvaient 
+        cultiver en paix et élever leurs enfants à l'abri des dangers."
+        <cite>— Parole des anciens</cite>
+      </blockquote>
+      
+      <h3>Les expulsions de Hiala : quand le territoire se conquiert par les armes</h3>
+      [image:gauche:/images/histoire/ancienne_chefferie.jpg:Ancienne chefferie de Bandenkop]
+      <p>Le site de Hiala n'était cependant pas vierge de toute présence humaine. Plusieurs chefs y avaient établi leurs 
+        clans bien avant l'arrivée de Boufang, et leur délogement allait exiger autant de force militaire que de détermination 
+        politique.
+        Le premier, Fé Meuwang, occupait l'emplacement de l'actuelle concession Mèfé Sieh. Face aux armées de Boufang, il ne put 
+        résister et prit la fuite en direction de Bandjoun, abandonnant derrière lui terres et influence. Le deuxième, Tchomlou, 
+        établi du côté de Tchiégah, connut le même sort et rejoignit lui aussi les terres de Bandjoun après sa défaite.
+        Mais le troisième, Fé Tchio, était d'une tout autre trempe.
+      </p>
+
+      <h3>Fé Tchio, l'adversaire redoutable</h3>
+      <p>Installé vers Touh Tsèla, Fé Tchio ne ressemblait en rien aux chefs qui l'avaient précédé dans la fuite. 
+        Il commandait une armée structurée et aguerrie, et jouissait en outre d'un pouvoir spirituel considérable que 
+        ses adversaires ne pouvaient ignorer. Ni la pression militaire de Boufang ni les intimidations ne parvinrent à 
+        le faire plier. Face à cet équilibre des forces, les deux hommes finirent par choisir la voie de la négociation. 
+        Au pied d'une colline dont la mémoire collective a conservé le nom jusqu'à nos jours — "Kouoh Khé", littéralement "
+        la colline du pacte" — Boufang et Fé Tchio conclurent un accord de non-agression solennel. Ce lieu mythique, 
+        gravé dans la toponymie du village, témoigne encore aujourd'hui de ce moment charnière où deux puissances rivales 
+        choisirent la coexistence plutôt que l'anéantissement mutuel.
+        Le pacte fut respecté. Pendant de longues années, aucun des deux chefs n'attaqua l'autre.
+      </p>
+
+      <h3>Bougueng et l'unification définitive du territoire</h3>
+      <p>La mort de Boufang allait cependant redistribuer les cartes. Son successeur, Bougueng, ne partageait ni le 
+        pragmatisme ni l'esprit de compromis de son prédécesseur. Décidé à régner sans partage sur l'ensemble du territoire, 
+        il résolut d'en finir avec la coexistence qui avait jusqu'alors prévalu.
+        Par une combinaison de pression militaire soutenue, de manœuvres politiques habiles et d'une volonté inflexible, 
+        Bougueng parvint progressivement à isoler Fé Tchio, à éroder ses soutiens et à fragiliser sa position. Face à une 
+        pression devenue insoutenable, Fé Tchio finit par quitter définitivement Bandenkop pour trouver refuge vers Batcham.
+        Maître incontesté d'un territoire enfin unifié, Fé Bougueng entreprit alors le vaste chantier de restructuration du 
+        village. Une œuvre de longue haleine que ses descendants allaient poursuivre, consolider et enrichir, 
+        posant génération après génération les fondements du Bandenkop que l'on connaît aujourd'hui.
+      </p>
+
+      <blockquote>
+        "De Djimgou à Hiala, des premiers défrichements de Bouagang aux conquêtes de Bougueng, l'histoire de Bandenkop est 
+        celle d'un peuple qui s'est bâti par la force, la vision et la persévérance. Une histoire fondatrice dont 
+        les traces — dans les noms de lieux, les titres de notabilité et la mémoire des anciens — continuent de parler aux vivants."
+        <cite>— Parole des anciens</cite>
+      </blockquote>
+    `,
+  },
+  formation: {
+    titre: "Struture et organisation sociale",
+    periode: "",
+    auteur: "Tiré des récits oraux",
+    contenu: `
+      <h2>Bandenkop : L'architecture d'un pouvoir — organisation politique, sociale et traditionnelle</h2>
+      
+      <p>Derrière les collines verdoyantes de Bandenkop se cache une organisation politique et sociale d'une remarquable 
+      sophistication. Loin d'être une simple chefferie villageoise, Bandenkop est un véritable État miniature, 
+      doté d'institutions solides, de hiérarchies précises et d'une sagesse organisationnelle transmise de génération 
+      en génération.
+      </p>
+      [image:droite:/images/histoire/entree_chefferie.jpg:Entrée de la chefferie de Bandenkop]
+      
+      <h3>Une monarchie au cœur du village</h3>
+      <p>Comme nombre de villages des hautes terres camerounaises, Bandenkop est organisé en monarchie. Tous les pouvoirs y 
+      sont concentrés entre les mains du chef, garant suprême de la sécurité et de la prospérité de sa communauté. 
+      Depuis 1977, sa fonction dépasse le cadre purement traditionnel : reconnu comme auxiliaire de l'administration, 
+      il sert désormais de relais officiel entre les populations locales et l'État camerounais, incarnant ainsi la jonction 
+      entre l'ordre coutumier et l'ordre républicain. La chefferie elle-même est bien plus qu'une simple résidence royale. 
+      Elle est à la fois demeure privée du souverain, siège du tribunal coutumier et centre du pouvoir administratif — un 
+      lieu où le sacré et le politique cohabitent en permanence.
+      </p>
+      
+      <h3>Le Lakem : le creuset du pouvoir royal</h3>
+      <p>Avant de régner, le chef doit naître une seconde fois. Cette renaissance symbolique s'accomplit au Lakem, 
+      [image:gauche:/images/histoire/chef_et_kuipou.jpg:L'actuel chef de Bandenkop et son Kuipou au Lakem]
+
+      lieu d'initiation où le nouveau souverain est conduit après sa désignation pour y subir neuf semaines de rites 
+      fondateurs. Il n'y entre pas seul. À ses côtés se trouve son Kuipou, son bras droit, l'un de ses frères, 
+      désigné au même moment et soumis à la même initiation. Le Kuipou est le numéro deux du royaume — celui qui seconde 
+      le chef au quotidien et peut le remplacer en cas de nécessité. Sa désignation simultanée n'est pas anodine : 
+      elle signifie que si le destin en avait décidé autrement, c'est lui qui aurait régné. Le chef est également 
+      accompagné au Lakem par d'autres figures aux rôles soigneusement définis. La Tchetchuè — dont le nom signifie 
+      littéralement "regarder la bouche" — est une jeune femme choisie pour ses qualités esthétiques, dont la présence 
+      a pour vocation de stimuler l'appétit du souverain durant son séjour initiatique. Le Da'ah Beuh — "lécheur de doigt" 
+      — est quant à lui chargé de nettoyer les doigts du chef après chaque repas, un geste rituel chargé de sens. Enfin, 
+      une femme est remise au chef durant cette période d'initiation, et au terme des neuf semaines, elle doit être enceinte 
+      — garantissant ainsi au village que le futur monarque sera en mesure de perpétuer la dynastie.
+      [image:droite:/images/histoire/mekem_tafe.jpg:Mekem Tafé]
+
+      Durant toute la durée du Lakem, la sécurité du chef et du village est assurée par Mekem Tafé, l'un des neuf notables, 
+      qui ne quitte pas le souverain d'une semelle. Cette période est en effet considérée comme une phase de grande 
+      vulnérabilité pour le village tout entier, si bien que des notables et soldats venus de villages alliés contribuent 
+      à en assurer la protection. À l'issue de l'initiation, le nouveau chef fait une sortie officielle, est présenté sur 
+      la place publique et prend formellement ses fonctions. Il dispose alors du temps qu'il juge nécessaire pour organiser 
+      les funérailles de son père, le défunt roi.
+      </p>
+      
+      
+      <h3>Les neuf notables : les gardiens invisibles du royaume</h3>
+      <p>Un chef Bandenkop ne gouverne jamais seul. Il est en permanence entouré de ses neuf notables, figures immuables 
+      [image:droite:/images/histoire/tcheufe.jpg:Des Tcheufé dans leurs acoutrements]
+
+      et redoutables dont la mission première est d'assurer la protection spirituelle du chef et la sécurité de l'ensemble 
+      du village. Leurs rôles sont multiples, parfois obscurs, parfois publics — mais toujours orientés vers l'intérêt 
+      supérieur de la communauté. Avec le temps et l'accroissement des personnalités puissantes au sein du village, 
+      le cercle s'est élargi et compte aujourd'hui davantage de membres. Mais le nom "neuf notables" demeure, comme un 
+      hommage à l'ordre originel — et les neuf fondateurs restent, eux, inchangeables et inamovibles.
+      À leurs côtés opère un second groupe, celui des sept notables, tout aussi puissants mais moins exposés au regard 
+      du public. Leurs missions, variées et souvent discrètes, viennent compléter l'architecture invisible qui soutient 
+      le pouvoir royal.
+      </p>
+
+      <h3>Fé Tchio, l'adversaire redoutable</h3>
+      <p>Installé vers Touh Tsèla, Fé Tchio ne ressemblait en rien aux chefs qui l'avaient précédé dans la fuite. 
+        Il commandait une armée structurée et aguerrie, et jouissait en outre d'un pouvoir spirituel considérable que 
+        ses adversaires ne pouvaient ignorer. Ni la pression militaire de Boufang ni les intimidations ne parvinrent à 
+        le faire plier. Face à cet équilibre des forces, les deux hommes finirent par choisir la voie de la négociation. 
+        Au pied d'une colline dont la mémoire collective a conservé le nom jusqu'à nos jours — "Kouoh Khé", littéralement "
+        la colline du pacte" — Boufang et Fé Tchio conclurent un accord de non-agression solennel. Ce lieu mythique, 
+        gravé dans la toponymie du village, témoigne encore aujourd'hui de ce moment charnière où deux puissances rivales 
+        choisirent la coexistence plutôt que l'anéantissement mutuel.
+        Le pacte fut respecté. Pendant de longues années, aucun des deux chefs n'attaqua l'autre.
+      </p>
+
+      <h3>Les Nwalla : les bras armés de la chefferie</h3>
+      <p>Dans l'organigramme de la chefferie, les Nwalla occupent une place centrale. Ce sont les agents d'exécution du 
+      pouvoir royal, chargés de missions aussi bien intérieures qu'extérieures au village. Ils sont au nombre de trois, 
+      chacun disposant d'un territoire de compétence bien délimité : les Nwalla Ka'a, les Nwalla Touh et les Nwalla Tchuèdié 
+      — également appelés Nwalla Tchitchia. Sous l'autorité directe des Nwalla se trouvent les Po'o Nwa, qui assurent les 
+      fonctions de police de la cour royale. Nwalla et Po'o Nwa appartiennent tous à la société secrète du Nwagouong, 
+      lien invisible qui soude leur corps et garantit leur loyauté absolue envers la chefferie. Le service d'un Nwalla 
+      auprès de la chefferie dure sept ans. À l'issue de cette période, il reçoit un titre de notabilité et continue de 
+      servir le chef sous le nom de Tcheufé. Le nouveau souverain peut, s'il le juge opportun, choisir parmi les Tcheufé 
+      de son prédécesseur un homme d'expérience et le nommer Tabreuh — chef du corps de garde du roi, gardien ultime de la 
+      personne royale.
+      </p>
+
+      <h3>Les assemblées consultatives : intelligence et régulation sociale</h3>
+      <p>Au-delà de la hiérarchie exécutive, la chefferie s'appuie sur des groupes consultatifs aux fonctions bien précises. 
+      Le Siop constitue l'organe de renseignement et d'espionnage du village — des yeux et des oreilles au service permanent 
+      du chef, chargés de l'informer en toutes circonstances. Le Fefèh, lui, est l'instance chargée de la régulation des 
+      mœurs : adultères, conflits moraux, infractions aux règles coutumières — c'est lui qui instruit, juge et applique les 
+      sanctions. Ces institutions témoignent d'une conception du pouvoir qui ne se réduit pas à la force, mais intègre la 
+      connaissance, la surveillance et la justice comme piliers indispensables de la gouvernance.
+      </p>
+
+      <h3>Du village aux sous-villages : l'organisation territoriale</h3>
+      <p>Sur le plan territorial, le village Bandenkop était historiquement divisé en trois grands quartiers : Denkeng, 
+      Tsèmeuhia et Tsèla, chacun placé sous l'autorité d'un chef de quartier. Cette tripartition reflétait à la fois la 
+      géographie du territoire et les dynamiques humaines qui avaient présidé à son peuplement progressif.
+      [image:gauche:/images/histoire/chef_tsemeuhia.jpg:Chef de Tsèmeuhia (Genie TINGUEM)]
+      [image:gauche:/images/histoire/chef_tsela.jpg:Chef de Tsèla 2 (Jean Bosco BOUGUENG)]
+      [image:gauche:/images/histoire/chef_packem.jpg:Chef de Packem (Nestor FEZEU)]
+      [image:gauche:/images/histoire/chef_denkeng.jpg:Chef de Denkeng (Jean Marie NZALI)]
+      [image:gauche:/images/histoire/chef_tsela1.jpg:Chef de Tsèla 1 (Emile CHETAH)]
+      [image:gauche:/images/histoire/chef_dengou.jpg:Chef de Dengou (Celestin SIMO)]
+      [image:gauche:/images/histoire/:Chef de Hiala(Pas encore de chef)]
+
+      Avec le découpage administratif moderne, Bandenkop a accédé au statut de village de deuxième degré, coiffant 
+      désormais sept villages de troisième degré : Dengou, Tsèmeuhia, Packem, Denkeng, Hiala, Tsèla 1 et Tsèla 2 — chacun 
+      administré par son propre chef de troisième degré. Cette évolution institutionnelle témoigne de la croissance et du 
+      rayonnement d'une entité territoriale qui, depuis les premiers pas de Bouagang à Djimgou, n'a cessé de s'étendre, 
+      de se structurer et de s'affirmer.
+      </p>
+
+      <blockquote>
+        "De l'initiation secrète du Lakem aux missions discrètes du Siop, de la bravoure des Nwalla à la sagesse des neuf 
+        notables, Bandenkop révèle une organisation politique d'une profondeur et d'une cohérence remarquables. 
+        Un ordre ancien, vivant, qui continue de rythmer le quotidien du village et d'en assurer l'identité face aux 
+        mutations du monde moderne."
+        <cite>— Mémoire de Bandenkop</cite>
+      </blockquote>
+    `,
+  },
+  alliances: {
+    titre: "Alliances et Traités",
+    periode: "",
+    auteur: "Tiré des récits oraux",
+    contenu: `
+      <h2>Bandenkop et ses alliances : des liens forgés dans l'histoire, le sang et la fraternité</h2>
+      
+      <p>Dans les hautes terres de l'Ouest Cameroun, la survie et la prospérité d'un village ne se mesurent pas uniquement 
+      à la vaillance de ses guerriers ou à la sagesse de ses chefs. Elles se mesurent aussi à la qualité de ses alliances. 
+      Bandenkop l'a compris très tôt, et au fil de son histoire, a su tisser des liens durables avec des peuples voisins — 
+      des liens qui dépassent largement la simple entente politique pour toucher à l'âme même des peuples concernés.
+      </p>
+      
+      <h3>Bapa : frères de frontière et de culture</h3>
+      <p>La première de ces alliances majeures unit Bandenkop au peuple Bapa. Les deux villages partagent une frontière 
+      géographique commune, mais aussi, et surtout, un héritage culturel remarquablement similaire. De la langue à certaines 
+      pratiques traditionnelles, en passant par la structure des institutions au sein de leurs chefferies respectives, Bapa 
+      et Bandenkop se reconnaissent mutuellement dans un miroir historique que le temps n'a pas terni.
+      Ce rapprochement n'est pas le fruit du hasard. Il s'enracine dans une réalité historique fondamentale : 
+      [image:droite:/images/histoire/gardes.jpg:Des soldats Bapa a Bandenkop (2009)]
+
+      Bapa n'a jamais été un adversaire de Bandenkop. Là où d'autres villages ont croisé le fer avec Bandenkop dans les 
+      guerres de conquête et d'expansion, Bapa a toujours évolué dans un rapport de proximité et de solidarité. 
+      Les deux peuples ont même partagé des adversaires communs — au premier rang desquels le puissant village de 
+      Bandjoun — ce qui a naturellement renforcé leur solidarité et cimenté une alliance fondée non sur la contrainte, 
+      mais sur une communauté de destin.
+      </p>
+      
+      <h3>Babouantou : une fraternité gravée dans la pierre et les rites</h3>
+      <p>Si l'alliance avec Bapa est forte, celle qui unit Bandenkop à Babouantou est d'une profondeur et d'une intensité 
+      tout à fait particulières. Elle transcende le cadre de la simple entente pacifique pour s'inscrire au cœur même des 
+      rituels de pouvoir qui fondent l'identité royale de Bandenkop. En effet, c'est le chef de Babouantou qui détient 
+      l'honneur et le devoir d'installer le chef de Bandenkop lors de son intronisation. Ce geste, chargé d'une immense 
+      portée symbolique, dit mieux que n'importe quel traité la nature de ce lien : ce n'est pas une alliance entre deux 
+      étrangers qui se respectent, c'est une fraternité entre deux peuples qui se reconnaissent. Sa Majesté Kaleuk Mongoué, 
+      roi de Babouantou, l'exprime avec une simplicité désarmante : "Les Bandenkop et les Babouantou sont des frères."
+      [image:gauche:/images/histoire/sm_kaleuk.jpeg:SM KALEUK MONGOUE (Roi des Babouantou)]
+
+      Cette fraternité a une incarnation géographique et spirituelle. Entre les deux villages existe un lieu chargé de 
+      mémoire, là où leurs ancêtres auraient scellé leur alliance fondatrice. Les Bandenkop l'appellent "Koueh Tchi Dzè" — 
+      littéralement "Rivière sans frontière". Ce nom est tout un programme : il dit que entre Bandenkop et Babouantou, 
+      il n'existe aucune séparation, aucune limite, aucune barrière. Deux peuples, une âme.
+      Cette fraternité ne s'est pas seulement exprimée dans les symboles. Elle s'est aussi écrite dans le sang. Lors des 
+      conflits qui ont opposé Bandenkop au village de Bangou, Babouantou s'est rangé sans hésitation aux côtés de son allié, 
+      et a perdu des hommes au combat — des fils de Babouantou tombés pour la défense d'une terre qui n'était pas la leur, 
+      mais qu'ils considéraient comme celle de leurs frères. Ce sacrifice demeure gravé dans la mémoire collective des deux 
+      peuples.
+      </p>
+      
+      
+      <h3>Des alliances vivantes, ancrées dans le présent</h3>
+      <p>Ces alliances ne sont pas de simples vestiges d'un passé révolu. Elles continuent de se manifester concrètement 
+      dans le présent. Lors de l'initiation du nouveau chef au Lakem — période de grande vulnérabilité pour le village — ce 
+      sont les soldats et notables de Bapa et de Babouantou qui contribuent à sécuriser Bandenkop, veillant sur le village 
+      comme sur le leur propre. Ce geste, répété à chaque nouveau règne, est le témoignage vivant que ces alliances ne sont 
+      pas des souvenirs : elles sont des engagements renouvelés, de génération en génération.
+      Bandenkop entretient certes des relations amicales avec de nombreux autres villages de l'Ouest Cameroun. Mais les 
+      liens qui l'unissent à Bapa et à Babouantou occupent une place à part — plus profonds, plus anciens, plus chargés 
+      de sens. Ils rappellent que dans l'histoire des peuples, les alliances les plus solides ne sont pas celles que l'on 
+      signe, mais celles que l'on vit.
+      </p>
+
+      <blockquote>
+        "Frontière partagée avec Bapa, rivière sans frontière avec Babouantou — Bandenkop a bâti sa stabilité et sa grandeur 
+        non seulement par la force de ses armes, mais aussi par la richesse de ses amitiés. Un enseignement qui résonne 
+        encore aujourd'hui."
+        <cite>— Mémoire de Bandenkop</cite>
+      </blockquote>
+    `,
+  },
+  batailles: {
+    titre: "Les Grandes Batailles",
+    periode: "",
+    auteur: "Tiré des récits oraux",
+    contenu: `
+      <h2>Une terre forgée dans le feu — les grandes batailles</h2>
+      
+      <p>L'histoire de Bandenkop n'est pas seulement celle d'une chefferie bien organisée ou d'alliances soigneusement 
+      entretenues. C'est aussi, et peut-être avant tout, l'histoire d'un peuple qui a su défendre sa terre, son identité 
+      et sa liberté au prix du sang. Des guerres tribales d'expansion aux combats pour l'indépendance nationale, Bandenkop 
+      a traversé le feu sans jamais plier.
+      </p>
+      
+      <h3>Le Liedjè : l'armée du royaume</h3>
+      <p>À Bandenkop, le chef n'est pas seulement le garant spirituel et politique de son peuple — il en est aussi le 
+      commandant suprême. L'armée traditionnelle du village, le Liedjè, est placée sous son autorité directe et commandée 
+      sur le terrain par un chef d'état-major. Ce rôle est aujourd'hui assumé par Dze Mèfé Fenghom, assisté de Sop Magoua 
+      dans ses fonctions. Ensemble, ils assurent le commandement des troupes et veillent au recrutement des combattants.
+      Car la terre de Bandenkop a été défendue au prix du sang — par la bravoure et la stratégie des guerriers du Liedjè, 
+      mais aussi par la force spirituelle des notables qui, dans l'ombre, ont toujours veillé sur le destin du village.
+      </p>
+      
+      <h3>Face à Bandjoun : l'humiliation d'un conquérant</h3>
+      <p>Parmi les menaces les plus redoutables qu'ait connues Bandenkop figure celle du puissant royaume de Bandjoun, 
+      voisin expansionniste dont les ambitions territoriales ne connaissaient pas de limites. Son projet était clair : 
+      annexer Bandenkop et transformer ses terres fertiles en plantations de café. Un destin de servitude que les Bandenkop 
+      refusèrent avec une détermination absolue. C'est le roi Feze Mekoudjou qui donna à cette résistance son moment le plus 
+      éclatant. Lors d'une rencontre avec des explorateurs allemands en présence du chef Bandjoun, le souverain Bandenkop 
+      posa un acte d'une audace stupéfiante : il saisit physiquement le chef Bandjoun, le renversa, et posa son poignard 
+      sur sa gorge — devant les administrateurs allemands, devant ses propres serviteurs, tous impuissants et sidérés.
+      L'humiliation était totale et publique. Les Allemands eux-mêmes, frappés par la scène, auraient lancé au chef Bandjoun 
+      avec une ironie mordante : "Comment, tu veux faire de quelqu'un ta femme, pourtant il n'a pas froid aux yeux de te 
+      taper devant nous ? Tu es sûr qu'il va te laisser quand il sera dans ta maison ?" Cette démonstration de courage et de 
+      puissance brisa net les ambitions du chef Bandjoun. Bandenkop ne serait jamais une plantation.
+      </p>
+      
+      <h3>La guerre contre Bangou : la plus longue, la plus féroce</h3>
+      <p>Si la confrontation avec Bandjoun fut spectaculaire, c'est la guerre contre Bangou qui reste la plus longue et la 
+      plus douloureuse de l'histoire Bandenkop — en dehors de la guerre d'indépendance. Bangou partage avec Bandenkop la 
+      frontière la plus étendue, et c'est précisément sur cette ligne de contact que s'est embrasé le conflit le plus 
+      profond qu'ait jamais connu le village. Au fil des générations, les escarmouches se muèrent en sièges, les rivalités 
+      en guerre totale. Pour tenir leurs positions dans les collines et les forêts, les Bandenkop creusèrent des tranchées 
+      profondes — les "Sum" — véritables ouvrages défensifs taillés dans la terre, témoins silencieux d'une guerre de ruse 
+      et d'endurance. Certaines de ces tranchées existent encore aujourd'hui au quartier Tsèmeuhia, figées dans le paysage 
+      comme des cicatrices de l'histoire. Ce conflit donna naissance à l'une des innovations les plus remarquables de 
+      l'histoire locale. Le 8e roi de Bandenkop, Fé Nzali, mit au point durant cette période un fusil artisanal — une arme 
+      de conception locale, certes moins sophistiquée que les armements européens, mais dont le principe et l'efficacité 
+      étaient comparables. Cette invention bouleversa l'équilibre des forces et permit à Bandenkop de tenir tête à des 
+      adversaires mieux équipés. En hommage à cet exploit, le roi fut surnommé "Fé Gah" — "le chef du fusil" — un titre 
+      qui résonne encore comme un symbole d'ingéniosité et de résistance. Les alliés de Babouantou apportèrent un soutien 
+      décisif dans cette guerre, scellant dans le feu des batailles une fraternité que les mots seuls n'auraient pu forger. 
+      Malgré tout, la guerre laissa des traces durables : une partie significative du territoire Bandenkop fut perdue au 
+      profit de Bangou. Le village s'étendait autrefois jusqu'à l'emplacement de l'actuelle morgue de Bangou — des terres 
+      que les Bandenkop, engagés simultanément sur plusieurs fronts, ne purent jamais récupérer.
+      </p>
+
+      <h3>Les Bali : l'invasion surprise et le piège des rochers</h3>
+      <p>Une autre menace vint de loin. Installés à Bamenda, les Bali étaient un peuple conquérant qui lançait des raids 
+      réguliers contre les communautés environnantes. Ces attaques finissent par atteindre Bandenkop, prenant le village 
+      par surprise. Face à cette invasion soudaine et impréparée, les Bandenkop firent le choix tactique de la retraite — 
+      non par lâcheté, mais par stratégie. Ils se replièrent vers les rochers de Loung Beli, un relief accidenté qu'ils 
+      connaissaient parfaitement. Les assaillants Bali, lancés dans une poursuite aveugle, ne maîtrisaient pas ce terrain. 
+      Ils s'échouèrent au bord des falaises : la dénivellation était trop brutale, trop soudaine. Très peu survécurent à la 
+      chute, et ceux qui survécurent furent rapidement neutralisés par les Bandenkop embusqués dans les hauteurs.
+      La nature elle-même avait combattu aux côtés des Bandenkop.
+      </p>
+
+      <h3>La guerre d'indépendance : Bandenkop contre le colon</h3>
+      <p>Le chapitre le plus grave de l'histoire militaire de Bandenkop s'écrit dans le sang des guerres d'indépendance. 
+      Durant cette période cruciale pour le Cameroun tout entier, le quartier général de l'Armée de Libération du Kameroun 
+      (ANLK) était établi à Bandenkop — faisant du village un centre névralgique de la résistance nationale.
+      Cette fois, l'ennemi n'était plus un village voisin aux ambitions territoriales. C'était la puissance coloniale 
+      française, appuyée par des soldats venus du Tchad, armés jusqu'aux dents et déterminés à écraser toute velléité 
+      d'émancipation. La guerre prit une dimension d'une brutalité inédite : armes à feu sophistiquées, bombes incendiaires 
+      au Napalm — des armes de destruction massive déployées contre des populations civiles et des combattants souvent 
+      équipés de moyens rudimentaires. Les maquisards Bandenkop furent traqués, arrêtés, contraints à l'exil. Mais ils 
+      résistèrent — avec les armes récupérées sur les soldats tombés au combat, avec une connaissance intime de leur 
+      territoire, et avec la force de leurs pouvoirs mystiques transmis de génération en génération. Dans les forêts et 
+      les collines de Bandenkop, la résistance ne fut jamais éteinte.
+      </p>
+
+      <blockquote>
+        "Des tranchées de Tsèmeuhia aux rochers de Loung Beli, du poignard de Feze Mekoudjou aux maquis de l'indépendance, 
+        Bandenkop a écrit son histoire dans la résistance et le courage. Un peuple qui n'a jamais courbé l'échine, qui a su 
+        innover sous la pression, s'allier dans l'adversité, et puiser dans ses racines la force de survivre. Ces batailles 
+        ne sont pas seulement des pages d'histoire — elles sont l'âme même de Bandenkop."
+        <cite>— Mémoire de Bandenkop</cite>
+      </blockquote>
+    `,
+  },
+  resistance: {
+    titre: "La résistance anticoloniale",
+    periode: "",
+    auteur: "Tiré des récits oraux",
+    contenu: `
+      <h2>La résistance — *Uun peuple qui refusa de mourir</h2>
+      
+      <p>Il est des épreuves qui brisent les peuples. Et il en est d'autres qui les révèlent. Pour Bandenkop, la guerre du 
+      maquis fut les deux à la fois — une descente aux enfers et une renaissance, un incendie et une forge. Ce que l'armée 
+      coloniale française voulut effacer de la carte, l'histoire se chargea de graver dans le marbre.
+      </p>
+      
+      <h3>Le fief des indomptables</h3>
+      <p>Dans les années sombres qui précédèrent l'indépendance du Cameroun, l'Ouest du pays était en feu. La lutte 
+      anticoloniale, portée par des hommes et des femmes décidés à reprendre leur destin en main, embrasait les collines, 
+      les forêts et les villages. Mais parmi tous les foyers de résistance, Bandenkop occupait une place à part — une place 
+      que l'administration coloniale française ne lui enviait pas. Car Bandenkop n'était pas seulement un village parmi 
+      d'autres. C'était un fief. Le fief des nationalistes les plus déterminés, le refuge des maquisards les plus redoutés, 
+      le cœur battant d'une résistance qui refusait obstinément de s'éteindre. Le quartier général de l'Armée de Libération 
+      du Kameroun y avait élu domicile, et les partisans de l'indépendance y trouvaient abri, soutien et ressources.
+      Pour les soldats coloniaux, Bandenkop était une plaie ouverte. Une humiliation permanente.
+      </p>
+      
+      <h3>Une résistance à deux visages</h3>
+      <p>Ce qui rendait Bandenkop particulièrement redoutable aux yeux de l'ennemi, c'est que sa résistance ne se limitait 
+      pas au seul champ de bataille physique. Elle opérait sur deux fronts simultanés — le visible et l'invisible.
+      Sur le terrain, les maquisards Bandenkop se battaient avec une férocité qui désarçonnait les soldats français et leurs 
+      upplétifs venus du Tchad. Armés souvent de moyens rudimentaires, récupérant les armes sur les corps de leurs adversaires 
+      tombés, ils connaissaient chaque sentier, chaque colline, chaque repli de leur territoire comme la paume de leur main. 
+      Ils frappaient, disparaissaient, surgissaient ailleurs. Les pertes dans les rangs coloniaux étaient lourdes — trop lourdes 
+      pour être ignorées. Mais dans l'ombre, une autre guerre se menait. Les notables de Bandenkop, gardiens des savoirs 
+      ancestraux et dépositaires d'une puissance spirituelle forgée au fil des siècles, constituaient un rempart invisible 
+      que ni les fusils ni les bombes ne pouvaient atteindre. Soudés, concentrés, redoutablement efficaces, ils protégeaient le village avec des armes que l'ennemi ne comprenait pas et ne pouvait pas contrer.
+      Des soldats entrèrent à Bandenkop. Certains n'en ressortirent jamais. Personne ne pouvait expliquer comment. 
+      Personne n'osait vraiment poser la question.
+      </p>
+      
+      <h3>La fureur coloniale : quand l'incendie devient une arme</h3>
+      <p>Face à une résistance qu'elle ne parvenait pas à briser, l'administration coloniale française perdit ce qui lui 
+      restait de retenue. La stratégie militaire laissa place à la brutalité pure. Si Bandenkop ne pouvait pas être soumis, 
+      il serait détruit.
+      L'ordre fut donné. Brûlez tout.
+      Ce qui suivit est l'un des chapitres les plus douloureux de l'histoire du village. Les soldats déferlèrent sur 
+      Bandenkop avec une mission de destruction systématique et méthodique. Chaque maison fut incendiée. Les flammes 
+      dévorèrent les toits de paille, les murs de terre, les souvenirs accumulés au fil des générations. Chaque plantation 
+      fut ravagée — les cultures qui nourrissaient les familles, les arbres fruitiers que des mains patientes avaient 
+      plantés et cultivés. Chaque grenier fut réduit en cendres — les réserves alimentaires, l'assurance de la survie 
+      pour les mois à venir, disparurent dans la fumée.
+      En quelques jours, ce que des générations avaient bâti fut anéanti. Bandenkop n'était plus qu'un champ de ruines 
+      fumantes, un paysage de désolation que le vent dispersait en cendres grises sur les collines environnantes.
+      </p>
+
+      <h3>L'exode : un peuple chassé de sa propre terre</h3>
+      <p>Face à la brutalité des flammes et des armes, il n'y avait plus d'autre choix. Les Bandenkop durent fuir. 
+      Ces hommes et ces femmes qui avaient défendu leur terre pied à pied, qui avaient creusé des tranchées dans leurs 
+      propres collines et puisé dans leurs dernières forces pour tenir, se retrouvèrent contraints d'abandonner ce qu'il 
+      restait de leur village. L'ironie du sort fut cruelle jusqu'au bout : c'est vers Bangou — l'adversaire historique, 
+      la terre de la plus longue guerre — que les Bandenkop se réfugièrent. Parce que la survie n'a pas de fierté. 
+      Parce que certaines blessures sont moins profondes que d'autres.
+      Et dans ce mouvement de fuite et de douleur, le coup le plus cruel restait à venir.
+      </p>
+
+      <h3>L'exil du roi : quand le berger perd son troupeau</h3>
+      <p>Sa Majesté Feze Marcel, roi de Bandenkop et l'un des leaders les plus engagés du mouvement nationaliste, fut lui 
+      aussi rattrapé par la machine coloniale. Traqué, menacé, désigné comme ennemi de l'ordre colonial, il fut contraint 
+      de quitter son royaume — de tourner le dos à sa chefferie, à ses notables, à son peuple en détresse — et de partir 
+      en exil. C'est peut-être l'image la plus déchirante de toute cette période. Un roi sans royaume. Un chef sans peuple. 
+      Un homme dont la vision et l'engagement avaient fait de lui une cible, et dont le sacrifice personnel fut l'un des 
+      prix les plus lourds payés pour la liberté d'un peuple.
+      Pour beaucoup, cet exil sonnait comme un glas. Bandenkop était fini. Le village brûlé, la population dispersée, 
+      le roi en exil — comment un peuple peut-il survivre à tout cela ?
+      </p>
+
+      <h3>Un village qu'on ne peut pas tuer</h3>
+      <p>Pourtant, Bandenkop survécut.
+      Parce que l'on peut brûler des maisons, mais pas une mémoire. Parce que l'on peut disperser des hommes, mais pas leur 
+      identité. Parce que certains peuples portent en eux une résistance qui ne se trouve ni dans les armes ni dans les 
+      greniers — mais dans quelque chose de bien plus profond, de bien plus difficile à atteindre.
+      Bandenkop fut l'une des zones du Cameroun où la lutte pour l'indépendance fut la plus longue et la plus sanglante. 
+      Ce titre, personne ne le revendique avec fierté. Mais il dit quelque chose d'essentiel sur ce peuple : face à 
+      la puissance d'un empire colonial armé jusqu'aux dents, disposant du Napalm et de la terreur comme outils de 
+      gouvernance, les Bandenkop ne capitulèrent jamais.
+      Ils plièrent. Ils souffrirent. Ils perdirent des leurs, des terres, un roi, un village entier.
+      Mais ils ne rompirent pas.
+      </p>
+
+      <blockquote>
+        "Les flammes de cette époque sont éteintes depuis longtemps. Les cendres ont été balayées par le vent des décennies.
+         Bandenkop s'est relevé, rebâti, repeuplé. Mais dans la mémoire collective du village, dans les récits transmis de 
+         génération en génération autour des feux, cette guerre ne meurt jamais tout à fait. Elle veille. 
+         Elle rappelle. Elle enseigne. Et elle murmure à chaque Bandenkop, où qu'il se trouve dans le monde : tu viens d'un 
+         peuple qui a tout perdu et qui s'est quand même relevé."
+        <cite>— Mémoire de Bandenkop</cite>
+      </blockquote>
+    `,
+  },
+  exil: {
+    titre: "L'Exil Vers Bangou",
+    periode: "1920-1930",
+    auteur: "Comité d'histoire de Bandenkop",
+    contenu: `
+      [image:gauche:/images/histoire/exil.jpg:Période d'exil vers Bangou]
+      <p>Suite à la répression coloniale, une partie de la population dut s'exiler chez les voisins de Bangou. Cette période d'exil fut douloureuse mais aussi riche d'enseignements.</p>
+      
+      <blockquote>
+        "À Bangou, nous avons found une seconde famille. Leur accueil n'a jamais été oublié."
+        <cite>— Témoignage d'un exilé</cite>
+      </blockquote>
+      
+      <p>Les relations fraternelles avec Bangou permirent aux exilés de préserver leur culture tout en s'intégrant temporairement.</p>
+    `,
+  },
+  reconstruction: {
+    titre: "La Reconstruction",
+    periode: "1950-2000",
+    auteur: "Comité d'histoire de Bandenkop",
+    contenu: `
+      [image:gauche:/images/histoire/reconstruction.jpg:Reconstruction de Bandenkop]
+      <p>La seconde moitié du XXe siècle a vu Bandenkop se moderniser tout en préservant ses traditions. L'école publique a été construite, le centre de santé ouvert, et les infrastructures routières améliorées.</p>
+      
+      <p>La diaspora Bandenkop, installée dans les grandes villes du Cameroun et à l'étranger, a contribué au développement du village par l'envoi de fonds et la création d'associations de ressortissants.</p>
+    `,
+  },
+  perspectives: {
+    titre: "Perspectives d'Avenir",
+    periode: "2000-aujourd'hui",
+    auteur: "Comité d'histoire de Bandenkop",
+    contenu: `
+      [image:droite:/images/histoire/perspectives.jpg:Perspectives d'avenir]
+      <p>Aujourd'hui, Bandenkop se tourne résolument vers l'avenir tout en restant fidèle à son héritage. Des projets ambitieux sont en cours : électrification rurale, adduction d'eau potable, construction d'un centre culturel.</p>
+      
+      <blockquote>
+        "Nous portons en nous l'héritage de nos ancêtres et la promesse d'un avenir meilleur pour nos enfants."
+        <cite>— Jeunesse de Bandenkop</cite>
+      </blockquote>
+      
+      <p>La jeunesse est au cœur de ces projets, formée aux métiers traditionnels comme aux technologies modernes.</p>
+    `,
+  }
+};
+
+const { slug } = Astro.params;
+const article = slug ? articles[slug] : undefined;
+
+function formaterContenu(contenu: string): string {
+  if (!contenu) return '';
+  
+  let formatted = contenu;
+
+  const escapeJsString = (value: string): string => value.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+  let imageIndex = 0;
+
+  // Groupe d'images des chefs: rendu en carrousel horizontal scrollable et cliquable
+  formatted = formatted.replace(/((?:\s*\[image:gauche:[^\]]+\]\s*){3,})/g, (block) => {
+    const items = Array.from(block.matchAll(/\[image:gauche:([^\]]+):([^\]]*)\]/g));
+    if (items.length < 3) return block;
+
+    const cards = items.map((item) => {
+      const url = item[1] || '';
+      const desc = item[2] || '';
+      imageIndex += 1;
+      const safeUrl = escapeJsString(url);
+      const safeDesc = escapeJsString(desc);
+      const legend = desc ? `Figure ${imageIndex} — ${desc}` : `Figure ${imageIndex}`;
+
+      return `<div class="chiefs-scroll__item cursor-pointer" onclick="openLightbox('${safeUrl}', '${safeDesc}')">
+          <div class="aspect-square rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow bg-gray-100">
+            <img src="${url}" alt="${desc || 'Image'}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" loading="lazy" />
+          </div>
+          <p class="tap-hint sm:hidden">Touchez pour agrandir</p>
+          <p class="photo-caption">${legend}</p>
+        </div>`;
+    }).join('');
+
+    return `<div class="chiefs-scroll" role="region" aria-label="Galerie des chefs de quartier">${cards}</div>`;
+  });
+
+  // Images (gauche/droite/centre) + numérotation dans l'ordre d'apparition
+  formatted = formatted.replace(/\[image:(gauche|droite|centre):([^\]]+):([^\]]*)\]/g, (match, position, url, desc) => {
+    imageIndex += 1;
+    const safeUrl = escapeJsString(url);
+    const safeDesc = escapeJsString(desc || '');
+    const legend = desc ? `Figure ${imageIndex} — ${desc}` : `Figure ${imageIndex}`;
+
+    if (position === 'gauche') {
+      return `<div class="float-left w-20 sm:w-32 md:w-48 lg:w-56 mr-3 sm:mr-6 mb-4 cursor-pointer" onclick="openLightbox('${safeUrl}', '${safeDesc}')">
+          <div class="aspect-square rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow bg-gray-100">
+            <img src="${url}" alt="${desc || 'Image'}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" loading="lazy" />
+          </div>
+          <p class="tap-hint sm:hidden">Touchez pour agrandir</p>
+          <p class="photo-caption">${legend}</p>
+        </div>`;
+    }
+
+    if (position === 'droite') {
+      return `<div class="float-right w-20 sm:w-32 md:w-48 lg:w-56 ml-3 sm:ml-6 mb-4 cursor-pointer" onclick="openLightbox('${safeUrl}', '${safeDesc}')">
+          <div class="aspect-square rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow bg-gray-100">
+            <img src="${url}" alt="${desc || 'Image'}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" loading="lazy" />
+          </div>
+          <p class="tap-hint sm:hidden">Touchez pour agrandir</p>
+          <p class="photo-caption">${legend}</p>
+        </div>`;
+    }
+
+    return `<div class="text-center my-8 cursor-pointer" onclick="openLightbox('${safeUrl}', '${safeDesc}')">
+        <div class="inline-block max-w-full rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow bg-gray-100">
+          <img src="${url}" alt="${desc || 'Image'}" class="max-h-64 sm:max-h-96 w-auto object-contain hover:scale-105 transition-transform duration-500" loading="lazy" />
+        </div>
+        <p class="photo-caption">${legend}</p>
+      </div>`;
+  });
+  
+  return formatted;
+}
+
+if (!article) {
+  return new Response(null, {
+    status: 404,
+    statusText: "Not found",
+  });
+}
+---
+
+<Layout title={`${article.titre} - Histoire de Bandenkop`}>
+  <div class="min-h-screen bg-gray-50">
+    <div class="relative h-96 bg-gradient-to-br from-orange-900 to-red-900 overflow-hidden">
+      <div class="absolute inset-0 bg-black/40"></div>
+      <div class="absolute inset-0 flex items-center justify-center">
+        <div class="text-center text-white z-10 px-4">
+          <h1 class="font-['Playfair_Display'] text-4xl md:text-5xl lg:text-6xl font-bold mb-4">{article.titre}</h1>
+          <p class="text-xl text-orange-200">Période : {article.periode}</p>
+          <p class="text-sm text-orange-300 mt-2">Par {article.auteur}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="sticky top-20 z-20 bg-white/95 backdrop-blur-sm shadow-sm py-3">
+      <div class="max-w-4xl mx-auto px-4">
+        <div class="relative">
+          <input type="text" id="searchInput" placeholder="🔍 Rechercher dans l'article..." 
+            class="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500" />
+          <svg class="absolute left-3 top-2.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+          <div id="searchResults" class="hidden absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-xl border border-gray-200 max-h-60 overflow-y-auto z-30"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="max-w-4xl mx-auto px-4 py-8">
+      <div class="sticky top-32 z-20 mb-8 flex justify-end">
+        <div class="flex items-center space-x-4">
+          <button id="likeBtn" class="flex items-center space-x-2 bg-white rounded-full shadow-lg px-4 py-2 hover:shadow-xl transition-all">
+            <svg id="likeIcon" class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+            </svg>
+            <span id="likeCount" class="text-gray-700 font-medium">0</span>
+          </button>
+          <button id="shareBtn" class="flex items-center space-x-2 bg-white rounded-full shadow-lg px-4 py-2 hover:shadow-xl transition-all">
+            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
+            </svg>
+            <span class="text-gray-700">Partager</span>
+          </button>
+          <button id="printBtn" class="flex items-center space-x-2 bg-white rounded-full shadow-lg px-4 py-2 hover:shadow-xl transition-all">
+            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+            </svg>
+            <span class="text-gray-700">Imprimer</span>
+          </button>
+        </div>
+      </div>
+
+      <article class="bg-white rounded-2xl shadow-xl p-8 md:p-12 prose prose-lg max-w-none">
+        <div class="article-content text-justify" set:html={formaterContenu(article.contenu)} />
+        <div class="mt-8 pt-4 border-t border-gray-100">
+          <div class="flex flex-wrap gap-2">
+            <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm">#Histoire</span>
+            <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm">#Bandenkop</span>
+            <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm">#Traditions</span>
+          </div>
+        </div>
+      </article>
+
+      <div class="mt-8 flex justify-between">
+        <a href="/histoire" class="flex items-center text-orange-600 hover:text-orange-800">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+          Retour à l'histoire
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div id="lightbox" class="fixed inset-0 bg-black/90 z-50 hidden items-center justify-center" onclick="closeLightbox()">
+    <div class="relative max-w-5xl max-h-[90vh] p-4" onclick="event.stopPropagation()">
+      <button onclick="closeLightbox()" class="absolute -top-12 right-0 text-white text-4xl hover:text-orange-500 transition-colors">&times;</button>
+      <img id="lightbox-img" src="" alt="" class="max-w-full max-h-[85vh] mx-auto object-contain rounded-lg shadow-2xl" />
+      <p id="lightbox-caption" class="text-center text-white mt-4 text-sm"></p>
+      <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+        <button onclick="zoomIn()" class="bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded-full text-sm transition">🔍 +</button>
+        <button onclick="zoomOut()" class="bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded-full text-sm transition">🔍 -</button>
+      </div>
+    </div>
+  </div>
+
+  <ScrollToTop />
+
+  <script>
+    let liked = false;
+    let likeCount = 0;
+    let currentZoom = 1;
+    let currentImage: HTMLImageElement | null = null;
+
+    function openLightbox(url: string, caption: string) {
+      const lightbox = document.getElementById('lightbox');
+      const img = document.getElementById('lightbox-img') as HTMLImageElement | null;
+      const captionEl = document.getElementById('lightbox-caption');
+      if (!lightbox || !img || !captionEl) return;
+      img.src = url;
+      img.style.transform = "scale(1)";
+      currentZoom = 1;
+      captionEl.textContent = caption || '';
+      lightbox.classList.remove('hidden');
+      lightbox.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+      currentImage = img;
+    }
+
+    function closeLightbox() {
+      const lightbox = document.getElementById('lightbox');
+      if (!lightbox) return;
+      lightbox.classList.add('hidden');
+      lightbox.classList.remove('flex');
+      document.body.style.overflow = '';
+      if (currentImage) {
+        currentImage.style.transform = "scale(1)";
+        currentZoom = 1;
+      }
+    }
+
+    function zoomIn() {
+      if (currentImage && currentZoom < 3) {
+        currentZoom += 0.25;
+        currentImage.style.transform = "scale(" + currentZoom + ")";
+      }
+    }
+
+    function zoomOut() {
+      if (currentImage && currentZoom > 0.5) {
+        currentZoom -= 0.25;
+        currentImage.style.transform = "scale(" + currentZoom + ")";
+      }
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeLightbox();
+      }
+    });
+
+    const windowWithLightbox = window as typeof window & {
+      openLightbox: typeof openLightbox;
+      closeLightbox: typeof closeLightbox;
+      zoomIn: typeof zoomIn;
+      zoomOut: typeof zoomOut;
+    };
+    windowWithLightbox.openLightbox = openLightbox;
+    windowWithLightbox.closeLightbox = closeLightbox;
+    windowWithLightbox.zoomIn = zoomIn;
+    windowWithLightbox.zoomOut = zoomOut;
+
+    const searchInput = document.getElementById('searchInput') as HTMLInputElement | null;
+    const searchResults = document.getElementById('searchResults') as HTMLElement | null;
+    const articleContent = document.querySelector('.article-content') as HTMLElement | null;
+
+    interface SearchResult {
+      node: Text;
+      start: number;
+      end: number;
+      text: string;
+    }
+
+    function searchInArticle() {
+      if (!searchInput || !searchResults || !articleContent) return;
+      const searchTerm = searchInput.value.trim().toLowerCase();
+      if (!searchTerm || searchTerm.length < 2) {
+        searchResults.classList.add('hidden');
+        clearHighlights();
+        return;
+      }
+
+      const textNodes = getTextNodes(articleContent);
+      const results: SearchResult[] = [];
+      textNodes.forEach(function(node: Text) {
+        const raw = node.textContent || '';
+        const text = raw.toLowerCase();
+        let index = text.indexOf(searchTerm);
+        while (index !== -1) {
+          results.push({
+            node: node,
+            start: index,
+            end: index + searchTerm.length,
+            text: raw.substring(Math.max(0, index - 50), Math.min(raw.length, index + searchTerm.length + 50))
+          });
+          index = text.indexOf(searchTerm, index + 1);
+        }
+      });
+
+      if (results.length > 0) {
+        searchResults.innerHTML = results.slice(0, 10).map(function(result, i) {
+          return '<div class="p-3 hover:bg-orange-50 cursor-pointer border-b border-gray-100 last:border-0 search-result-item" data-index="' + i + '">' +
+            '<p class="text-sm text-gray-600">...' + result.text.replace(new RegExp(searchTerm, 'gi'), function(match: string) { return '<mark class="bg-yellow-200">' + match + '</mark>'; }) + '...</p>' +
+            '</div>';
+        }).join('');
+        searchResults.classList.remove('hidden');
+        
+        document.querySelectorAll('.search-result-item').forEach(function(item, idx) {
+          item.addEventListener('click', function() {
+            const result = results[idx];
+            if (!result) return;
+            const range = document.createRange();
+            range.setStart(result.node, result.start);
+            range.setEnd(result.node, result.end);
+            const span = document.createElement('span');
+            span.appendChild(range.extractContents());
+            range.insertNode(span);
+            span.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            span.classList.add('bg-yellow-200', 'transition-all', 'duration-1000');
+            setTimeout(function() { span.classList.remove('bg-yellow-200'); }, 3000);
+          });
+        });
+        highlightText(searchTerm);
+      } else {
+        searchResults.innerHTML = '<div class="p-3 text-sm text-gray-500">Aucun résultat trouvé</div>';
+        searchResults.classList.remove('hidden');
+        clearHighlights();
+      }
+    }
+
+    function getTextNodes(node: Node): Text[] {
+      const textNodes: Text[] = [];
+      function getNodes(n: Node) {
+        if (n.nodeType === Node.TEXT_NODE && (n.textContent || '').trim().length > 0) {
+          textNodes.push(n as Text);
+        } else if (n.nodeType === Node.ELEMENT_NODE) {
+          const el = n as Element;
+          if (el.tagName !== 'SCRIPT' && el.tagName !== 'STYLE') {
+            n.childNodes.forEach(function(child: Node) { getNodes(child); });
+          }
+        }
+      }
+      getNodes(node);
+      return textNodes;
+    }
+
+    function highlightText(searchTerm: string) {
+      if (!articleContent) return;
+      clearHighlights();
+      const walker = document.createTreeWalker(articleContent, NodeFilter.SHOW_TEXT, {
+        acceptNode: function(node: Node) {
+          if ((node as Text).parentElement && (node as Text).parentElement?.tagName === 'MARK') return NodeFilter.FILTER_REJECT;
+          if ((node.textContent || '').trim().length === 0) return NodeFilter.FILTER_REJECT;
+          return NodeFilter.FILTER_ACCEPT;
+        }
+      });
+      const textNodes: Text[] = [];
+      while (walker.nextNode()) textNodes.push(walker.currentNode as Text);
+      textNodes.forEach(function(node: Text) {
+        const text = node.textContent || '';
+        const regex = new RegExp('(' + searchTerm + ')', 'gi');
+        if (regex.test(text)) {
+          const span = document.createElement('span');
+          span.innerHTML = text.replace(regex, '<mark class="bg-yellow-200">$1</mark>');
+          node.parentNode?.replaceChild(span, node);
+        }
+      });
+    }
+
+    function clearHighlights() {
+      if (!articleContent) return;
+      const marks = articleContent.querySelectorAll('mark');
+      marks.forEach(function(mark) {
+        const parent = mark.parentNode;
+        if (!parent) return;
+        parent.replaceChild(document.createTextNode(mark.textContent || ''), mark);
+        if (parent.normalize) parent.normalize();
+      });
+    }
+
+    searchInput?.addEventListener('input', function() { setTimeout(searchInArticle, 100); });
+    document.addEventListener('click', function(e) {
+      const target = e.target as Node | null;
+      if (!searchInput?.contains(target) && !searchResults?.contains(target)) {
+        searchResults?.classList.add('hidden');
+      }
+    });
+
+    document.getElementById("likeBtn")?.addEventListener("click", function() {
+      const likeIcon = document.getElementById("likeIcon");
+      const likeCountEl = document.getElementById("likeCount");
+      if (!likeIcon || !likeCountEl) return;
+      if (!liked) {
+        likeIcon.classList.remove("text-gray-400");
+        likeIcon.classList.add("text-red-600", "fill-current");
+        likeIcon.style.fill = "#ef4444";
+        likeCount++;
+        liked = true;
+      } else {
+        likeIcon.classList.add("text-gray-400");
+        likeIcon.classList.remove("text-red-600", "fill-current");
+        likeIcon.style.fill = "none";
+        likeCount--;
+        liked = false;
+      }
+      likeCountEl.textContent = String(likeCount);
+      likeIcon.classList.add("animate-pulse");
+      setTimeout(function() { likeIcon.classList.remove("animate-pulse"); }, 300);
+    });
+
+    document.getElementById("shareBtn")?.addEventListener("click", async function() {
+      if (navigator.share) {
+        await navigator.share({ title: document.title, url: window.location.href });
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        alert("🔗 Lien copié !");
+      }
+    });
+
+    document.getElementById("printBtn")?.addEventListener("click", function() { window.print(); });
+  </script>
+
+  <style is:global>
+    .article-content { font-family: 'Georgia', 'Times New Roman', serif; line-height: 1.8; color: #374151; }
+    .article-content p { margin-bottom: 1.5rem; font-size: 1.125rem; text-align: justify; }
+    .article-content h3 { font-family: "Playfair Display", serif; font-size: 1.5rem; margin-top: 2rem; margin-bottom: 1rem; color: #1f2937; border-left: 4px solid #f97316; padding-left: 1rem; }
+    .article-content blockquote { position: relative; font-style: italic; border-left: 6px solid #f97316; padding: 1.5rem 2rem; margin: 2rem 0; color: #4b5563; background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%); border-radius: 1rem; font-size: 1.1rem; line-height: 1.6; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); }
+    .article-content blockquote::before { content: "“"; font-size: 4rem; font-family: Georgia, serif; position: absolute; top: -0.5rem; left: 0.5rem; color: #f97316; opacity: 0.3; }
+    .article-content blockquote::after { content: "”"; font-size: 4rem; font-family: Georgia, serif; position: absolute; bottom: -2rem; right: 1rem; color: #f97316; opacity: 0.3; }
+    .article-content blockquote cite { display: block; margin-top: 1rem; font-size: 0.875rem; color: #b45309; font-style: normal; font-weight: 500; text-align: right; border-top: 1px solid #fed7aa; padding-top: 0.75rem; }
+    .article-content blockquote cite::before { content: "— "; }
+    .article-content blockquote:hover { transform: translateX(4px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); transition: all 0.2s ease; }
+    #lightbox { backdrop-filter: blur(5px); transition: all 0.3s ease; }
+    #lightbox-img { transition: transform 0.2s ease; }
+    .article-content .tap-hint {
+      font-family: Inter, "Helvetica Neue", Arial, sans-serif !important;
+      font-weight: 300 !important;
+      font-size: 8px !important;
+      line-height: 1.1 !important;
+      letter-spacing: 0.01em;
+      color: #ea580c !important;
+      margin-top: 0.25rem !important;
+      margin-bottom: 0 !important;
+      text-align: center;
+      font-style: normal !important;
+    }
+    .article-content .photo-caption {
+      font-family: "Fira Sans", Inter, "Helvetica Neue", Arial, sans-serif !important;
+      font-weight: 500 !important;
+      font-size: 10px !important;
+      line-height: 1.2 !important;
+      color: #0f766e !important;
+      margin-top: 0.25rem !important;
+      margin-bottom: 0 !important;
+      text-align: center !important;
+      font-style: normal !important;
+    }
+    #lightbox-caption {
+      font-family: "Fira Sans", Inter, "Helvetica Neue", Arial, sans-serif !important;
+      font-weight: 500 !important;
+      color: #99f6e4 !important;
+      text-align: center !important;
+      letter-spacing: 0.01em;
+    }
+    .article-content .chiefs-scroll {
+      display: flex;
+      gap: 0.75rem;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 0.25rem 0.1rem 0.65rem;
+      margin: 0.75rem 0 1.25rem;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+    .article-content .chiefs-scroll__item {
+      flex: 0 0 112px;
+      scroll-snap-align: start;
+    }
+    .article-content .chiefs-scroll::-webkit-scrollbar {
+      height: 6px;
+    }
+    .article-content .chiefs-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 999px;
+    }
+    .article-content .chiefs-scroll::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 999px;
+    }
+    @media (min-width: 640px) {
+      .article-content .photo-caption {
+        font-size: 12px !important;
+        margin-top: 0.5rem !important;
+      }
+      .article-content .chiefs-scroll__item {
+        flex-basis: 150px;
+      }
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    #lightbox { animation: fadeIn 0.2s ease-out; }
+    @media (max-width: 640px) {
+      .article-content p { font-size: 1rem; }
+      .article-content h3 { font-size: 1.25rem; }
+      .article-content blockquote { padding: 1rem 1.5rem; }
+      .article-content blockquote::before, .article-content blockquote::after { font-size: 2.5rem; }
+      .float-left { float: left !important; width: 32% !important; min-width: 88px; margin: 0.35rem 0.75rem 0.45rem 0 !important; }
+      .float-right { float: right !important; width: 32% !important; min-width: 88px; margin: 0.35rem 0 0.45rem 0.75rem !important; }
+    }
+    @media print {
+      header, footer, .sticky, #likeBtn, #shareBtn, #printBtn, #searchInput, #searchResults, #lightbox { display: none !important; }
+      article { box-shadow: none; padding: 0; }
+      .article-content blockquote { background: none; border-left: 3px solid #f97316; padding: 0.5rem 1rem; box-shadow: none; }
+      .article-content blockquote::before, .article-content blockquote::after { display: none; }
+    }
+  </style>
+</Layout>

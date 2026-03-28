@@ -1,0 +1,445 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import AuthCheck from '../../components/AuthCheck.astro';
+import RetourButton from '../../components/Apprentissage/RetourButton.astro';
+import { getToken } from '../../utils/auth';
+---
+
+<Layout title="Prononciation - Apprentissage Bandenkop">
+  <AuthCheck>
+    <div class="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
+      <!-- Header -->
+      <div class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="px-4 max-w-7xl mx-auto h-16 flex items-center">
+          <RetourButton url="/apprentissage" />
+          <h1 class="flex-1 text-center text-lg sm:text-xl font-semibold text-gray-800">
+            Prononciation
+          </h1>
+          <div class="w-20"></div>
+        </div>
+      </div>
+
+      <div class="px-4 py-6 max-w-7xl mx-auto">
+        <!-- Barre de recherche et filtres -->
+        <div class="bg-white rounded-xl shadow-lg p-4 mb-6">
+          <div class="flex flex-col md:flex-row gap-4">
+            <!-- Recherche -->
+            <div class="flex-1">
+              <input 
+                type="text" 
+                id="search-input"
+                placeholder="Rechercher un mot en français ou en bandenkop..." 
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+              />
+            </div>
+            
+            <!-- Filtre par catégorie -->
+            <div class="md:w-64">
+              <select id="categorie-filter" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500">
+                <option value="">Toutes les catégories</option>
+                <!-- Rempli par JS -->
+              </select>
+            </div>
+            
+            <!-- Filtre par niveau -->
+            <div class="md:w-48">
+              <select id="niveau-filter" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500">
+                <option value="">Tous niveaux</option>
+                <option value="debutant">Débutant</option>
+                <option value="intermediaire">Intermédiaire</option>
+                <option value="avance">Avancé</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Catégories sous forme de rubriques -->
+        <div id="categories-section" class="mb-8">
+          <h2 class="text-lg font-bold text-gray-800 mb-4">Catégories</h2>
+          <div id="categories-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+            <!-- Rempli par JS -->
+          </div>
+        </div>
+
+        <!-- Résultats -->
+        <div id="results-section">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-bold text-gray-800" id="results-title">Tous les mots</h2>
+            <span class="text-sm text-gray-500" id="results-count">0 mot(s)</span>
+          </div>
+
+          <!-- Loading -->
+          <div id="loading" class="text-center py-12">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-600 border-t-transparent"></div>
+            <p class="mt-4 text-gray-600">Chargement des mots...</p>
+          </div>
+
+          <!-- Grille des mots -->
+          <div id="words-grid" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Rempli par JS -->
+          </div>
+
+          <!-- Pagination -->
+          <div id="pagination" class="hidden flex justify-center mt-8 space-x-2">
+            <!-- Rempli par JS -->
+          </div>
+
+          <!-- Message si aucun mot -->
+          <div id="no-words" class="hidden text-center py-12">
+            <p class="text-gray-500">Aucun mot trouvé</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </AuthCheck>
+
+  <script>
+    import { getToken } from '../../utils/auth';
+
+    const API_URL = 'http://localhost:3001';
+    let currentAudio: HTMLAudioElement | null = null;
+    let currentButtonId: string | null = null;
+    let currentPage = 1;
+    let totalPages = 1;
+    let currentFilters = {
+      search: '',
+      categorie: '',
+      niveau: ''
+    };
+
+    type Categorie = {
+      _id: string;
+      nom: string;
+      description?: string;
+      icone?: string;
+      couleur: string;
+    };
+
+    type PrononciationWord = {
+      _id: string;
+      motFrancais: string;
+      motBandenkop: string;
+      audioUrl: string;
+      categorie: Categorie;
+      niveau: 'debutant' | 'intermediaire' | 'avance';
+      points: number;
+      transcriptionPhonetique?: string;
+      exemplePhrase?: {
+        francais: string;
+        bandenkop: string;
+      };
+      imageUrl?: string;
+    };
+
+    // Gestion audio
+    function stopCurrentAudio() {
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+        currentAudio = null;
+        
+        if (currentButtonId) {
+          const prevButton = document.getElementById(currentButtonId);
+          if (prevButton) {
+            resetButtonIcon(prevButton);
+          }
+        }
+        currentButtonId = null;
+      }
+    }
+
+    function resetButtonIcon(button: HTMLElement) {
+      button.innerHTML = `
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span>Écouter</span>
+      `;
+    }
+
+    function setPauseIcon(button: HTMLElement) {
+      button.innerHTML = `
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span>Pause</span>
+      `;
+    }
+
+    async function playAudio(url: string, buttonId: string) {
+      if (currentButtonId === buttonId && currentAudio) {
+        if (!currentAudio.paused) {
+          currentAudio.pause();
+          const button = document.getElementById(buttonId);
+          if (button) resetButtonIcon(button);
+          return;
+        }
+      }
+
+      stopCurrentAudio();
+
+      try {
+        const audio = new Audio(url);
+        currentAudio = audio;
+        currentButtonId = buttonId;
+
+        const button = document.getElementById(buttonId);
+        if (button) setPauseIcon(button);
+
+        audio.addEventListener('ended', () => {
+          stopCurrentAudio();
+        });
+
+        await audio.play();
+      } catch (err) {
+        console.error('Erreur lecture audio:', err);
+        stopCurrentAudio();
+      }
+    }
+
+    // Charger les catégories
+    async function loadCategories() {
+      const token = getToken();
+      try {
+        const response = await fetch(`${API_URL}/api/prononciation/categories`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const categories = await response.json();
+        
+        const categoriesGrid = document.getElementById('categories-grid');
+        const categorieFilter = document.getElementById('categorie-filter') as HTMLSelectElement;
+        
+        if (categoriesGrid) {
+          categoriesGrid.innerHTML = categories.map((cat: Categorie) => `
+            <button 
+              onclick="filterByCategorie('${cat._id}')"
+              class="group p-3 rounded-xl bg-white shadow hover:shadow-lg transition-all text-center ${cat.couleur ? 'bg-gradient-to-br ' + cat.couleur : ''}"
+            >
+              <span class="text-2xl block mb-1">${cat.icone || '🔤'}</span>
+              <span class="text-xs font-medium">${cat.nom}</span>
+            </button>
+          `).join('');
+        }
+
+        if (categorieFilter) {
+          categorieFilter.innerHTML = `
+            <option value="">Toutes les catégories</option>
+            ${categories.map((cat: Categorie) => `
+              <option value="${cat._id}">${cat.nom}</option>
+            `).join('')}
+          `;
+        }
+      } catch (error) {
+        console.error('Erreur chargement catégories:', error);
+      }
+    }
+
+    // Charger les mots avec pagination
+    async function loadWords(page = 1) {
+      const token = getToken();
+      const loading = document.getElementById('loading');
+      const wordsGrid = document.getElementById('words-grid');
+      const noWords = document.getElementById('no-words');
+      const pagination = document.getElementById('pagination');
+      const resultsCount = document.getElementById('results-count');
+
+      if (loading) loading.classList.remove('hidden');
+      if (wordsGrid) wordsGrid.classList.add('hidden');
+      if (noWords) noWords.classList.add('hidden');
+      if (pagination) pagination.classList.add('hidden');
+
+      try {
+        const params = new URLSearchParams({
+          page: page.toString(),
+          limit: '12',
+          ...(currentFilters.search && { search: currentFilters.search }),
+          ...(currentFilters.categorie && { categorie: currentFilters.categorie }),
+          ...(currentFilters.niveau && { niveau: currentFilters.niveau })
+        });
+
+        const response = await fetch(`${API_URL}/api/prononciation/mots?${params}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        const data = await response.json();
+        
+        if (loading) loading.classList.add('hidden');
+
+        if (!data.mots || data.mots.length === 0) {
+          if (noWords) noWords.classList.remove('hidden');
+          if (resultsCount) resultsCount.textContent = '0 mot(s)';
+          return;
+        }
+
+        if (wordsGrid) {
+          wordsGrid.classList.remove('hidden');
+          wordsGrid.innerHTML = data.mots.map((word: PrononciationWord) => {
+            const buttonId = `audio-btn-${word._id}`;
+            return `
+              <div class="bg-white rounded-xl shadow-lg p-4 hover:shadow-xl transition-shadow">
+                ${word.imageUrl ? `
+                  <img src="${word.imageUrl}" alt="${word.motBandenkop}" class="w-full h-32 object-cover rounded-lg mb-3">
+                ` : ''}
+                
+                <div class="flex items-center justify-between mb-3">
+                  <span class="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-600">
+                    ${word.categorie?.nom || 'Non catégorisé'}
+                  </span>
+                  <span class="text-sm font-medium px-2 py-1 rounded-full ${
+                    word.niveau === 'debutant' ? 'bg-green-100 text-green-800' :
+                    word.niveau === 'intermediaire' ? 'bg-yellow-100 text-yellow-800' :
+                    'bg-red-100 text-red-800'
+                  }">
+                    ${word.niveau}
+                  </span>
+                </div>
+
+                <div class="text-center mb-4">
+                  <h3 class="text-2xl font-bold text-gray-800 mb-1">${word.motBandenkop}</h3>
+                  <p class="text-sm text-gray-600">${word.motFrancais}</p>
+                  ${word.transcriptionPhonetique ? `
+                    <p class="text-xs text-gray-400 mt-1">[${word.transcriptionPhonetique}]</p>
+                  ` : ''}
+                </div>
+
+                <button 
+                  id="${buttonId}"
+                  onclick="playAudio('${word.audioUrl}', '${buttonId}')" 
+                  class="w-full bg-gradient-to-r from-orange-600 to-red-600 text-white py-2 rounded-lg font-semibold hover:shadow-lg transition-all flex items-center justify-center space-x-2"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  <span>Écouter</span>
+                </button>
+
+                ${word.exemplePhrase?.francais ? `
+                  <div class="mt-3 pt-3 border-t border-gray-100 text-xs text-gray-500">
+                    "${word.exemplePhrase.francais}"
+                  </div>
+                ` : ''}
+              </div>
+            `;
+          }).join('');
+        }
+
+        if (resultsCount) {
+          resultsCount.textContent = `${data.total} mot(s)`;
+        }
+
+        // Pagination
+        if (pagination && data.totalPages > 1) {
+          pagination.classList.remove('hidden');
+          currentPage = data.page;
+          totalPages = data.totalPages;
+          
+          let pagesHtml = '';
+          
+          // Bouton précédent
+          pagesHtml += `
+            <button 
+              onclick="changePage(${currentPage - 1})"
+              class="px-3 py-1 rounded-lg border ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-orange-50'}"
+              ${currentPage === 1 ? 'disabled' : ''}
+            >
+              ←
+            </button>
+          `;
+
+          // Pages
+          for (let i = 1; i <= data.totalPages; i++) {
+            if (
+              i === 1 || 
+              i === data.totalPages || 
+              (i >= currentPage - 2 && i <= currentPage + 2)
+            ) {
+              pagesHtml += `
+                <button 
+                  onclick="changePage(${i})"
+                  class="px-3 py-1 rounded-lg border ${i === currentPage ? 'bg-orange-600 text-white' : 'hover:bg-orange-50'}"
+                >
+                  ${i}
+                </button>
+              `;
+            } else if (i === currentPage - 3 || i === currentPage + 3) {
+              pagesHtml += `<span class="px-2">...</span>`;
+            }
+          }
+
+          // Bouton suivant
+          pagesHtml += `
+            <button 
+              onclick="changePage(${currentPage + 1})"
+              class="px-3 py-1 rounded-lg border ${currentPage === data.totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-orange-50'}"
+              ${currentPage === data.totalPages ? 'disabled' : ''}
+            >
+              →
+            </button>
+          `;
+
+          pagination.innerHTML = pagesHtml;
+        }
+
+      } catch (error) {
+        console.error('Erreur chargement:', error);
+        if (loading) {
+          loading.innerHTML = `
+            <div class="text-red-600">
+              <p class="text-xl mb-2">❌ Erreur de chargement</p>
+              <button onclick="location.reload()" class="mt-4 bg-orange-600 text-white px-6 py-2 rounded-lg">
+                Réessayer
+              </button>
+            </div>
+          `;
+        }
+      }
+    }
+
+    // Filtres
+    function applyFilters() {
+      currentPage = 1;
+      const searchInput = document.getElementById('search-input') as HTMLInputElement;
+      const categorieFilter = document.getElementById('categorie-filter') as HTMLSelectElement;
+      const niveauFilter = document.getElementById('niveau-filter') as HTMLSelectElement;
+
+      currentFilters = {
+        search: searchInput?.value || '',
+        categorie: categorieFilter?.value || '',
+        niveau: niveauFilter?.value || ''
+      };
+
+      loadWords(1);
+    }
+
+    // Fonctions globales
+    (window as any).playAudio = playAudio;
+    (window as any).filterByCategorie = (categorieId: string) => {
+      const filter = document.getElementById('categorie-filter') as HTMLSelectElement;
+      if (filter) {
+        filter.value = categorieId;
+        applyFilters();
+      }
+    };
+    (window as any).changePage = (page: number) => {
+      if (page >= 1 && page <= totalPages) {
+        loadWords(page);
+      }
+    };
+
+    // Event listeners
+    document.addEventListener('DOMContentLoaded', () => {
+      loadCategories();
+      loadWords(1);
+      
+      const searchInput = document.getElementById('search-input');
+      const categorieFilter = document.getElementById('categorie-filter');
+      const niveauFilter = document.getElementById('niveau-filter');
+
+      searchInput?.addEventListener('input', applyFilters);
+      categorieFilter?.addEventListener('change', applyFilters);
+      niveauFilter?.addEventListener('change', applyFilters);
+    });
+  </script>
+</Layout>

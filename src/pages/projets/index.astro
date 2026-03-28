@@ -1,0 +1,276 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Projets - Bandenkop">
+  <div class="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
+    <!-- Hero Section -->
+    <section class="pt-32 pb-12 bg-gradient-to-br from-orange-900 via-red-900 to-amber-900">
+      <div class="container mx-auto px-6 text-center text-white">
+        <h1 class="text-5xl md:text-7xl font-black mb-6">
+          Projets de <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-yellow-300">Développement</span>
+        </h1>
+        <p class="text-xl text-orange-100 max-w-3xl mx-auto">
+          Ensemble, construisons l'avenir de Bandenkop
+        </p>
+      </div>
+    </section>
+
+    <!-- Animation principale -->
+    <section class="py-16">
+      <div class="container mx-auto px-6">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 overflow-hidden">
+          <!-- Animation SVG -->
+          <div class="relative w-full min-h-[400px] md:min-h-[500px]">
+            <svg viewBox="0 0 1000 400" class="w-full h-auto">
+              <!-- Fond -->
+              <rect width="1000" height="400" fill="#fef9e8" />
+              
+              <!-- Ciel et nuages -->
+              <circle cx="150" cy="80" r="30" fill="#fff" opacity="0.9" />
+              <circle cx="180" cy="60" r="25" fill="#fff" opacity="0.9" />
+              <circle cx="120" cy="70" r="20" fill="#fff" opacity="0.9" />
+              
+              <circle cx="750" cy="50" r="35" fill="#fff" opacity="0.8" />
+              <circle cx="780" cy="40" r="28" fill="#fff" opacity="0.8" />
+              <circle cx="720" cy="55" r="25" fill="#fff" opacity="0.8" />
+              
+              <circle cx="450" cy="100" r="25" fill="#fff" opacity="0.7" />
+              <circle cx="480" cy="85" r="20" fill="#fff" opacity="0.7" />
+              <circle cx="420" cy="95" r="18" fill="#fff" opacity="0.7" />
+              
+              <!-- Soleil -->
+              <circle cx="900" cy="60" r="35" fill="#FFD700" opacity="0.8" />
+              <path d="M900 20 L900 40 M880 60 L860 60 M900 100 L900 80 M920 60 L940 60" stroke="#FFD700" stroke-width="3" stroke-linecap="round"/>
+              
+              <!-- Arbres de gauche -->
+              <rect x="30" y="300" width="15" height="80" fill="#8B5A2B" />
+              <circle cx="37" cy="295" r="25" fill="#2E7D32" />
+              <circle cx="30" cy="285" r="20" fill="#388E3C" />
+              
+              <rect x="80" y="320" width="15" height="60" fill="#8B5A2B" />
+              <circle cx="87" cy="315" r="20" fill="#2E7D32" />
+              
+              <!-- Arbres de droite -->
+              <rect x="860" y="310" width="15" height="70" fill="#8B5A2B" />
+              <circle cx="867" cy="305" r="22" fill="#2E7D32" />
+              
+              <rect x="910" y="330" width="12" height="50" fill="#8B5A2B" />
+              <circle cx="916" cy="325" r="18" fill="#2E7D32" />
+              
+              <!-- La route -->
+              <path id="road" d="M 0 300 L 200 300 L 250 280 L 400 280 L 450 260 L 600 260 L 650 280 L 800 280 L 850 300 L 1000 300" 
+                    fill="none" stroke="#4B5563" stroke-width="12" stroke-linecap="round" />
+              
+              <!-- Lignes de la route (pointillés) -->
+              <path d="M 0 300 L 200 300 M 250 280 L 400 280 M 450 260 L 600 260 M 650 280 L 800 280 M 850 300 L 1000 300" 
+                    fill="none" stroke="#FFD966" stroke-width="4" stroke-dasharray="15 20" stroke-linecap="round" />
+              
+              <!-- Plaque "Démarrage" au début -->
+              <g id="start-plaque">
+                <rect x="10" y="230" width="100" height="45" rx="8" fill="#F97316" />
+                <text x="60" y="262" text-anchor="middle" fill="white" font-size="16" font-weight="bold">DÉMARRAGE</text>
+                <text x="60" y="277" text-anchor="middle" fill="white" font-size="12">🏁</text>
+              </g>
+              
+              <!-- La voiture (avec animation) -->
+              <g id="car" class="car-animation">
+                <!-- Corps de la voiture -->
+                <rect x="0" y="265" width="60" height="30" rx="8" fill="#E67E22" />
+                <rect x="5" y="280" width="50" height="15" rx="5" fill="#D35400" />
+                <!-- Toit -->
+                <rect x="15" y="255" width="30" height="18" rx="5" fill="#F39C12" />
+                <!-- Fenêtres -->
+                <rect x="20" y="260" width="8" height="10" fill="#3498DB" />
+                <rect x="32" y="260" width="8" height="10" fill="#3498DB" />
+                <!-- Roues -->
+                <circle cx="15" cy="295" r="8" fill="#2C3E50" />
+                <circle cx="45" cy="295" r="8" fill="#2C3E50" />
+                <circle cx="15" cy="295" r="4" fill="#7F8C8D" />
+                <circle cx="45" cy="295" r="4" fill="#7F8C8D" />
+                <!-- Phares -->
+                <circle cx="5" cy="280" r="3" fill="#FFD966" />
+                <circle cx="55" cy="280" r="3" fill="#FFD966" />
+              </g>
+              
+              <!-- La destination "Réalisé" -->
+              <g id="finish">
+                <!-- Poteau d'arrivée -->
+                <rect x="940" y="240" width="8" height="80" fill="#8B5A2B" />
+                <!-- Panneau -->
+                <rect x="870" y="210" width="100" height="50" rx="8" fill="#2E7D32" />
+                <text x="920" y="242" text-anchor="middle" fill="white" font-size="20" font-weight="bold">RÉALISÉ</text>
+                <text x="920" y="260" text-anchor="middle" fill="white" font-size="12">🏆</text>
+              </g>
+              
+              <!-- Herbe au bord de la route -->
+              <path d="M0 305 L200 305 L250 285 L400 285 L450 265 L600 265 L650 285 L800 285 L850 305 L1000 305 L1000 310 L0 310 Z" fill="#5D9B4B" opacity="0.6" />
+              
+              <!-- Texte "Démarrons ensemble un projet!" -->
+              <text x="500" y="370" text-anchor="middle" fill="#F97316" font-size="20" font-weight="bold" class="engine-text">
+                🚀 Démarrons ensemble un projet ! 🚀
+              </text>
+            </svg>
+          </div>
+          
+          <!-- Message d'attente -->
+          <div class="text-center mt-8">
+            <div class="inline-block bg-orange-100 rounded-full px-6 py-3 mb-6">
+              <span class="text-orange-800 font-medium">🚧 Page en construction 🚧</span>
+            </div>
+            <p class="text-gray-600 max-w-2xl mx-auto mb-8">
+              Nos projets prennent forme. En attendant de les découvrir, vous pouvez déjà participer à l'aventure !
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Boutons d'action -->
+    <section class="py-12">
+      <div class="container mx-auto px-6">
+        <div class="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+          <!-- Faire un don -->
+          <a href="/contact?subject=Don" class="group bg-white rounded-2xl shadow-xl p-8 text-center hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
+            <div class="w-20 h-20 bg-gradient-to-br from-orange-100 to-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-4xl">💰</span>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Faire un don</h3>
+            <p class="text-gray-600 mb-4">Contribuez financièrement aux projets de développement</p>
+            <span class="inline-flex items-center text-orange-600 font-semibold group-hover:translate-x-1 transition-transform">
+              Soutenir →
+            </span>
+          </a>
+          
+          <!-- Proposer un projet -->
+          <a href="/contact?subject=Projet" class="group bg-white rounded-2xl shadow-xl p-8 text-center hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
+            <div class="w-20 h-20 bg-gradient-to-br from-orange-100 to-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-4xl">💡</span>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Proposer un projet</h3>
+            <p class="text-gray-600 mb-4">Soumettez vos idées pour le développement du village</p>
+            <span class="inline-flex items-center text-orange-600 font-semibold group-hover:translate-x-1 transition-transform">
+              Proposer →
+            </span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Citation -->
+    <section class="py-12">
+      <div class="container mx-auto px-6">
+        <div class="bg-gradient-to-r from-orange-100 to-red-100 rounded-2xl p-8 text-center max-w-2xl mx-auto">
+          <svg class="w-12 h-12 text-orange-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <p class="text-lg text-gray-700 italic">
+            "Chaque grand projet commence par un petit pas. Votre contribution, petite ou grande, fait la différence."
+          </p>
+          <p class="mt-4 text-orange-600 font-semibold">— Communauté de Bandenkop</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <style is:global>
+    /* Animation de la voiture */
+    .car-animation {
+      animation: drive 8s ease-in-out infinite;
+      transform-origin: center;
+    }
+    
+    @keyframes drive {
+      0% {
+        transform: translateX(-50px);
+      }
+      10% {
+        transform: translateX(0px);
+      }
+      85% {
+        transform: translateX(860px);
+      }
+      100% {
+        transform: translateX(860px);
+      }
+    }
+    
+    /* Animation des roues */
+    .car-animation circle:last-child,
+    .car-animation circle:nth-last-child(2) {
+      animation: wheelSpin 0.5s linear infinite;
+    }
+    
+    @keyframes wheelSpin {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    
+    /* Animation du texte */
+    .engine-text {
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 0.7;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1.02);
+      }
+    }
+    
+    /* Animation des nuages */
+    @keyframes cloudFloat {
+      0% {
+        transform: translateX(-10px);
+      }
+      100% {
+        transform: translateX(10px);
+      }
+    }
+    
+    /* Animation du soleil */
+    @keyframes sunGlow {
+      0%, 100% {
+        opacity: 0.8;
+      }
+      50% {
+        opacity: 1;
+      }
+    }
+    
+    /* Responsive */
+    @media (max-width: 640px) {
+      .car-animation {
+        animation-duration: 10s;
+      }
+      
+      @keyframes drive {
+        0% {
+          transform: translateX(-50px);
+        }
+        10% {
+          transform: translateX(0px);
+        }
+        85% {
+          transform: translateX(400px);
+        }
+        100% {
+          transform: translateX(400px);
+        }
+      }
+    }
+    
+    /* Animation d'apparition */
+    .car-animation {
+      animation: drive 8s ease-in-out infinite;
+    }
+  </style>
+</Layout>

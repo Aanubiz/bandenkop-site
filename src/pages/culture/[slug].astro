@@ -1,0 +1,689 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ScrollToTop from '../../components/ScrollToTop.astro';
+
+interface ArticleCulture {
+  titre: string;
+  periode: string;
+  auteur: string;
+  imageCouverture: string;
+  contenu: string;
+}
+
+// Les contenus des articles culturels
+const articles: Record<string, ArticleCulture> = {
+  danses: {
+    titre: "Les Danses Traditionnelles",
+    periode: "Transmission orale",
+    auteur: "Comité culturel de Bandenkop",
+    imageCouverture: "/images/culture/danses.jpg",
+    contenu: `
+      <p>Les danses traditionnelles de Bandenkop sont bien plus que de simples divertissements. Elles racontent notre histoire, transmettent nos valeurs et célèbrent notre identité. Chaque danse a une signification profonde et est exécutée lors de moments précis de la vie communautaire.</p>
+      
+      <img src="/images/culture/danse-nkah.jpg" alt="Danse Nkah" class="rounded-xl shadow-lg my-6 w-full" onerror="this.style.display='none'" />
+      
+      <h2>Le Nkah - Danse des notables</h2>
+      <p>Le Nkah est la danse réservée aux notables et aux chefs. Elle symbolise la sagesse, l'autorité et la responsabilité. Les danseurs, parés de leurs plus beaux atours, exécutent des mouvements lents et majestueux, rappelant la dignité des anciens.</p>
+      
+      <div class="float-right ml-6 mb-4 w-64">
+        <img src="/images/culture/danse-mfeh.jpg" alt="Danse Mfeh" class="rounded-lg shadow-md" onerror="this.style.display='none'" />
+        <p class="text-xs text-gray-500 mt-1 italic text-center">Les femmes dansant le Mfeh</p>
+      </div>
+      
+      <blockquote>
+        "Danser le Nkah, c'est porter le poids de nos ancêtres. Chaque pas est une prière, chaque geste un hommage."
+        <cite>— Notable Tchomgou</cite>
+      </blockquote>
+      
+      <h2>Le Mfeh - Danse des femmes</h2>
+      <p>Le Mfeh est la danse des femmes. Elle célèbre la fécondité, la joie et la solidarité féminine. Lors des grandes cérémonies, les femmes se rassemblent pour danser en cercle, leurs mouvements ondulants rappelant les vagues du fleuve Nkam.</p>
+      
+      <p>Cette danse est aussi un moment de transmission : les mères enseignent à leurs filles les pas et les chants qui accompagnent le Mfeh. C'est ainsi que la tradition se perpétue, de génération en génération.</p>
+      
+      <h2>Le Khe - Danse guerrière</h2>
+      <p>Le Khe est la danse des guerriers. Elle évoque la bravoure, la force et la protection du village. Les hommes y exécutent des mouvements vigoureux, simulant des combats et brandissant des lances et des boucliers.</p>
+      
+      <blockquote>
+        "Le Khe nous rappelle que nous sommes les gardiens de notre terre. Il nous donne la force de défendre nos valeurs."
+        <cite>— Ancien guerrier</cite>
+      </blockquote>
+      
+      <h2>Le Mengo - Danse d'initiation</h2>
+      <p>Le Mengo est une danse sacrée, réservée aux initiés. Elle marque le passage de l'enfance à l'âge adulte et transmet les secrets de la tradition. Les mouvements, codifiés et précis, racontent le voyage initiatique du jeune homme ou de la jeune fille.</p>
+    `
+  },
+  notabilite: {
+    titre: "La Notabilité à Bandenkop",
+    periode: "Structure traditionnelle",
+    auteur: "Comité culturel de Bandenkop",
+    imageCouverture: "/images/culture/notabilite.jpg",
+    contenu: `
+      <p>Le système de notabilité est au cœur de l'organisation sociale de Bandenkop. Il repose sur un équilibre subtil entre pouvoir, sagesse et responsabilité envers la communauté.</p>
+      
+      <img src="/images/culture/chef-conseil.jpg" alt="Chef et notables en conseil" class="rounded-xl shadow-lg my-6 w-full" onerror="this.style.display='none'" />
+      
+      <h2>Le Chef (Fo'o)</h2>
+      <p>Le Fo'o est le chef suprême du village. Il est le garant des traditions, l'arbitre des conflits et le représentant de Bandenkop auprès des autres communautés. Sa parole fait loi, mais elle est toujours éclairée par l'avis des notables.</p>
+      
+      <blockquote>
+        "Le chef ne gouverne pas seul. Il est le tronc, les notables sont les branches. Ensemble, ils forment l'arbre de notre communauté."
+        <cite>— Proverbe Bandenkop</cite>
+      </blockquote>
+      
+      <div class="float-left mr-6 mb-4 w-64">
+        <img src="/images/culture/notables.jpg" alt="Les neuf notables" class="rounded-lg shadow-md" onerror="this.style.display='none'" />
+        <p class="text-xs text-gray-500 mt-1 italic text-center">Les neuf notables en conseil</p>
+      </div>
+      
+      <h2>Les neuf notables</h2>
+      <p>Les neuf notables représentent les grandes familles fondatrices. Ils assistent le chef dans ses décisions et veillent à ce que les intérêts de tous soient pris en compte. Chaque notable a une fonction spécifique :</p>
+      
+      <ul>
+        <li>Le notable de la justice</li>
+        <li>Le notable de la guerre</li>
+        <li>Le notable des terres</li>
+        <li>Le notable des rites</li>
+        <li>Le notable des alliances</li>
+        <li>Le notable des jeunes</li>
+        <li>Le notable des femmes</li>
+        <li>Le notable des étrangers</li>
+        <li>Le notable de la parole</li>
+      </ul>
+      
+      <h2>Les chefs de quartier</h2>
+      <p>Chaque quartier de Bandenkop est dirigé par un chef de quartier, nommé par le chef en concertation avec les notables. Il est le lien direct entre les habitants et le conseil du village.</p>
+      
+      <h2>Les dignitaires religieux</h2>
+      <p>Les dignitaires religieux, souvent issus des grandes familles, sont les gardiens des lieux sacrés et des rites. Ils président aux cérémonies et veillent à l'équilibre entre le monde visible et invisible.</p>
+    `
+  },
+  chapeaux: {
+    titre: "Les Chapeaux Traditionnels",
+    periode: "Symboles de pouvoir",
+    auteur: "Comité culturel de Bandenkop",
+    imageCouverture: "/images/culture/chapeaux.jpg",
+    contenu: `
+      <p>Les chapeaux traditionnels de Bandenkop ne sont pas de simples accessoires. Ils racontent le statut, la fonction et l'histoire de celui qui les porte.</p>
+      
+      <img src="/images/culture/tchagha.jpg" alt="Tchagha - chapeau royal" class="rounded-xl shadow-lg my-6 w-full" onerror="this.style.display='none'" />
+      
+      <h2>Le Tchagha - Chapeau royal</h2>
+      <p>Le Tchagha est le chapeau du chef. Orné de perles et de plumes, il est le symbole suprême de l'autorité. Seul le Fo'o peut le porter, lors des cérémonies officielles.</p>
+      
+      <blockquote>
+        "Le Tchagha n'est pas un simple couvre-chef. C'est la couronne de nos ancêtres, le lien entre les vivants et ceux qui nous ont précédés."
+        <cite>— Sa Majesté le Roi</cite>
+      </blockquote>
+      
+      <div class="float-right ml-6 mb-4 w-64">
+        <img src="/images/culture/mfo.jpg" alt="Mfo - chapeau des notables" class="rounded-lg shadow-md" onerror="this.style.display='none'" />
+        <p class="text-xs text-gray-500 mt-1 italic text-center">Un notable paré du Mfo</p>
+      </div>
+      
+      <h2>Le Mfo - Chapeau des notables</h2>
+      <p>Le Mfo est porté par les notables. Sa forme et ses motifs varient selon la fonction et le rang du notable. Il est toujours fabriqué par des artisans spécialisés, qui connaissent les secrets de sa confection.</p>
+      
+      <h2>Le Nkap - Chapeau des guerriers</h2>
+      <p>Le Nkap est le chapeau des guerriers. Plus robuste et moins orné que les chapeaux des notables, il est conçu pour la protection et l'action. Les plumes qui le décorent sont celles des oiseaux chassés par le guerrier lui-même.</p>
+      
+      <h2>Le Ndeng - Chapeau des sages</h2>
+      <p>Le Ndeng est porté par les sages et les anciens. Sa forme arrondie évoque la sagesse qui enveloppe la communauté. Les motifs tissés racontent souvent les proverbes et les enseignements transmis par celui qui le porte.</p>
+    `
+  },
+  chaises: {
+    titre: "Les Chaises et Trônes",
+    periode: "Sièges du pouvoir",
+    auteur: "Comité culturel de Bandenkop",
+    imageCouverture: "/images/culture/chaises.jpg",
+    contenu: `
+      <p>Les sièges traditionnels de Bandenkop sont bien plus que des meubles. Chacun raconte l'histoire de celui qui l'occupe et la place qu'il occupe dans la société.</p>
+      
+      <img src="/images/culture/kpu.jpg" alt="Kpu - Trône royal" class="rounded-xl shadow-lg my-6 w-full" onerror="this.style.display='none'" />
+      
+      <h2>Le Kpu - Trône royal</h2>
+      <p>Le Kpu est le trône du chef. Taillé dans un arbre sacré, il est transmis de règne en règne. Personne d'autre que le Fo'o ne peut s'y asseoir, sous peine de s'attirer la colère des ancêtres.</p>
+      
+      <div class="float-left mr-6 mb-4 w-64">
+        <img src="/images/culture/tchop.jpg" alt="Tchop - Chaise à porteur" class="rounded-lg shadow-md" onerror="this.style.display='none'" />
+        <p class="text-xs text-gray-500 mt-1 italic text-center">Le Tchop, symbole de prestige</p>
+      </div>
+      
+      <h2>Le Tchop - Chaise à porteur</h2>
+      <p>Le Tchop est la chaise utilisée lors des cérémonies pour transporter le chef ou un notable de marque. Elle est portée par des hommes forts, et son utilisation est réservée aux plus hauts dignitaires.</p>
+      
+      <h2>Le Ngong - Tabouret des notables</h2>
+      <p>Le Ngong est le tabouret sur lequel s'assoient les notables lors des conseils. Sa hauteur est légèrement inférieure à celle du trône royal, rappelant la hiérarchie traditionnelle.</p>
+      
+      <h2>Le Foh - Chaise des anciens</h2>
+      <p>Le Foh est la chaise des sages et des anciens. Elle est souvent offerte par le chef en reconnaissance des services rendus à la communauté. La recevoir est un grand honneur.</p>
+    `
+  },
+  ceremonies: {
+    titre: "Les Cérémonies Traditionnelles",
+    periode: "Rythme de la vie",
+    auteur: "Comité culturel de Bandenkop",
+    imageCouverture: "/images/culture/ceremonies.jpg",
+    contenu: `
+      <p>Les cérémonies rythment la vie de Bandenkop. Elles marquent les étapes importantes de la vie individuelle et collective, et renforcent les liens qui unissent la communauté.</p>
+      
+      <h2>L'intronisation du chef</h2>
+      <p>L'intronisation d'un nouveau chef est l'événement le plus important de la vie du village. Elle dure plusieurs jours et réunit toutes les familles. Le nouveau Fo'o reçoit les insignes du pouvoir : le Tchagha, le Kpu et la lance sacrée.</p>
+      
+      <blockquote>
+        "Introniser un chef, c'est renouveler le pacte entre le peuple et les ancêtres. C'est affirmer que Bandenkop continuera."
+        <cite>— Rituel d'intronisation</cite>
+      </blockquote>
+      
+      <div class="float-right ml-6 mb-4 w-64">
+        <img src="/images/culture/funerailles.jpg" alt="Funérailles d'un notable" class="rounded-lg shadow-md" onerror="this.style.display='none'" />
+        <p class="text-xs text-gray-500 mt-1 italic text-center">Cérémonie funéraire</p>
+      </div>
+      
+      <h2>Les funérailles des notables</h2>
+      <p>Les funérailles d'un notable sont une cérémonie solennelle. Elles durent plusieurs jours, durant lesquels la communauté rend hommage au défunt et célèbre son passage vers le monde des ancêtres.</p>
+      
+      <h2>Les cérémonies de récolte</h2>
+      <p>À la fin de la saison des pluies, la communauté se réunit pour célébrer les récoltes. C'est un moment de joie et de partage, où l'on remercie la terre et les ancêtres pour leur générosité.</p>
+      
+      <h2>Les rituels de purification</h2>
+      <p>Les rituels de purification sont célébrés pour écarter les mauvais esprits et restaurer l'harmonie. Ils sont présidés par les dignitaires religieux et impliquent souvent des offrandes et des danses sacrées.</p>
+    `
+  },
+  initiation: {
+    titre: "Les Initiations",
+    periode: "Passage vers la connaissance",
+    auteur: "Comité culturel de Bandenkop",
+    imageCouverture: "/images/culture/initiation.jpg",
+    contenu: `
+      <p>L'initiation est un moment crucial dans la vie de tout Bandenkop. Elle marque le passage de l'enfance à l'âge adulte et transmet les connaissances essentielles pour devenir un membre à part entière de la communauté.</p>
+      
+      <img src="/images/culture/initiation-khe.jpg" alt="Initiation du Khe" class="rounded-xl shadow-lg my-6 w-full" onerror="this.style.display='none'" />
+      
+      <h2>L'initiation du Khe</h2>
+      <p>Le Khe est l'initiation la plus sacrée. Elle est réservée à ceux qui aspirent à devenir notables ou à accéder aux plus hautes fonctions. Les secrets du Khe ne sont révélés qu'aux initiés et ne peuvent être divulgués sous peine de mort.</p>
+      
+      <blockquote>
+        "Le Khe n'est pas une simple initiation. C'est un voyage au cœur de nous-mêmes, une renaissance."
+        <cite>— Ancien initié</cite>
+      </blockquote>
+      
+      <div class="float-left mr-6 mb-4 w-64">
+        <img src="/images/culture/societe-ngi.jpg" alt="Société secrète du Ngi" class="rounded-lg shadow-md" onerror="this.style.display='none'" />
+        <p class="text-xs text-gray-500 mt-1 italic text-center">Membres de la société du Ngi</p>
+      </div>
+      
+      <h2>La société secrète du Ngi</h2>
+      <p>Le Ngi est une société secrète chargée de maintenir l'ordre et la justice. Ses membres sont reconnaissables à leurs masques et à leurs costumes, qu'ils portent lors des cérémonies. Leur identité est connue des initiés mais reste secrète pour les non-initiés.</p>
+      
+      <h2>L'initiation des femmes</h2>
+      <p>L'initiation des femmes, présidée par les matriarches, transmet les savoirs liés à la féminité, à la maternité et à la vie domestique. Elle se déroule dans des lieux secrets, à l'écart du village.</p>
+      
+      <h2>L'apprentissage des traditions</h2>
+      <p>Au-delà des initiations formelles, l'apprentissage des traditions est un processus continu. Il se fait par l'observation, l'écoute des anciens et la participation aux cérémonies.</p>
+    `
+  },
+  khe: {
+    titre: "Le Khé - La Vérité",
+    periode: "Justice ancestrale",
+    auteur: "Comité culturel de Bandenkop",
+    imageCouverture: "/images/culture/khe.jpg",
+    contenu: `
+      <p>Le Khé est l'épreuve de vérité, un jugement par lequel on prouve son innocence ou sa culpabilité. Cette pratique ancestrale, encadrée par des rituels stricts, est considérée comme infaillible car elle fait appel à la justice divine.</p>
+      
+      <img src="/images/culture/ordalie.jpg" alt="Ordalie traditionnelle" class="rounded-xl shadow-lg my-6 w-full" onerror="this.style.display='none'" />
+      
+      <h2>Les ordalies</h2>
+      <p>Les ordalies sont des épreuves par lesquelles un accusé prouve son innocence. Elles peuvent consister à plonger la main dans l'eau bouillante, à ingérer un poison, ou à affronter un animal sacré. Seul l'innocent survit.</p>
+      
+      <blockquote>
+        "Le Khé ne ment jamais. Ce que les hommes cachent, les esprits le révèlent."
+        <cite>— Dignitaire religieux</cite>
+      </blockquote>
+      
+      <div class="float-right ml-6 mb-4 w-64">
+        <img src="/images/culture/serments.jpg" alt="Serment traditionnel" class="rounded-lg shadow-md" onerror="this.style.display='none'" />
+        <p class="text-xs text-gray-500 mt-1 italic text-center">Un serment scellé devant les ancêtres</p>
+      </div>
+      
+      <h2>Les serments</h2>
+      <p>Les serments sont une forme atténuée du Khé. Prononcés devant les ancêtres, ils engagent celui qui les fait. Trahir un serment, c'est s'exposer à la colère des esprits et au rejet de la communauté.</p>
+      
+      <h2>La divination</h2>
+      <p>La divination permet de connaître la vérité sans avoir recours à l'ordalie. Le devin interroge les esprits et interprète les signes pour révéler ce qui est caché.</p>
+      
+      <p>Aujourd'hui, le Khé est rarement pratiqué dans sa forme la plus extrême, mais il reste un symbole puissant de la justice traditionnelle. Son esprit continue d'inspirer la manière dont les conflits sont résolus à Bandenkop.</p>
+    `
+  },
+  prophetes: {
+    titre: "Prophètes et Marabouts",
+    periode: "Hommes de Dieu",
+    auteur: "Comité culturel de Bandenkop",
+    imageCouverture: "/images/culture/prophetes.jpg",
+    contenu: `
+      <p>Les prophètes et marabouts occupent une place importante dans la spiritualité de Bandenkop. Ils sont les intermédiaires entre le monde visible et invisible, les guérisseurs et les conseillers.</p>
+      
+      <img src="/images/culture/devins.jpg" alt="Devin en transe" class="rounded-xl shadow-lg my-6 w-full" onerror="this.style.display='none'" />
+      
+      <h2>Les marabouts traditionnels</h2>
+      <p>Les marabouts traditionnels sont les gardiens des connaissances ancestrales. Ils connaissent les plantes médicinales, les rites de protection et les formules qui apaisent les esprits.</p>
+      
+      <blockquote>
+        "Le marabout ne guérit pas seulement le corps. Il guérit l'âme et rétablit l'équilibre entre l'homme et les esprits."
+        <cite>— Sage de Bandenkop</cite>
+      </blockquote>
+      
+      <div class="float-left mr-6 mb-4 w-64">
+        <img src="/images/culture/devins-guérisseurs.jpg" alt="Guérisseur traditionnel" class="rounded-lg shadow-md" onerror="this.style.display='none'" />
+        <p class="text-xs text-gray-500 mt-1 italic text-center">Un guérisseur en consultation</p>
+      </div>
+      
+      <h2>Les devins-guérisseurs</h2>
+      <p>Les devins-guérisseurs combinent l'art de la divination et celui de la guérison. Ils diagnostiquent les maux en interprétant les signes et proposent des remèdes parfois accompagnés de rituels.</p>
+      
+      <h2>Les prophètes modernes</h2>
+      <p>Aujourd'hui, de nouveaux prophètes émergent, mêlant traditions ancestrales et influences modernes. Ils prêchent dans des églises indépendantes et attirent des fidèles de toute la région.</p>
+      
+      <h2>Les interprètes des signes</h2>
+      <p>Certains sont capables de lire dans les rêves, dans les mouvements des animaux ou dans les phénomènes naturels pour prédire l'avenir. Leur parole est respectée et souvent redoutée.</p>
+    `
+  },
+  rites: {
+    titre: "Les Rites",
+    periode: "Lien avec les ancêtres",
+    auteur: "Comité culturel de Bandenkop",
+    imageCouverture: "/images/culture/rites.jpg",
+    contenu: `
+      <p>Les rites sont au cœur de la vie spirituelle de Bandenkop. Ils marquent les moments importants, honorent les ancêtres et maintiennent l'harmonie entre les vivants et les esprits.</p>
+      
+      <img src="/images/culture/rites-naissance.jpg" alt="Rite de naissance" class="rounded-xl shadow-lg my-6 w-full" onerror="this.style.display='none'" />
+      
+      <h2>Rites de naissance et imposition du nom</h2>
+      <p>À la naissance d'un enfant, un rite est célébré pour le présenter aux ancêtres et lui donner un nom. Ce nom n'est pas choisi au hasard : il reflète les circonstances de la naissance, les aspirations de la famille ou l'histoire des aïeux.</p>
+      
+      <blockquote>
+        "Donner un nom à un enfant, c'est lui confier un destin. C'est l'inscrire dans la lignée de ceux qui l'ont précédé."
+        <cite>— Ancien</cite>
+      </blockquote>
+      
+      <div class="float-right ml-6 mb-4 w-64">
+        <img src="/images/culture/rites-mariage.jpg" alt="Rite de mariage" class="rounded-lg shadow-md" onerror="this.style.display='none'" />
+        <p class="text-xs text-gray-500 mt-1 italic text-center">Célébration du mariage traditionnel</p>
+      </div>
+      
+      <h2>Rites de mariage et dot</h2>
+      <p>Le mariage traditionnel est une affaire de familles. La dot, versée par la famille du marié à celle de la mariée, scelle l'alliance et assure la pérennité des liens entre les deux lignages.</p>
+      
+      <h2>Rites funéraires et veillées</h2>
+      <p>Les funérailles sont l'occasion de célébrer le départ du défunt vers le monde des ancêtres. Les veillées, rythmées par les chants et les danses, permettent à la communauté de se recueillir et de soutenir la famille endeuillée.</p>
+      
+      <h2>Rites agraires pour les récoltes</h2>
+      <p>Les rites agraires accompagnent le cycle des cultures. Au début de la saison des pluies, on demande aux ancêtres de protéger les semences. À la récolte, on les remercie pour leur générosité.</p>
+    `
+  },
+  interdits: {
+    titre: "Les Interdits",
+    periode: "Tabous sacrés",
+    auteur: "Comité culturel de Bandenkop",
+    imageCouverture: "/images/culture/interdits.jpg",
+    contenu: `
+      <p>Les interdits, ou tabous, structurent la vie sociale et spirituelle de Bandenkop. Les transgresser, c'est s'exposer à la colère des ancêtres et au rejet de la communauté.</p>
+      
+      <h2>Ne pas désigner le chef par son nom</h2>
+      <p>Le nom du chef est sacré. Le prononcer à voix haute est un affront qui peut être sévèrement puni. On le désigne par ses titres ou par des périphrases.</p>
+      
+      <blockquote>
+        "Le nom du chef est comme le feu sacré : on ne le prononce pas à la légère."
+        <cite>— Proverbe Bandenkop</cite>
+      </blockquote>
+      
+      <div class="float-left mr-6 mb-4 w-64">
+        <img src="/images/culture/foret-sacree.jpg" alt="Forêt sacrée" class="rounded-lg shadow-md" onerror="this.style.display='none'" />
+        <p class="text-xs text-gray-500 mt-1 italic text-center">L'entrée de la forêt sacrée</p>
+      </div>
+      
+      <h2>Interdiction de certaines nourritures aux initiés</h2>
+      <p>Pendant la période d'initiation, les jeunes doivent s'abstenir de certains aliments. Ces restrictions visent à purifier le corps et l'esprit avant de recevoir les enseignements sacrés.</p>
+      
+      <h2>Ne pas traverser la forêt sacrée sans autorisation</h2>
+      <p>La forêt sacrée est le domaine des ancêtres. Y pénétrer sans y être autorisé, c'est risquer de les offenser et de s'attirer leur courroux.</p>
+      
+      <h2>Respect des jours sacrés sans travail agricole</h2>
+      <p>Certains jours de la semaine sont consacrés aux ancêtres. Il est interdit d'y travailler la terre, sous peine de compromettre les récoltes.</p>
+    `
+  },
+  semaines: {
+    titre: "Les Jours de la Semaine",
+    periode: "Rythme sacré",
+    auteur: "Comité culturel de Bandenkop",
+    imageCouverture: "/images/culture/semaines.jpg",
+    contenu: `
+      <p>Chaque jour de la semaine a sa signification et ses règles à Bandenkop. Ce rythme sacré structure la vie de la communauté.</p>
+      
+      <h2>Nkwe' - Jour du marché</h2>
+      <p>Le Nkwe' est le jour du marché. C'est le moment où les habitants se retrouvent pour échanger, discuter et célébrer. C'est aussi un jour de paix, où les conflits sont suspendus.</p>
+      
+      <div class="float-right ml-6 mb-4 w-64">
+        <img src="/images/culture/marche.jpg" alt="Jour du marché" class="rounded-lg shadow-md" onerror="this.style.display='none'" />
+        <p class="text-xs text-gray-500 mt-1 italic text-center">L'animation du jour du marché</p>
+      </div>
+      
+      <h2>Mfou' - Jour de repos</h2>
+      <p>Le Mfou' est le jour du repos. On ne travaille pas la terre, on ne se lance pas dans de nouvelles entreprises. C'est un temps pour la famille et la réflexion.</p>
+      
+      <h2>Nka' - Jour sacré</h2>
+      <p>Le Nka' est consacré aux ancêtres. On y célèbre les rites, on visite les tombes et on se recueille. C'est un jour de silence et de méditation.</p>
+      
+      <h2>Tchou' - Jour des ancêtres</h2>
+      <p>Le Tchou' est le jour le plus sacré de la semaine. On y honore les ancêtres par des offrandes et des prières. Aucune activité profane ne doit venir troubler ce jour.</p>
+    `
+  },
+  divinite: {
+    titre: "La Divinité - Si",
+    periode: "Force suprême",
+    auteur: "Comité culturel de Bandenkop",
+    imageCouverture: "/images/culture/divinite.jpg",
+    contenu: `
+      <p>Le Si est la force suprême, le créateur de toutes choses. Présent partout et en chacun, il est honoré à travers les ancêtres qui servent d'intermédiaires entre le monde visible et l'invisible.</p>
+      
+      <img src="/images/culture/si.jpg" alt="Représentation du Si" class="rounded-xl shadow-lg my-6 w-full" onerror="this.style.display='none'" />
+      
+      <h2>L'unité de toutes choses</h2>
+      <p>Le Si est à la fois la cause première et la fin ultime de toute existence. Il ne se manifeste pas directement, mais sa présence est partout : dans le vent qui souffle, dans l'eau qui coule, dans le cœur de chaque être.</p>
+      
+      <blockquote>
+        "Le Si n'a ni commencement ni fin. Il est ce qui était, ce qui est et ce qui sera."
+        <cite>— Sagesse des anciens</cite>
+      </blockquote>
+      
+      <div class="float-left mr-6 mb-4 w-64">
+        <img src="/images/culture/ancetres.jpg" alt="Ancêtres médiateurs" class="rounded-lg shadow-md" onerror="this.style.display='none'" />
+        <p class="text-xs text-gray-500 mt-1 italic text-center">Les ancêtres, médiateurs entre le Si et les hommes</p>
+      </div>
+      
+      <h2>Les ancêtres, intermédiaires</h2>
+      <p>Les ancêtres sont les médiateurs entre le Si et les hommes. Après leur mort, ils rejoignent le monde invisible et peuvent intercéder en faveur des vivants. Les rites et les offrandes leur sont adressés pour maintenir l'harmonie.</p>
+      
+      <h2>L'harmonie cosmique</h2>
+      <p>Le Si a créé le monde en ordre et en harmonie. L'homme a pour devoir de préserver cet équilibre en respectant les traditions, en honorant les ancêtres et en vivant en paix avec la nature.</p>
+      
+      <h2>Le culte aujourd'hui</h2>
+      <p>Bien que de nombreux Bandenkop aient adopté d'autres religions, la croyance en Si et le respect des ancêtres restent profonds. Les rites traditionnels sont encore pratiqués, souvent en parallèle des cultes modernes.</p>
+    `
+  }
+};
+
+const { slug } = Astro.params;
+const article = slug ? articles[slug] : undefined;
+
+if (!article) {
+  return new Response(null, {
+    status: 404,
+    statusText: 'Not found'
+  });
+}
+---
+
+<Layout title={`${article.titre} - Culture Bandenkop`}>
+  <div class="min-h-screen bg-gray-50">
+    <!-- Header avec image de couverture -->
+    <div class="relative h-96 bg-gradient-to-br from-orange-900 to-red-900 overflow-hidden">
+      <div class="absolute inset-0 bg-black/40"></div>
+      <div class="absolute inset-0 flex items-center justify-center">
+        <div class="text-center text-white z-10 px-4">
+          <h1 class="font-['Playfair_Display'] text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
+            {article.titre}
+          </h1>
+          <p class="text-xl text-orange-200">Période : {article.periode}</p>
+          <p class="text-sm text-orange-300 mt-2">Par {article.auteur}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="max-w-4xl mx-auto px-4 py-12">
+      <!-- Barre d'outils -->
+      <div class="sticky top-24 z-20 mb-8 flex justify-end">
+        <div class="flex items-center space-x-4">
+          <button id="likeBtn" class="flex items-center space-x-2 bg-white rounded-full shadow-lg px-4 py-2 hover:shadow-xl transition-all">
+            <svg id="likeIcon" class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+            </svg>
+            <span id="likeCount" class="text-gray-700 font-medium">0</span>
+          </button>
+          
+          <button id="shareBtn" class="flex items-center space-x-2 bg-white rounded-full shadow-lg px-4 py-2 hover:shadow-xl transition-all">
+            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
+            </svg>
+            <span class="text-gray-700">Partager</span>
+          </button>
+          
+          <button id="printBtn" class="flex items-center space-x-2 bg-white rounded-full shadow-lg px-4 py-2 hover:shadow-xl transition-all">
+            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+            </svg>
+            <span class="text-gray-700">Imprimer</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Article avec rendu HTML correct -->
+      <article class="bg-white rounded-2xl shadow-xl p-8 md:p-12 prose prose-lg max-w-none">
+        <div class="article-content" set:html={article.contenu} />
+        
+        <!-- Tags -->
+        <div class="mt-8 pt-4 border-t border-gray-100">
+          <div class="flex flex-wrap gap-2">
+            <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm">#Culture</span>
+            <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm">#Bandenkop</span>
+            <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm">#Traditions</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Navigation -->
+      <div class="mt-8 flex justify-between">
+        <a href="/culture" class="flex items-center text-orange-600 hover:text-orange-800">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+          Retour à la culture
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <ScrollToTop />
+
+  <script>
+    let liked = false;
+    let likeCount = 0;
+
+    document.getElementById('likeBtn')?.addEventListener('click', () => {
+      const likeIcon = document.getElementById('likeIcon') as SVGElement | null;
+      const likeCountEl = document.getElementById('likeCount') as HTMLElement | null;
+      if (!likeIcon || !likeCountEl) return;
+      
+      if (!liked) {
+        likeIcon.classList.remove('text-gray-400');
+        likeIcon.classList.add('text-red-600', 'fill-current');
+        likeIcon.style.fill = '#ef4444';
+        likeCount++;
+        liked = true;
+      } else {
+        likeIcon.classList.add('text-gray-400');
+        likeIcon.classList.remove('text-red-600', 'fill-current');
+        likeIcon.style.fill = 'none';
+        likeCount--;
+        liked = false;
+      }
+      
+      likeCountEl.textContent = String(likeCount);
+      likeIcon.classList.add('animate-pulse');
+      setTimeout(() => likeIcon.classList.remove('animate-pulse'), 300);
+    });
+
+    document.getElementById('shareBtn')?.addEventListener('click', async () => {
+      if (navigator.share) {
+        await navigator.share({
+          title: document.title,
+          url: window.location.href
+        });
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        alert('🔗 Lien copié !');
+      }
+    });
+
+    document.getElementById('printBtn')?.addEventListener('click', () => {
+      window.print();
+    });
+  </script>
+
+  <style is:global>
+    /* Styles pour l'article */
+    .article-content p {
+      margin-bottom: 1.5rem;
+      line-height: 1.8;
+      color: #374151;
+    }
+    
+    .article-content h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      color: #1f2937;
+      border-bottom: 2px solid #f97316;
+      padding-bottom: 0.5rem;
+      display: inline-block;
+    }
+    
+    /* Style pour les citations */
+    .article-content blockquote {
+      position: relative;
+      font-style: italic;
+      border-left: 6px solid #f97316;
+      padding: 1.5rem 2rem;
+      margin: 2rem 0;
+      color: #4b5563;
+      background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+      border-radius: 1rem;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    
+    .article-content blockquote::before {
+      content: "“";
+      font-size: 4rem;
+      font-family: Georgia, serif;
+      position: absolute;
+      top: -0.5rem;
+      left: 0.5rem;
+      color: #f97316;
+      opacity: 0.3;
+    }
+    
+    .article-content blockquote::after {
+      content: "”";
+      font-size: 4rem;
+      font-family: Georgia, serif;
+      position: absolute;
+      bottom: -2rem;
+      right: 1rem;
+      color: #f97316;
+      opacity: 0.3;
+    }
+    
+    .article-content blockquote cite {
+      display: block;
+      margin-top: 1rem;
+      font-size: 0.875rem;
+      color: #b45309;
+      font-style: normal;
+      font-weight: 500;
+      text-align: right;
+      border-top: 1px solid #fed7aa;
+      padding-top: 0.75rem;
+    }
+    
+    .article-content blockquote cite::before {
+      content: "— ";
+    }
+    
+    .article-content blockquote:hover {
+      transform: translateX(4px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      transition: all 0.2s ease;
+    }
+    
+    .article-content ul, .article-content ol {
+      margin: 1rem 0;
+      padding-left: 2rem;
+    }
+    
+    .article-content li {
+      margin: 0.5rem 0;
+    }
+    
+    /* Images flottantes */
+    .article-content img {
+      border-radius: 0.75rem;
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+      margin: 1.5rem 0;
+      max-width: 100%;
+    }
+    
+    .article-content .float-left {
+      float: left;
+      margin-right: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .article-content .float-right {
+      float: right;
+      margin-left: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    @media (max-width: 640px) {
+      .article-content .float-left,
+      .article-content .float-right {
+        float: none;
+        margin: 1rem auto;
+        display: block;
+        width: 100%;
+      }
+      
+      .article-content blockquote {
+        padding: 1rem 1.5rem;
+      }
+      
+      .article-content blockquote::before,
+      .article-content blockquote::after {
+        font-size: 2.5rem;
+      }
+    }
+    
+    @media print {
+      header, footer, .sticky, #likeBtn, #shareBtn, #printBtn {
+        display: none !important;
+      }
+      article {
+        box-shadow: none;
+        padding: 0;
+      }
+      .article-content blockquote {
+        background: none;
+        border-left: 3px solid #f97316;
+        padding: 0.5rem 1rem;
+        box-shadow: none;
+      }
+      .article-content blockquote::before,
+      .article-content blockquote::after {
+        display: none;
+      }
+    }
+  </style>
+</Layout>

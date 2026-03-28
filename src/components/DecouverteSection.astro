@@ -1,0 +1,180 @@
+---
+// src/components/DecouverteSection.astro
+const lieux = [
+  {
+    nom: "Mont Bandenkop",
+    type: "Relief",
+    description: "Point culminant offrant une vue panoramique sur toute la région",
+    image: "/images/decouverte/mont.jpg",
+    coordonnees: "5.1333° N, 10.3833° E"
+  },
+  {
+    nom: "Chutes de Nkam",
+    type: "Tourisme",
+    description: "Cascades spectaculaires au cœur de la forêt sacrée",
+    image: "/images/decouverte/chutes.jpg",
+    coordonnees: "5.1456° N, 10.3921° E"
+  },
+  {
+    nom: "Marché Traditionnel",
+    type: "Économie",
+    description: "Le cœur battant du commerce local tous les 8 jours",
+    image: "/images/decouverte/marche.jpg",
+    coordonnees: "5.1311° N, 10.3817° E"
+  },
+  {
+    nom: "Forêt Sacrée",
+    type: "Culture",
+    description: "Lieu de culte et d'initiation, protégé par les ancêtres",
+    image: "/images/decouverte/foret.jpg",
+    coordonnees: "5.1389° N, 10.3785° E"
+  }
+];
+---
+
+<section class="py-20 bg-white">
+  <div class="container mx-auto px-6">
+    <div class="text-center mb-12">
+      <h2 class="text-4xl md:text-5xl font-black text-gray-800 mb-4">
+        Découvrez <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600">Bandenkop</span>
+      </h2>
+      <p class="text-xl text-gray-600">
+        Explorez la géographie, les richesses naturelles et culturelles de notre village
+      </p>
+    </div>
+
+    <!-- Carte interactive -->
+    <div class="relative h-96 mb-12 rounded-2xl overflow-hidden shadow-2xl">
+      <img src="/images/decouverte/carte-bandenkop.jpg" alt="Carte de Bandenkop" class="w-full h-full object-cover" />
+      <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+      <div class="absolute bottom-8 left-8 text-white">
+        <h3 class="text-3xl font-bold mb-2">Situation Géographique</h3>
+        <p class="text-lg">Hauts Plateaux de l'Ouest Cameroun</p>
+        <p class="text-sm opacity-75">Arrondissement de Bangou</p>
+      </div>
+    </div>
+
+    <!-- Grille découverte -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+      {lieux.map((lieu) => (
+        <div class="group relative bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transform hover:scale-105 transition-all duration-500">
+          <div class="relative h-48 overflow-hidden">
+            <img src={lieu.image} alt={lieu.nom} class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+            <div class="absolute top-4 left-4">
+              <span class="bg-orange-600 text-white px-2 py-1 rounded-full text-xs">
+                {lieu.type}
+              </span>
+            </div>
+          </div>
+          <div class="p-4">
+            <h3 class="font-bold text-gray-800 mb-1">{lieu.nom}</h3>
+            <p class="text-sm text-gray-600 mb-2">{lieu.description}</p>
+            <p class="text-xs text-gray-400">{lieu.coordonnees}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <!-- Informations détaillées -->
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="bg-orange-50 rounded-xl p-6">
+        <div class="text-3xl mb-3">⛰️</div>
+        <h3 class="font-bold text-gray-800 mb-2">Relief et Climat</h3>
+        <ul class="space-y-2 text-sm text-gray-600">
+          <li>• Altitude : 1400-1800m</li>
+          <li>• Climat tropical d'altitude</li>
+          <li>• Saison sèche : Nov-Mars</li>
+          <li>• Saison pluvieuse : Avril-Oct</li>
+          <li>• Température moyenne : 22°C</li>
+        </ul>
+      </div>
+
+      <div class="bg-green-50 rounded-xl p-6">
+        <div class="text-3xl mb-3">🌿</div>
+        <h3 class="font-bold text-gray-800 mb-2">Végétation</h3>
+        <ul class="space-y-2 text-sm text-gray-600">
+          <li>• Savane arbustive</li>
+          <li>• Forêts galeries</li>
+          <li>• Arbres sacrés (fromagers)</li>
+          <li>• Plantes médicinales</li>
+          <li>• Cultures en terrasses</li>
+        </ul>
+      </div>
+
+      <div class="bg-blue-50 rounded-xl p-6">
+        <div class="text-3xl mb-3">💧</div>
+        <h3 class="font-bold text-gray-800 mb-2">Hydrographie</h3>
+        <ul class="space-y-2 text-sm text-gray-600">
+          <li>• Rivière Nkam</li>
+          <li>• Sources sacrées</li>
+          <li>• Cascades saisonnières</li>
+          <li>• Marigots en saison pluvieuse</li>
+        </ul>
+      </div>
+
+      <div class="bg-purple-50 rounded-xl p-6">
+        <div class="text-3xl mb-3">🏥</div>
+        <h3 class="font-bold text-gray-800 mb-2">Éducation & Santé</h3>
+        <ul class="space-y-2 text-sm text-gray-600">
+          <li>• École primaire publique</li>
+          <li>• Centre de santé intégré</li>
+          <li>• Programme de vaccination</li>
+          <li>• Pharmacie traditionnelle</li>
+        </ul>
+      </div>
+
+      <div class="bg-red-50 rounded-xl p-6">
+        <div class="text-3xl mb-3">⚽</div>
+        <h3 class="font-bold text-gray-800 mb-2">Sport</h3>
+        <ul class="space-y-2 text-sm text-gray-600">
+          <li>• Équipe de football locale</li>
+          <li>• Tournois inter-villages</li>
+          <li>• Lutte traditionnelle</li>
+          <li>• Course en montagne</li>
+        </ul>
+      </div>
+
+      <div class="bg-yellow-50 rounded-xl p-6">
+        <div class="text-3xl mb-3">🎪</div>
+        <h3 class="font-bold text-gray-800 mb-2">Festivals</h3>
+        <ul class="space-y-2 text-sm text-gray-600">
+          <li>• Fête des récoltes (Octobre)</li>
+          <li>• Danse du Ngi (Décembre)</li>
+          <li>• Festival culturel (Août)</li>
+          <li>• Cérémonie des masques</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Activités touristiques -->
+    <div class="mt-12 bg-gradient-to-r from-orange-600 to-red-600 rounded-2xl p-8 text-white">
+      <h3 class="text-2xl font-bold mb-4">Activités Touristiques</h3>
+      <div class="grid md:grid-cols-3 gap-4">
+        <div class="flex items-center space-x-3">
+          <span class="text-2xl">🥾</span>
+          <span>Randonnées guidées</span>
+        </div>
+        <div class="flex items-center space-x-3">
+          <span class="text-2xl">🏕️</span>
+          <span>Camping chez l'habitant</span>
+        </div>
+        <div class="flex items-center space-x-3">
+          <span class="text-2xl">🎨</span>
+          <span>Ateliers d'artisanat</span>
+        </div>
+        <div class="flex items-center space-x-3">
+          <span class="text-2xl">🍲</span>
+          <span>Cuisine traditionnelle</span>
+        </div>
+        <div class="flex items-center space-x-3">
+          <span class="text-2xl">🎭</span>
+          <span>Spectacles culturels</span>
+        </div>
+        <div class="flex items-center space-x-3">
+          <span class="text-2xl">📸</span>
+          <span>Photographie</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

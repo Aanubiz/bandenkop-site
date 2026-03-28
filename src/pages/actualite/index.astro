@@ -1,0 +1,330 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getToken } from '../../utils/auth';
+
+const API_URL = 'http://localhost:3001';
+const page = Astro.url.searchParams.get('page') || 1;
+const categorie = Astro.url.searchParams.get('categorie') || '';
+const recherche = Astro.url.searchParams.get('recherche') || '';
+---
+
+<Layout title="Actualités - Bandenkop">
+  <div class="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
+    
+    <!-- Hero Section -->
+    <section class="pt-24 pb-12 bg-gradient-to-br from-orange-900 to-red-900">
+      <div class="px-4 max-w-7xl mx-auto text-center text-white">
+        <h1 class="font-['Playfair_Display'] text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
+          Actualités de Bandenkop
+        </h1>
+        <p class="text-lg sm:text-xl text-orange-100 max-w-2xl mx-auto">
+          Restez informé des dernières nouvelles de la communauté
+        </p>
+      </div>
+    </section>
+
+    <!-- Section des filtres avec recherche mobile -->
+    <section class="py-4 bg-white border-b sticky top-16 z-10">
+      <div class="px-4 max-w-7xl mx-auto">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+          
+          <!-- Filtres par catégorie (défilables horizontalement sur mobile) -->
+          <div class="w-full md:w-auto overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
+            <div class="flex gap-2 min-w-max">
+              <a 
+                href="/actualite" 
+                class={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors flex-shrink-0 ${
+                  !categorie ? 'bg-orange-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-orange-100'
+                }`}
+              >
+                Tous
+              </a>
+              <a 
+                href="/actualite?categorie=Événement" 
+                class={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors flex-shrink-0 ${
+                  categorie === 'Événement' ? 'bg-orange-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-orange-100'
+                }`}
+              >
+                Événements
+              </a>
+              <a 
+                href="/actualite?categorie=Tradition" 
+                class={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors flex-shrink-0 ${
+                  categorie === 'Tradition' ? 'bg-orange-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-orange-100'
+                }`}
+              >
+                Traditions
+              </a>
+              <a 
+                href="/actualite?categorie=Développement" 
+                class={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors flex-shrink-0 ${
+                  categorie === 'Développement' ? 'bg-orange-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-orange-100'
+                }`}
+              >
+                Développement
+              </a>
+              <a 
+                href="/actualite?categorie=Diaspora" 
+                class={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors flex-shrink-0 ${
+                  categorie === 'Diaspora' ? 'bg-orange-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-orange-100'
+                }`}
+              >
+                Diaspora
+              </a>
+              <a 
+                href="/actualite?categorie=Culture" 
+                class={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors flex-shrink-0 ${
+                  categorie === 'Culture' ? 'bg-orange-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-orange-100'
+                }`}
+              >
+                Culture
+              </a>
+            </div>
+          </div>
+          
+          <!-- Barre de recherche : icône sur mobile, champ sur desktop -->
+          <div class="relative w-full md:w-auto flex-shrink-0">
+            <!-- Version mobile (icône) -->
+            <button 
+              id="search-toggle" 
+              class="md:hidden p-2 bg-orange-100 rounded-full hover:bg-orange-200 transition-colors"
+              aria-label="Rechercher"
+            >
+              <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
+            </button>
+            
+            <!-- Version desktop (champ de recherche) -->
+            <form action="/actualite" method="get" class="hidden md:block relative">
+              <input 
+                type="search" 
+                name="recherche" 
+                value={recherche}
+                placeholder="Rechercher..." 
+                class="w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+              />
+              <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
+            </form>
+            
+            <!-- Panneau de recherche mobile (caché par défaut) -->
+            <div id="mobile-search" class="absolute right-0 top-12 w-64 bg-white rounded-xl shadow-xl p-4 hidden md:hidden z-50">
+              <form action="/actualite" method="get" class="flex">
+                <input 
+                  type="search" 
+                  name="recherche" 
+                  value={recherche}
+                  placeholder="Rechercher..." 
+                  class="flex-1 px-3 py-2 border border-gray-300 rounded-l-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                />
+                <button type="submit" class="bg-orange-600 text-white px-3 py-2 rounded-r-lg hover:bg-orange-700">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                  </svg>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Liste des articles -->
+    <section class="py-12">
+      <div class="px-4 max-w-7xl mx-auto">
+        <div id="articles-container" class="space-y-8">
+          <!-- Sera rempli par JavaScript -->
+          <div class="text-center py-12">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-600 border-t-transparent"></div>
+            <p class="mt-4 text-gray-600">Chargement des articles...</p>
+          </div>
+        </div>
+        
+        <!-- Pagination -->
+        <div id="pagination" class="mt-8 flex justify-center"></div>
+      </div>
+    </section>
+  </div>
+
+  <style>
+    /* Cache la scrollbar sur mobile pour les filtres */
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+    .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+
+  <script>
+    const API_URL = 'http://localhost:3001';
+
+    type Article = {
+      _id: string;
+      image: string;
+      titre: string;
+      categorie: string;
+      datePublication: string;
+      resume: string;
+      auteur: string;
+    };
+
+    type ArticlesResponse = {
+      articles: Article[];
+      page: number;
+      totalPages: number;
+    };
+    
+    async function chargerArticles(page = 1, categorie = '', recherche = '') {
+      const container = document.getElementById('articles-container');
+      if (!container) return;
+      
+      try {
+        let url = `${API_URL}/api/articles?page=${page}&limite=4`;
+        if (categorie) url += `&categorie=${encodeURIComponent(categorie)}`;
+        if (recherche) url += `&recherche=${encodeURIComponent(recherche)}`;
+        
+        console.log('📡 Chargement:', url);
+        
+        const response = await fetch(url);
+        const data = await response.json() as ArticlesResponse;
+        
+        if (data.articles.length === 0) {
+          container.innerHTML = `
+            <div class="text-center py-12 bg-white rounded-2xl shadow">
+              <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+              </svg>
+              <p class="text-gray-500">Aucun article trouvé</p>
+            </div>
+          `;
+          return;
+        }
+        
+        // Afficher les articles avec images de taille fixe
+        container.innerHTML = data.articles.map((article: Article) => `
+          <article class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300">
+            <div class="grid md:grid-cols-3">
+              <!-- Image de taille fixe -->
+              <div class="md:col-span-1 h-48 md:h-56 overflow-hidden bg-gray-100">
+                <img 
+                  src="${article.image}" 
+                  alt="${article.titre}" 
+                  class="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
+                  onerror="this.src='/images/default-article.jpg'"
+                />
+              </div>
+              <div class="md:col-span-2 p-6 md:p-8">
+                <div class="flex items-center gap-3 mb-3">
+                  <span class="px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-xs font-semibold">
+                    ${article.categorie}
+                  </span>
+                  <span class="text-sm text-gray-500">
+                    ${new Date(article.datePublication).toLocaleDateString('fr-FR', {
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric'
+                    })}
+                  </span>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">
+                  <a href="/actualite/${article._id}" class="hover:text-orange-600 transition-colors">
+                    ${article.titre}
+                  </a>
+                </h2>
+                
+                <p class="text-gray-600 mb-4">${article.resume}</p>
+                
+                <div class="flex items-center justify-between">
+                  <span class="text-sm text-gray-500">Par ${article.auteur}</span>
+                  <a href="/actualite/${article._id}" class="inline-flex items-center text-orange-600 font-semibold hover:text-orange-800">
+                    Lire la suite
+                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </article>
+        `).join('');
+        
+        // Générer la pagination
+        genererPagination(data.page, data.totalPages);
+        
+      } catch (error) {
+        console.error('Erreur chargement articles:', error);
+        container.innerHTML = `
+          <div class="text-center py-12 bg-white rounded-2xl shadow">
+            <p class="text-red-600">❌ Erreur de chargement des articles</p>
+          </div>
+        `;
+      }
+    }
+    
+    function genererPagination(pageCourante: number, totalPages: number) {
+      const pagination = document.getElementById('pagination');
+      if (!pagination) return;
+      if (totalPages <= 1) {
+        pagination.innerHTML = '';
+        return;
+      }
+      
+      let html = '<div class="flex space-x-2">';
+      
+      if (pageCourante > 1) {
+        html += `<a href="?page=${pageCourante - 1}" class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-orange-50 transition-colors">Précédent</a>`;
+      }
+      
+      for (let i = 1; i <= totalPages; i++) {
+        if (i === pageCourante) {
+          html += `<span class="px-4 py-2 bg-orange-600 text-white border border-orange-600 rounded-lg">${i}</span>`;
+        } else {
+          html += `<a href="?page=${i}" class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-orange-50 transition-colors">${i}</a>`;
+        }
+      }
+      
+      if (pageCourante < totalPages) {
+        html += `<a href="?page=${pageCourante + 1}" class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-orange-50 transition-colors">Suivant</a>`;
+      }
+      
+      html += '</div>';
+      pagination.innerHTML = html;
+    }
+
+    // Gestion de la recherche mobile
+    const searchToggle = document.getElementById('search-toggle');
+    const mobileSearch = document.getElementById('mobile-search');
+
+    if (searchToggle && mobileSearch) {
+      searchToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        mobileSearch.classList.toggle('hidden');
+      });
+      
+      // Fermer en cliquant ailleurs
+      document.addEventListener('click', (e) => {
+        const target = e.target as Node | null;
+        if (!target) return;
+        if (!mobileSearch.contains(target) && !searchToggle.contains(target)) {
+          mobileSearch.classList.add('hidden');
+        }
+      });
+    }
+    
+    // Récupérer les paramètres de l'URL
+    const params = new URLSearchParams(window.location.search);
+    const pageParam = params.get('page');
+    const page = parseInt(pageParam ?? '1', 10) || 1;
+    const categorie = params.get('categorie') || '';
+    const recherche = params.get('recherche') || '';
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      chargerArticles(page, categorie, recherche);
+    });
+  </script>
+</Layout>

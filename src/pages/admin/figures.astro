@@ -1,0 +1,376 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import AdminLayout from '../../components/admin/AdminLayout.astro';
+import AuthCheck from '../../components/AuthCheck.astro';
+---
+
+<Layout title="Admin - Figures Wiki">
+  <AuthCheck>
+    <AdminLayout>
+      <div class="space-y-6">
+        <div class="flex justify-between items-center">
+          <h1 class="text-2xl font-bold text-gray-800">Gestion des figures du Wiki</h1>
+          <button onclick="openModal()" class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700">
+            + Nouvelle figure
+          </button>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+          <table class="w-full">
+            <thead class="bg-gray-50">
+               <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Photo</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nom</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Catégorie</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Likes</th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+               </tr>
+            </thead>
+            <tbody id="figures-list" class="divide-y divide-gray-200">
+              <tr><td colspan="5" class="px-6 py-4 text-center">Chargement...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Modal d'ajout/édition avec upload d'image -->
+      <div id="figureModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <h2 id="modalTitle" class="text-xl font-bold mb-4">Ajouter une figure</h2>
+          <form id="figureForm" class="space-y-4" enctype="multipart/form-data">
+            <input type="hidden" id="figureId">
+            
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium mb-1">Prénom *</label>
+                <input type="text" id="prenom" required class="w-full px-3 py-2 border rounded-lg">
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Nom *</label>
+                <input type="text" id="nom" required class="w-full px-3 py-2 border rounded-lg">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1">Catégorie *</label>
+              <select id="categorie" required class="w-full px-3 py-2 border rounded-lg">
+                <option value="vivants">🌟 Ceux qui font briller Bandenkop</option>
+                <option value="traces">📜 Ceux qui ont laissé des traces indélébiles</option>
+                <option value="etoiles">⭐ Étoiles montantes</option>
+              </select>
+            </div>
+
+            <!-- Upload d'image -->
+            <div>
+              <label class="block text-sm font-medium mb-1">Photo de la figure *</label>
+              <div class="flex items-center space-x-4">
+                <div class="flex-1">
+                  <input type="file" id="photoFile" accept="image/*" class="w-full px-3 py-2 border rounded-lg" onchange="previewImage(this)">
+                  <p class="text-xs text-gray-500 mt-1">Formats acceptés : JPG, PNG, GIF. Max 2MB.</p>
+                </div>
+                <div id="imagePreview" class="w-16 h-16 rounded-full bg-gray-100 overflow-hidden hidden">
+                  <img id="previewImg" class="w-full h-full object-cover">
+                </div>
+              </div>
+              <input type="hidden" id="photoUrl" name="photoUrl">
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1">Résumé (1-2 lignes) *</label>
+              <textarea id="resume" rows="2" required class="w-full px-3 py-2 border rounded-lg"></textarea>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1">Biographie complète *</label>
+              <textarea id="biographie" rows="6" required class="w-full px-3 py-2 border rounded-lg font-mono text-sm"></textarea>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1">Contributions (une par ligne)</label>
+              <textarea id="contributions" rows="3" class="w-full px-3 py-2 border rounded-lg" placeholder="Contribution 1&#10;Contribution 2"></textarea>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1">Citations (une par ligne)</label>
+              <textarea id="citations" rows="3" class="w-full px-3 py-2 border rounded-lg" placeholder="Citation 1&#10;Citation 2"></textarea>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1">Ordre d'affichage</label>
+              <input type="number" id="ordre" value="0" class="w-full px-3 py-2 border rounded-lg">
+            </div>
+
+            <div class="flex space-x-3 pt-4">
+              <button type="submit" class="flex-1 bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700">
+                Enregistrer
+              </button>
+              <button type="button" onclick="closeModal()" class="flex-1 bg-gray-200 py-2 rounded-lg hover:bg-gray-300">
+                Annuler
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </AdminLayout>
+  </AuthCheck>
+
+  <script>
+    import { getToken } from '../../utils/auth';
+
+    interface FigureItem {
+      _id: string;
+      prenom: string;
+      nom: string;
+      categorie: string;
+      photo?: string;
+      resume?: string;
+      biographie?: string;
+      contributions?: string[];
+      citations?: string[];
+      ordre?: number;
+      likes?: number;
+      dislikes?: number;
+    }
+
+    interface FiguresResponse {
+      figures: FigureItem[];
+    }
+
+    declare global {
+      interface Window {
+        openModal: () => void;
+        closeModal: () => void;
+        editFigure: (id: string) => Promise<void>;
+        deleteFigure: (id: string) => Promise<void>;
+        previewImage: (input: HTMLInputElement) => void;
+      }
+    }
+
+    const API_URL = 'http://localhost:3001';
+    const token = getToken();
+
+    const figuresList = document.getElementById('figures-list') as HTMLElement | null;
+    const modalTitle = document.getElementById('modalTitle') as HTMLElement | null;
+    const figureModal = document.getElementById('figureModal') as HTMLElement | null;
+    const figureForm = document.getElementById('figureForm') as HTMLFormElement | null;
+    const figureIdInput = document.getElementById('figureId') as HTMLInputElement | null;
+    const prenomInput = document.getElementById('prenom') as HTMLInputElement | null;
+    const nomInput = document.getElementById('nom') as HTMLInputElement | null;
+    const categorieInput = document.getElementById('categorie') as HTMLSelectElement | null;
+    const photoFileInput = document.getElementById('photoFile') as HTMLInputElement | null;
+    const photoUrlInput = document.getElementById('photoUrl') as HTMLInputElement | null;
+    const resumeInput = document.getElementById('resume') as HTMLTextAreaElement | null;
+    const biographieInput = document.getElementById('biographie') as HTMLTextAreaElement | null;
+    const contributionsInput = document.getElementById('contributions') as HTMLTextAreaElement | null;
+    const citationsInput = document.getElementById('citations') as HTMLTextAreaElement | null;
+    const ordreInput = document.getElementById('ordre') as HTMLInputElement | null;
+    const preview = document.getElementById('imagePreview') as HTMLElement | null;
+    const previewImg = document.getElementById('previewImg') as HTMLImageElement | null;
+
+    // Prévisualisation de l'image
+    window.previewImage = function(input: HTMLInputElement) {
+      if (!preview || !previewImg) return;
+
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e: ProgressEvent<FileReader>) {
+          if (typeof e.target?.result === 'string') {
+            previewImg.src = e.target.result;
+            preview.classList.remove('hidden');
+          }
+        };
+        reader.readAsDataURL(input.files[0]);
+      } else {
+        preview.classList.add('hidden');
+        previewImg.src = '';
+      }
+    };
+
+    async function loadFigures() {
+      if (!figuresList) return;
+
+      try {
+        const response = await fetch(`${API_URL}/api/figures`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data: FiguresResponse = await response.json();
+
+        if (!Array.isArray(data.figures) || data.figures.length === 0) {
+          figuresList.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-gray-500">Aucune figure</td></tr>';
+          return;
+        }
+
+        figuresList.innerHTML = data.figures.map((figure: FigureItem) => `
+          <tr class="hover:bg-gray-50">
+            <td class="px-6 py-4">
+              <img src="${figure.photo || '/images/default-avatar.png'}" alt="${figure.prenom} ${figure.nom}" class="w-12 h-12 rounded-full object-cover">
+             </td>
+            <td class="px-6 py-4 font-medium">${figure.prenom} ${figure.nom}</td>
+            <td class="px-6 py-4">
+              <span class="px-2 py-1 text-xs rounded-full ${
+                figure.categorie === 'vivants' ? 'bg-amber-100 text-amber-800' :
+                figure.categorie === 'traces' ? 'bg-blue-100 text-blue-800' :
+                'bg-purple-100 text-purple-800'
+              }">
+                ${figure.categorie === 'vivants' ? '🌟 Vivant' : figure.categorie === 'traces' ? '📜 Historique' : '⭐ Étoile'}
+              </span>
+             </td>
+            <td class="px-6 py-4">❤️ ${figure.likes || 0} | 💔 ${figure.dislikes || 0}</td>
+            <td class="px-6 py-4 text-right space-x-2">
+              <button onclick="editFigure('${figure._id}')" class="text-blue-600 hover:text-blue-800">✏️</button>
+              <button onclick="deleteFigure('${figure._id}')" class="text-red-600 hover:text-red-800">🗑️</button>
+             </td>
+           </tr>
+        `).join('');
+      } catch (error) {
+        console.error('Erreur:', error);
+      }
+    }
+
+    window.openModal = () => {
+      if (!modalTitle || !figureIdInput || !figureForm || !figureModal || !preview || !previewImg || !photoUrlInput) return;
+
+      modalTitle.textContent = 'Ajouter une figure';
+      figureIdInput.value = '';
+      photoUrlInput.value = '';
+      figureForm.reset();
+      preview.classList.add('hidden');
+      previewImg.src = '';
+      figureModal.classList.remove('hidden');
+      figureModal.classList.add('flex');
+    };
+
+    window.closeModal = () => {
+      if (!figureModal) return;
+      figureModal.classList.add('hidden');
+      figureModal.classList.remove('flex');
+    };
+
+    window.editFigure = async (id: string) => {
+      const response = await fetch(`${API_URL}/api/figures/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const figure: FigureItem = await response.json();
+
+      if (modalTitle) modalTitle.textContent = 'Modifier la figure';
+      if (figureIdInput) figureIdInput.value = figure._id;
+      if (prenomInput) prenomInput.value = figure.prenom;
+      if (nomInput) nomInput.value = figure.nom;
+      if (categorieInput) categorieInput.value = figure.categorie;
+      if (photoUrlInput) photoUrlInput.value = figure.photo || '';
+      if (resumeInput) resumeInput.value = figure.resume || '';
+      if (biographieInput) biographieInput.value = figure.biographie || '';
+      if (contributionsInput) contributionsInput.value = (figure.contributions || []).join('\n');
+      if (citationsInput) citationsInput.value = (figure.citations || []).join('\n');
+      if (ordreInput) ordreInput.value = String(figure.ordre || 0);
+
+      if (figure.photo && preview && previewImg) {
+        previewImg.src = figure.photo;
+        preview.classList.remove('hidden');
+      }
+
+      if (figureModal) {
+        figureModal.classList.remove('hidden');
+        figureModal.classList.add('flex');
+      }
+    };
+
+    window.deleteFigure = async (id: string) => {
+      if (!confirm('Supprimer cette figure ?')) return;
+      await fetch(`${API_URL}/api/figures/admin/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      await loadFigures();
+    };
+
+    // Soumission du formulaire avec upload d'image
+    figureForm?.addEventListener('submit', async (e: Event) => {
+      e.preventDefault();
+
+      if (
+        !figureIdInput ||
+        !photoFileInput ||
+        !photoUrlInput ||
+        !prenomInput ||
+        !nomInput ||
+        !categorieInput ||
+        !resumeInput ||
+        !biographieInput ||
+        !contributionsInput ||
+        !citationsInput ||
+        !ordreInput
+      ) {
+        return;
+      }
+
+      const id = figureIdInput.value;
+      let photoUrl = photoUrlInput.value;
+
+      // Upload de l'image si un fichier est sélectionné
+      if (photoFileInput.files && photoFileInput.files[0]) {
+        const formData = new FormData();
+        formData.append('image', photoFileInput.files[0]);
+
+        try {
+          const uploadResponse = await fetch(`${API_URL}/api/upload`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` },
+            body: formData
+          });
+          const uploadData: { url?: string } = await uploadResponse.json();
+          photoUrl = uploadData.url || photoUrl;
+        } catch (error) {
+          console.error('Erreur upload image:', error);
+          alert('Erreur lors de l\'upload de l\'image');
+          return;
+        }
+      }
+
+      const data = {
+        prenom: prenomInput.value,
+        nom: nomInput.value,
+        slug: `${prenomInput.value}-${nomInput.value}`.toLowerCase().replace(/\s+/g, '-').normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
+        categorie: categorieInput.value,
+        photo: photoUrl || '/images/default-avatar.png',
+        resume: resumeInput.value,
+        biographie: biographieInput.value,
+        contributions: contributionsInput.value.split('\n').filter((c: string) => c.trim()),
+        citations: citationsInput.value.split('\n').filter((c: string) => c.trim()),
+        ordre: parseInt(ordreInput.value, 10) || 0
+      };
+
+      console.log('📤 Envoi des données:', data);
+
+      try {
+        const url = id ? `${API_URL}/api/figures/admin/${id}` : `${API_URL}/api/figures/admin`;
+        const method = id ? 'PUT' : 'POST';
+
+        const response = await fetch(url, {
+          method,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          console.log('✅ Figure enregistrée:', result);
+          window.closeModal();
+          await loadFigures();
+        } else {
+          const error: { error?: string } = await response.json();
+          console.error('❌ Erreur:', error);
+          alert('Erreur: ' + (error.error || 'Erreur inconnue'));
+        }
+      } catch (error) {
+        console.error('❌ Erreur envoi:', error);
+        alert('Erreur de connexion au serveur');
+      }
+    });
+
+    loadFigures();
+  </script>
+</Layout>

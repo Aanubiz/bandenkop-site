@@ -1,0 +1,167 @@
+---
+// src/components/RubriquesGrid.astro (version épurée)
+const rubriques = [
+  {
+    titre: "Histoire",
+    description: "Un voyage à travers les siècles",
+    icon: "📜",
+    couleur: "from-amber-400 to-orange-500",
+    bgColor: "bg-amber-50",
+    forme: "circle",
+    lien: "/histoire",
+    stats: "9 chapitres"
+  },
+  {
+    titre: "Culture",
+    description: "La richesse des traditions",
+    icon: "🎭",
+    couleur: "from-red-400 to-pink-500",
+    bgColor: "bg-red-50",
+    forme: "wave",
+    lien: "/culture",
+    stats: "12 thématiques"
+  },
+  {
+    titre: "Apprentissage",
+    description: "Maîtrisez la langue",
+    icon: "📚",
+    couleur: "from-green-400 to-emerald-500",
+    bgColor: "bg-green-50",
+    forme: "triangle",
+    lien: "/apprentissage",
+    stats: "3 niveaux"
+  },
+  {
+    titre: "Actualités",
+    description: "Vivre avec son temps",
+    icon: "📰",
+    couleur: "from-blue-400 to-indigo-500",
+    bgColor: "bg-blue-50",
+    forme: "dot",
+    lien: "/actualite",
+    stats: "Mis à jour"
+  },
+  {
+    titre: "Découverte",
+    description: "Explorez le territoire",
+    icon: "🗺️",
+    couleur: "from-purple-400 to-violet-500",
+    bgColor: "bg-purple-50",
+    forme: "square",
+    lien: "/decouverte",
+    stats: "8 sites"
+  },
+  {
+    titre: "Projets",
+    description: "Construisons l'avenir",
+    icon: "🚀",
+    couleur: "from-cyan-400 to-teal-500",
+    bgColor: "bg-cyan-50",
+    forme: "line",
+    lien: "/projets",
+    stats: "6 en cours"
+  }
+];
+---
+
+<div class="reveal">
+  <div class="text-center mb-6 sm:mb-8 md:mb-10 lg:mb-12">
+    <h2 class="font-['Playfair_Display'] text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black mb-2 sm:mb-3 md:mb-4 bg-gradient-to-r from-orange-800 to-red-800 bg-clip-text text-transparent">
+      Explorez Bandenkop
+    </h2>
+    <p class="font-['Space_Grotesk'] text-sm sm:text-base md:text-lg text-gray-600 max-w-2xl mx-auto px-4">
+      Plongez au cœur de notre patrimoine à travers nos différentes rubriques
+    </p>
+  </div>
+
+  <!-- Grille : 2 colonnes sur mobile, 3 colonnes sur desktop -->
+  <div class="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5 md:gap-6 lg:gap-8">
+    {rubriques.map((rubrique, index) => (
+      <a 
+        href={rubrique.lien}
+        class={`group relative aspect-square rounded-2xl sm:rounded-3xl overflow-hidden reveal shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:scale-[1.02] ${rubrique.bgColor}`}
+        style={{ animationDelay: `${index * 100}ms` }}
+      >
+        <!-- Grande forme blanche emblématique -->
+        <div class="absolute inset-0 flex items-center justify-center opacity-20">
+          {rubrique.forme === 'circle' && (
+            <div class="w-48 h-48 bg-white rounded-full blur-xl"></div>
+          )}
+          
+          {rubrique.forme === 'wave' && (
+            <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+              <path d="M0,50 Q25,30 50,50 T100,50" stroke="white" stroke-width="15" fill="none" stroke-linecap="round"/>
+            </svg>
+          )}
+          
+          {rubrique.forme === 'triangle' && (
+            <div class="w-0 h-0 border-l-[100px] border-r-[100px] border-b-[170px] border-l-transparent border-r-transparent border-b-white rotate-12"></div>
+          )}
+          
+          {rubrique.forme === 'dot' && (
+            <div class="grid grid-cols-3 gap-4">
+              <div class="w-8 h-8 bg-white rounded-full"></div>
+              <div class="w-8 h-8 bg-white rounded-full"></div>
+              <div class="w-8 h-8 bg-white rounded-full"></div>
+              <div class="w-8 h-8 bg-white rounded-full"></div>
+              <div class="w-8 h-8 bg-white rounded-full"></div>
+              <div class="w-8 h-8 bg-white rounded-full"></div>
+            </div>
+          )}
+          
+          {rubrique.forme === 'square' && (
+            <div class="w-40 h-40 bg-white rotate-45 blur-sm"></div>
+          )}
+          
+          {rubrique.forme === 'line' && (
+            <div class="space-y-4">
+              <div class="w-32 h-2 bg-white"></div>
+              <div class="w-40 h-2 bg-white"></div>
+              <div class="w-24 h-2 bg-white"></div>
+            </div>
+          )}
+        </div>
+
+        <!-- Overlay de couleur -->
+        <div class={`absolute inset-0 bg-gradient-to-br ${rubrique.couleur} opacity-90 group-hover:opacity-95 transition-opacity`}></div>
+
+        <!-- Icône en haut à gauche -->
+        <div class="absolute top-3 sm:top-4 md:top-5 lg:top-6 left-3 sm:left-4 md:left-5 lg:left-6 z-10">
+          <span class="font-['Segoe_UI_Emoji',_'Apple_Color_Emoji',_'Noto_Color_Emoji',_sans-serif] text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl drop-shadow-2xl transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
+            {rubrique.icon}
+          </span>
+        </div>
+
+        <!-- Badge stats en haut à droite -->
+        <div class="absolute top-3 sm:top-4 md:top-5 lg:top-6 right-3 sm:right-4 md:right-5 lg:right-6 z-10">
+          <span class="font-['Space_Grotesk'] bg-white/20 backdrop-blur-md px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs md:text-sm text-white border border-white/30 font-semibold shadow-lg">
+            {rubrique.stats}
+          </span>
+        </div>
+
+        <!-- Contenu en bas -->
+        <div class="absolute bottom-3 sm:bottom-4 md:bottom-5 lg:bottom-6 left-3 sm:left-4 md:left-5 lg:left-6 right-3 sm:right-4 md:right-5 lg:right-6 z-10">
+          <div class="transform transition-all duration-500">
+            <!-- Titre -->
+            <h3 class="font-['Playfair_Display'] text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black text-white mb-1 drop-shadow-lg tracking-tight">
+              {rubrique.titre}
+            </h3>
+            
+            <!-- Description qui apparaît au survol -->
+            <p class="font-['Space_Grotesk'] text-xs sm:text-sm md:text-base text-white/90 opacity-0 max-h-0 group-hover:opacity-100 group-hover:max-h-20 transition-all duration-500 overflow-hidden font-medium">
+              {rubrique.description}
+            </p>
+            
+            <!-- Lien d'exploration -->
+            <div class="flex items-center text-xs sm:text-sm md:text-base font-semibold text-white/80 group-hover:text-white transition-colors duration-300 mt-1">
+              <span>Explorer</span>
+              <svg class="w-4 sm:w-5 h-4 sm:h-5 ml-1 transform group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </a>
+    ))}
+  </div>
+</div>

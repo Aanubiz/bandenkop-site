@@ -1,0 +1,159 @@
+<svg width="800" height="1200" viewBox="0 0 800 1200" xmlns="http://www.w3.org/2000/svg">
+  <!-- GROS MOTIFS AFRICAINS - STYLE GRAVURE MONUMENTALE -->
+  
+  <!-- 1. GRAND MASQUE BAMILÉKÉ (en haut à droite) -->
+  <g id="grand-masque" transform="translate(450, 50)" opacity="0.9">
+    <!-- Forme principale du masque -->
+    <path d="M0 100 Q-30 50 20 20 Q70 -10 120 30 Q150 70 110 120 Q80 150 40 140 Q10 130 0 100" 
+          fill="none" stroke="white" stroke-width="4" stroke-linecap="round"/>
+    
+    <!-- Yeux expressifs -->
+    <ellipse cx="40" cy="60" rx="12" ry="15" fill="none" stroke="white" stroke-width="3"/>
+    <ellipse cx="90" cy="60" rx="12" ry="15" fill="none" stroke="white" stroke-width="3"/>
+    <circle cx="40" cy="60" r="4" fill="white"/>
+    <circle cx="90" cy="60" r="4" fill="white"/>
+    
+    <!-- Nez et bouche -->
+    <path d="M65 80 L65 100" stroke="white" stroke-width="3"/>
+    <path d="M45 105 Q65 115 85 105" stroke="white" stroke-width="3" fill="none"/>
+    
+    <!-- Scarifications tribales -->
+    <path d="M20 85 L35 90" stroke="white" stroke-width="2"/>
+    <path d="M95 85 L110 90" stroke="white" stroke-width="2"/>
+    <path d="M30 120 L45 125" stroke="white" stroke-width="2"/>
+    <path d="M85 120 L100 125" stroke="white" stroke-width="2"/>
+    
+    <!-- Coiffe de plumes -->
+    <path d="M20 20 L30 0 L40 15 L50 0 L60 15 L70 0 L80 15 L90 0 L100 20" 
+          stroke="white" stroke-width="3" fill="none"/>
+  </g>
+
+  <!-- 2. GRAND TAMBOUR SACRÉ (Nkul) - au milieu à droite -->
+  <g id="grand-tambour" transform="translate(520, 380)" opacity="0.9">
+    <!-- Corps du tambour -->
+    <rect x="-30" y="0" width="160" height="200" rx="20" ry="20" 
+          fill="none" stroke="white" stroke-width="5"/>
+    
+    <!-- Cercles décoratifs -->
+    <ellipse cx="50" cy="30" rx="60" ry="15" fill="none" stroke="white" stroke-width="3"/>
+    <ellipse cx="50" cy="170" rx="60" ry="15" fill="none" stroke="white" stroke-width="3"/>
+    
+    <!-- Motifs géométriques sur le tambour -->
+    <line x1="0" y1="70" x2="100" y2="70" stroke="white" stroke-width="3" stroke-dasharray="10 10"/>
+    <line x1="0" y1="130" x2="100" y2="130" stroke="white" stroke-width="3" stroke-dasharray="10 10"/>
+    
+    <!-- Tête de tambour (peau) -->
+    <ellipse cx="50" cy="0" rx="70" ry="25" fill="none" stroke="white" stroke-width="4"/>
+    <ellipse cx="50" cy="200" rx="70" ry="25" fill="none" stroke="white" stroke-width="4"/>
+    
+    <!-- Baguettes de tambour -->
+    <line x1="120" y1="40" x2="160" y2="0" stroke="white" stroke-width="4"/>
+    <line x1="130" y1="160" x2="170" y2="120" stroke="white" stroke-width="4"/>
+  </g>
+
+  <!-- 3. TOTEM LÉOPARD (symbole du chef) - à droite -->
+  <g id="totem-leopard" transform="translate(600, 650)" opacity="0.9">
+    <!-- Corps -->
+    <ellipse cx="0" cy="50" rx="40" ry="60" fill="none" stroke="white" stroke-width="4"/>
+    
+    <!-- Tête -->
+    <circle cx="0" cy="-20" r="30" fill="none" stroke="white" stroke-width="4"/>
+    
+    <!-- Oreilles -->
+    <path d="M-15 -45 L-25 -65 L-5 -55" stroke="white" stroke-width="3" fill="none"/>
+    <path d="M15 -45 L25 -65 L5 -55" stroke="white" stroke-width="3" fill="none"/>
+    
+    <!-- Yeux perçants -->
+    <circle cx="-10" cy="-30" r="5" fill="white"/>
+    <circle cx="10" cy="-30" r="5" fill="white"/>
+    
+    <!-- Taches de léopard -->
+    <circle cx="-20" cy="10" r="8" fill="none" stroke="white" stroke-width="2"/>
+    <circle cx="15" cy="30" r="8" fill="none" stroke="white" stroke-width="2"/>
+    <circle cx="-10" cy="60" r="8" fill="none" stroke="white" stroke-width="2"/>
+    <circle cx="20" cy="80" r="8" fill="none" stroke="white" stroke-width="2"/>
+    
+    <!-- Queue -->
+    <path d="M30 90 Q50 70 45 40" stroke="white" stroke-width="4" fill="none"/>
+  </g>
+
+  <!-- 4. RIVIÈRE NKAM (en bas à droite) -->
+  <g id="riviere" transform="translate(400, 950)" opacity="0.8">
+    <!-- Cours d'eau ondulant -->
+    <path d="M0 0 Q50 -30 100 0 Q150 30 200 0 Q250 -30 300 0" 
+          stroke="white" stroke-width="6" fill="none"/>
+    <path d="M0 40 Q50 10 100 40 Q150 70 200 40 Q250 10 300 40" 
+          stroke="white" stroke-width="5" fill="none" opacity="0.7"/>
+    
+    <!-- Poissons stylisés -->
+    <path d="M50 -20 L60 -30 L70 -20 L60 -10 Z" fill="none" stroke="white" stroke-width="2"/>
+    <path d="M180 60 L190 50 L200 60 L190 70 Z" fill="none" stroke="white" stroke-width="2"/>
+    
+    <!-- Vagues/remous -->
+    <circle cx="120" cy="15" r="8" fill="none" stroke="white" stroke-width="2"/>
+    <circle cx="220" cy="55" r="8" fill="none" stroke="white" stroke-width="2"/>
+  </g>
+
+  <!-- 5. TOIT CONIQUE DE CASE ROYALE - très grand -->
+  <g id="toit-royal" transform="translate(300, 150)" opacity="0.9">
+    <!-- Structure du toit -->
+    <path d="M50 0 L0 100 L100 100 Z" stroke="white" stroke-width="5" fill="none"/>
+    
+    <!-- Détails du chaume -->
+    <line x1="25" y1="30" x2="15" y2="70" stroke="white" stroke-width="2"/>
+    <line x1="50" y1="20" x2="50" y2="80" stroke="white" stroke-width="2"/>
+    <line x1="75" y1="30" x2="85" y2="70" stroke="white" stroke-width="2"/>
+    
+    <!-- Sommet décoré -->
+    <circle cx="50" cy="0" r="10" fill="none" stroke="white" stroke-width="3"/>
+    <line x1="50" y1="-10" x2="50" y2="10" stroke="white" stroke-width="2"/>
+  </g>
+
+  <!-- 6. TRÔNE ROYAL (Kpu) - à droite -->
+  <g id="trone-royal" transform="translate(500, 800)" opacity="0.9">
+    <!-- Base du trône -->
+    <rect x="-20" y="0" width="120" height="80" rx="10" ry="10" 
+          fill="none" stroke="white" stroke-width="4"/>
+    
+    <!-- Dossier haut -->
+    <path d="M-20 -50 L-20 0 L100 0 L100 -30 Q50 -70 -20 -50" 
+          stroke="white" stroke-width="4" fill="none"/>
+    
+    <!-- Décorations -->
+    <circle cx="40" cy="-25" r="12" fill="none" stroke="white" stroke-width="3"/>
+    <circle cx="40" cy="-25" r="5" fill="white"/>
+    
+    <!-- Motifs de pouvoir -->
+    <line x1="0" y1="20" x2="20" y2="40" stroke="white" stroke-width="2"/>
+    <line x1="60" y1="20" x2="80" y2="40" stroke="white" stroke-width="2"/>
+  </g>
+
+  <!-- 7. ÉLÉMENTS QUI DÉBORDENT (en dehors du cadre) -->
+  <g id="debordements" opacity="0.7">
+    <!-- Masque qui dépasse à droite -->
+    <path d="M780 200 Q820 180 800 250 Q780 280 750 260" 
+          stroke="white" stroke-width="4" fill="none"/>
+    <circle cx="790" cy="230" r="8" fill="white"/>
+    
+    <!-- Tambour qui dépasse en bas -->
+    <ellipse cx="750" cy="1150" rx="60" ry="30" fill="none" stroke="white" stroke-width="4"/>
+    <line x1="750" y1="1120" x2="750" y2="1180" stroke="white" stroke-width="4"/>
+    
+    <!-- Rivière qui continue hors cadre -->
+    <path d="M780 1000 Q820 980 800 1020" stroke="white" stroke-width="6" fill="none"/>
+  </g>
+
+  <!-- 8. MOTIFS NDOP GÉANTS (tissu royal) -->
+  <g id="ndop-geant" transform="translate(650, 450)" opacity="0.6">
+    <!-- Grand losange -->
+    <polygon points="0,0 50,-50 100,0 50,50" fill="none" stroke="white" stroke-width="4"/>
+    
+    <!-- Motifs intérieurs -->
+    <line x1="0" y1="0" x2="100" y2="0" stroke="white" stroke-width="2" transform="rotate(45 50 0)"/>
+    <line x1="0" y1="0" x2="100" y2="0" stroke="white" stroke-width="2" transform="rotate(-45 50 0)"/>
+    
+    <!-- Points décoratifs -->
+    <circle cx="50" cy="-25" r="6" fill="white"/>
+    <circle cx="50" cy="25" r="6" fill="white"/>
+  </g>
+</svg>

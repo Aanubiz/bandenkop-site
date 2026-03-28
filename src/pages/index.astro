@@ -1,11 +1,494 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
+import MessageRoi from '../components/MessageRoi.astro';
+import HistoireSection from '../components/HistoireSection.astro';
+import CultureSection from '../components/CultureSection.astro';
+import DecouverteSection from '../components/DecouverteSection.astro';
+import ProjetSection from '../components/ProjetSection.astro';
+import RubriquesGrid from '../components/RubriquesGrid.astro';
+import ScrollToTop from '../components/ScrollToTop.astro';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+// Récupérer les 4 derniers articles depuis l'API
+const API_URL = 'http://localhost:3001';
+
+interface ArticlePreview {
+  _id: string;
+  titre: string;
+  datePublication: string;
+  categorie: string;
+  image?: string;
+  resume?: string;
+  auteur?: string;
+  vues?: number;
+}
+
+let derniersArticles: ArticlePreview[] = [];
+
+try {
+  const response = await fetch(`${API_URL}/api/articles?limite=4&page=1`);
+  if (response.ok) {
+    const data = await response.json();
+    derniersArticles = data.articles || [];
+  }
+} catch (error) {
+  console.error('Erreur chargement articles:', error);
+}
 ---
 
-<Layout>
-	<Welcome />
+<Layout title="Accueil - Bandenkop">
+  <!-- Hero Section -->
+  <section class="relative min-h-screen flex items-center pt-16 sm:pt-20 overflow-hidden bg-gradient-to-br from-orange-900 to-red-900">
+    <!-- Image de fond avec overlay -->
+    <div class="absolute inset-0">
+      <div class="absolute inset-0 bg-gradient-to-br from-orange-900 via-red-900 to-amber-900"></div>
+      <img 
+        src="/images/bandenkop-hero.jpg" 
+        alt="Bandenkop" 
+        class="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-30"
+        onerror="this.style.display='none'"
+      />
+      <div class="absolute inset-0 bg-gradient-to-br from-orange-900/80 via-red-900/80 to-amber-900/80"></div>
+      <div class="absolute inset-0 opacity-30 pointer-events-none" style="background-image: url('/patterns/african-pattern-repeat.svg'); background-repeat: repeat; background-size: 300px 300px;"></div>
+    </div>
+
+    <!-- Contenu hero -->
+    <div class="relative z-10 w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto py-8 sm:py-12 md:py-16 lg:py-20">
+      <div class="max-w-4xl mx-auto text-center text-white">
+        <div class="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 bg-white/10 backdrop-blur-md rounded-full mb-4 sm:mb-6 md:mb-8 animate-fade-in">
+          <span class="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-green-400 rounded-full animate-pulse mr-1.5 sm:mr-2"></span>
+          <span class="text-xs sm:text-sm font-medium">Village de 2ème degré - Hauts Plateaux</span>
+        </div>
+
+        <h1 class="font-['Playfair_Display'] text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black leading-tight mb-3 sm:mb-4 md:mb-6">
+          <span class="block">Bienvenue à</span>
+          <span class="block text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-300 to-orange-300">
+            Bandenkop
+          </span>
+        </h1>
+
+        <p class="text-sm sm:text-base md:text-lg lg:text-xl text-gray-200 mb-6 sm:mb-8 md:mb-10 lg:mb-12 max-w-2xl mx-auto px-4">
+          Au cœur des traditions vivantes du Cameroun, découvrez un village où l'histoire rencontre la modernité
+        </p>
+
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+          <a href="#decouvrir" class="w-full sm:w-auto relative inline-flex items-center justify-center px-5 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 text-sm sm:text-base font-semibold text-white overflow-hidden rounded-xl sm:rounded-2xl transition-all duration-300 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 shadow-lg hover:shadow-xl transform hover:scale-105 group">
+            <span>Commencer l'exploration</span>
+            <svg class="w-3.5 sm:w-4 md:w-5 h-3.5 sm:h-4 md:h-5 ml-1.5 sm:ml-2 inline-block transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+            </svg>
+          </a>
+          <a href="/histoire" class="relative w-full sm:w-auto px-5 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 text-white font-semibold overflow-hidden rounded-xl sm:rounded-2xl group">
+            <span class="absolute inset-0 bg-white/10 backdrop-blur-md border border-white/20 group-hover:bg-white/20 transition-all duration-300"></span>
+            <span class="relative z-10">Découvrir notre histoire</span>
+          </a>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 md:gap-4 mt-8 sm:mt-12 md:mt-16 lg:mt-20">
+          <div class="text-center p-2 sm:p-3 md:p-4 bg-white/5 backdrop-blur-sm rounded-lg sm:rounded-xl">
+            <div class="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-white">3 Siècles</div>
+            <div class="text-[10px] sm:text-xs md:text-sm text-orange-200">d'histoire</div>
+          </div>
+          <div class="text-center p-2 sm:p-3 md:p-4 bg-white/5 backdrop-blur-sm rounded-lg sm:rounded-xl">
+            <div class="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-white">+50</div>
+            <div class="text-[10px] sm:text-xs md:text-sm text-orange-200">figures</div>
+          </div>
+          <div class="text-center p-2 sm:p-3 md:p-4 bg-white/5 backdrop-blur-sm rounded-lg sm:rounded-xl">
+            <div class="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-white">3</div>
+            <div class="text-[10px] sm:text-xs md:text-sm text-orange-200">grands quartiers</div>
+          </div>
+          <div class="text-center p-2 sm:p-3 md:p-4 bg-white/5 backdrop-blur-sm rounded-lg sm:rounded-xl">
+            <div class="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-white">∞</div>
+            <div class="text-[10px] sm:text-xs md:text-sm text-orange-200">traditions</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="absolute bottom-4 sm:bottom-8 left-1/2 transform -translate-x-1/2 z-10 animate-bounce-slow hidden sm:block">
+      <div class="w-5 sm:w-6 h-8 sm:h-10 border-2 border-white/30 rounded-full flex justify-center">
+        <div class="w-1 h-1.5 sm:h-2 bg-white/50 rounded-full mt-2 animate-pulse"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Message du Roi -->
+  <section id="message-roi" class="py-8 sm:py-12 md:py-16 lg:py-20 bg-white">
+    <div class="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <MessageRoi />
+    </div>
+  </section>
+
+  <!-- Grille des rubriques -->
+  <section class="py-8 sm:py-12 md:py-16 lg:py-20 bg-gray-50">
+    <div class="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <RubriquesGrid />
+    </div>
+  </section>
+
+  <!-- Section Actualité (4 derniers articles) -->
+  <section class="py-8 sm:py-12 md:py-16 lg:py-20 bg-white">
+    <div class="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <div class="text-center mb-8 sm:mb-12">
+        <h2 class="font-['Playfair_Display'] text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4">
+          Actualités <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600">Bandenkop</span>
+        </h2>
+        <p class="text-sm sm:text-base md:text-lg text-gray-600 max-w-2xl mx-auto">
+          Restez informé des dernières nouvelles de la communauté
+        </p>
+      </div>
+
+      {derniersArticles.length > 0 ? (
+        <div class="grid md:grid-cols-2 gap-6 lg:gap-8">
+          {derniersArticles.map((article, index) => (
+            <article class="group bg-white rounded-xl sm:rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-500">
+              <div class="relative h-48 sm:h-56 overflow-hidden">
+                <img 
+                  src={article.image || '/images/default-article.jpg'} 
+                  alt={article.titre} 
+                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  onerror="this.src='/images/default-article.jpg'"
+                />
+                <div class="absolute top-3 sm:top-4 left-3 sm:left-4">
+                  <span class="bg-orange-600 text-white px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold">
+                    {article.categorie}
+                  </span>
+                </div>
+              </div>
+              <div class="p-4 sm:p-5 md:p-6">
+                <div class="flex items-center text-[10px] sm:text-xs text-gray-500 mb-2">
+                  <span>{new Date(article.datePublication).toLocaleDateString('fr-FR')}</span>
+                  <span class="mx-2">•</span>
+                  <span>Par {article.auteur}</span>
+                </div>
+                <h3 class="text-base sm:text-lg md:text-xl font-bold text-gray-800 mb-2 line-clamp-2">{article.titre}</h3>
+                <p class="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4 line-clamp-3">{article.resume}</p>
+                <div class="flex items-center justify-between">
+                  <span class="text-xs text-gray-500">{article.vues || 0} vues</span>
+                  <a 
+                    href={`/actualite/${article._id}`} 
+                    class="inline-flex items-center text-orange-600 font-semibold hover:text-orange-800 transition-colors text-xs sm:text-sm"
+                  >
+                    Lire la suite
+                    <svg class="w-3 h-3 sm:w-4 sm:h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-12">
+          <p class="text-gray-500">Aucune actualité pour le moment.</p>
+        </div>
+      )}
+
+      <div class="text-center mt-8 sm:mt-10 md:mt-12">
+        <a 
+          href="/actualite" 
+          class="inline-flex items-center bg-gradient-to-r from-orange-600 to-red-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-semibold hover:shadow-xl transform hover:scale-105 transition-all duration-300 text-sm sm:text-base"
+        >
+          Voir toutes les actualités
+          <svg class="w-4 sm:w-5 h-4 sm:h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section Histoire -->
+  <!-- Section Histoire (modifiée pour n'afficher que 3 chapitres) -->
+<section class="py-8 sm:py-12 md:py-16 lg:py-20 bg-white">
+  <div class="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <div class="text-center mb-8 sm:mb-12">
+      <h2 class="font-['Playfair_Display'] text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4">
+        Notre <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600">Histoire</span>
+      </h2>
+      <p class="text-sm sm:text-base md:text-lg text-gray-600 max-w-3xl mx-auto">
+        Un voyage à travers les âges, des origines mystiques aux perspectives d'avenir
+      </p>
+    </div>
+
+    <!-- Timeline interactive avec seulement les 3 premiers chapitres -->
+    <div class="relative max-w-4xl mx-auto">
+      <!-- Ligne de temps centrale (cachée sur mobile) -->
+      <div class="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-orange-300 via-red-300 to-orange-300 hidden lg:block"></div>
+
+      <div class="space-y-12">
+        <!-- Chapitre 1: Origines de Bandenkop -->
+        <div class="relative flex flex-col lg:flex-row items-center gap-8">
+          <!-- Point sur la timeline -->
+          <div class="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-orange-600 rounded-full border-4 border-white hidden lg:block"></div>
+          
+          <!-- Contenu -->
+          <div class="w-full lg:w-1/2 lg:pr-12">
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transform hover:scale-105 transition-all duration-500 group">
+              <div class="relative h-48 overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10"></div>
+                <img src="/images/histoire/origines.jpg" alt="Origines de Bandenkop" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                <div class="absolute top-4 left-4 text-4xl z-20">🌄</div>
+                <div class="absolute bottom-4 left-4 z-20">
+                  <span class="bg-orange-600 text-white px-3 py-1 rounded-full text-sm font-semibold">1700-1750</span>
+                </div>
+              </div>
+              <div class="p-6">
+                <h3 class="text-2xl font-bold text-gray-800 mb-3">Origines de Bandenkop</h3>
+                <p class="text-gray-600 mb-4">Découvrez les origines mystiques et historiques de notre village, fondé par des migrants venus des hauts plateaux.</p>
+                <ul class="space-y-2 mb-4">
+                  <li class="flex items-start space-x-2">
+                    <svg class="w-5 h-5 text-orange-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <span class="text-gray-600">Migration des premiers habitants</span>
+                  </li>
+                  <li class="flex items-start space-x-2">
+                    <svg class="w-5 h-5 text-orange-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <span class="text-gray-600">Installation sur les terres actuelles</span>
+                  </li>
+                </ul>
+                <a href="/histoire/origines" class="inline-flex items-center text-orange-600 font-semibold hover:text-orange-800 transition-colors">
+                  Lire la suite
+                  <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="hidden lg:block lg:w-1/2"></div>
+        </div>
+
+        <!-- Chapitre 2: L'Âge d'Or du Village -->
+        <div class="relative flex flex-col lg:flex-row lg:flex-row-reverse items-center gap-8">
+          <!-- Point sur la timeline -->
+          <div class="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-orange-600 rounded-full border-4 border-white hidden lg:block"></div>
+          
+          <!-- Contenu -->
+          <div class="w-full lg:w-1/2 lg:pl-12">
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transform hover:scale-105 transition-all duration-500 group">
+              <div class="relative h-48 overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10"></div>
+                <img src="/images/histoire/formation.jpg" alt="L'Âge d'Or du Village" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                <div class="absolute top-4 left-4 text-4xl z-20">🏛️</div>
+                <div class="absolute bottom-4 left-4 z-20">
+                  <span class="bg-orange-600 text-white px-3 py-1 rounded-full text-sm font-semibold">1750-1850</span>
+                </div>
+              </div>
+              <div class="p-6">
+                <h3 class="text-2xl font-bold text-gray-800 mb-3">L'Âge d'Or du Village</h3>
+                <p class="text-gray-600 mb-4">La structuration sociale et politique, l'établissement des chefferies et des notabilités.</p>
+                <ul class="space-y-2 mb-4">
+                  <li class="flex items-start space-x-2">
+                    <svg class="w-5 h-5 text-orange-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <span class="text-gray-600">Création des premières institutions</span>
+                  </li>
+                  <li class="flex items-start space-x-2">
+                    <svg class="w-5 h-5 text-orange-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <span class="text-gray-600">Mise en place du système de notabilité</span>
+                  </li>
+                </ul>
+                <a href="/histoire/formation" class="inline-flex items-center text-orange-600 font-semibold hover:text-orange-800 transition-colors">
+                  Lire la suite
+                  <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="hidden lg:block lg:w-1/2"></div>
+        </div>
+
+        <!-- Chapitre 3: Les Grandes Alliances -->
+        <div class="relative flex flex-col lg:flex-row items-center gap-8">
+          <!-- Point sur la timeline -->
+          <div class="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-orange-600 rounded-full border-4 border-white hidden lg:block"></div>
+          
+          <!-- Contenu -->
+          <div class="w-full lg:w-1/2 lg:pr-12">
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transform hover:scale-105 transition-all duration-500 group">
+              <div class="relative h-48 overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10"></div>
+                <img src="/images/histoire/alliances.jpg" alt="Les Grandes Alliances" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                <div class="absolute top-4 left-4 text-4xl z-20">🤝</div>
+                <div class="absolute bottom-4 left-4 z-20">
+                  <span class="bg-orange-600 text-white px-3 py-1 rounded-full text-sm font-semibold">1850-1900</span>
+                </div>
+              </div>
+              <div class="p-6">
+                <h3 class="text-2xl font-bold text-gray-800 mb-3">Les Grandes Alliances</h3>
+                <p class="text-gray-600 mb-4">Les pactes d'amitié et de fraternité avec les villages voisins qui façonnent encore aujourd'hui nos relations.</p>
+                <ul class="space-y-2 mb-4">
+                  <li class="flex items-start space-x-2">
+                    <svg class="w-5 h-5 text-orange-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <span class="text-gray-600">Alliance avec Bangou</span>
+                  </li>
+                  <li class="flex items-start space-x-2">
+                    <svg class="w-5 h-5 text-orange-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <span class="text-gray-600">Pacte de non-agression avec les villages voisins</span>
+                  </li>
+                </ul>
+                <a href="/histoire/alliances" class="inline-flex items-center text-orange-600 font-semibold hover:text-orange-800 transition-colors">
+                  Lire la suite
+                  <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="hidden lg:block lg:w-1/2"></div>
+        </div>
+      </div>
+
+      <!-- Bouton pour voir toute l'histoire -->
+      <div class="text-center mt-8 sm:mt-10 md:mt-12">
+        <a 
+          href="/histoire" 
+          class="inline-flex items-center bg-gradient-to-r from-orange-600 to-red-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-semibold hover:shadow-xl transform hover:scale-105 transition-all duration-300 text-sm sm:text-base"
+        >
+          Découvrir toute l'histoire
+          <svg class="w-4 sm:w-5 h-4 sm:h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+  <!-- Section Culture -->
+  <section class="py-8 sm:py-12 md:py-16 lg:py-20 bg-gray-50">
+    <div class="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <CultureSection />
+    </div>
+  </section>
+
+  <!-- Section Découverte -->
+  <section class="py-8 sm:py-12 md:py-16 lg:py-20 bg-gray-50">
+    <div class="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <DecouverteSection />
+    </div>
+  </section>
+
+  <!-- Section Projets -->
+  <section class="py-8 sm:py-12 md:py-16 lg:py-20 bg-white">
+    <div class="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <ProjetSection />
+    </div>
+  </section>
+
+  <!-- Section Apprentissage -->
+  <section class="py-12 sm:py-16 md:py-20 lg:py-24 bg-gradient-to-br from-orange-900 via-red-900 to-amber-900 relative overflow-hidden">
+    <div class="absolute top-0 left-0 w-48 sm:w-64 h-48 sm:h-64 bg-orange-500/20 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-0 right-0 w-64 sm:w-96 h-64 sm:h-96 bg-red-500/20 rounded-full blur-3xl"></div>
+    <div class="absolute inset-0 opacity-5" style="background-image: url('/patterns/african-pattern.svg'); background-size: 100px; background-repeat: repeat;"></div>
+    
+    <div class="relative z-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <div class="text-center text-white mb-6 sm:mb-8 md:mb-10 lg:mb-12 reveal">
+        <h2 class="font-['Playfair_Display'] text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 sm:mb-3 md:mb-4">Apprenez le Bandenkop</h2>
+        <p class="text-sm sm:text-base md:text-lg text-orange-200 max-w-2xl mx-auto px-4">
+          Une méthode immersive pour maîtriser la langue et la culture
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 md:gap-4 lg:gap-6 mb-6 sm:mb-8 md:mb-10 lg:mb-12 reveal">
+        <div class="bg-white/10 backdrop-blur-lg rounded-xl p-2 sm:p-3 md:p-4 text-center">
+          <div class="text-lg sm:text-xl md:text-2xl font-bold text-white">150+</div>
+          <div class="text-[10px] sm:text-xs text-orange-200">mots appris</div>
+        </div>
+        <div class="bg-white/10 backdrop-blur-lg rounded-xl p-2 sm:p-3 md:p-4 text-center">
+          <div class="text-lg sm:text-xl md:text-2xl font-bold text-white">25</div>
+          <div class="text-[10px] sm:text-xs text-orange-200">leçons</div>
+        </div>
+        <div class="bg-white/10 backdrop-blur-lg rounded-xl p-2 sm:p-3 md:p-4 text-center">
+          <div class="text-lg sm:text-xl md:text-2xl font-bold text-white">1000+</div>
+          <div class="text-[10px] sm:text-xs text-orange-200">apprenants</div>
+        </div>
+        <div class="bg-white/10 backdrop-blur-lg rounded-xl p-2 sm:p-3 md:p-4 text-center">
+          <div class="text-lg sm:text-xl md:text-2xl font-bold text-white">4.8/5</div>
+          <div class="text-[10px] sm:text-xs text-orange-200">note</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 md:gap-5 lg:gap-6 reveal">
+        <div class="bg-white/10 backdrop-blur-lg rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-5 lg:p-6 hover:bg-white/20 transition-all duration-500 group">
+          <div class="flex items-center justify-between mb-2 sm:mb-3">
+            <span class="text-xl sm:text-2xl md:text-3xl lg:text-4xl transform group-hover:scale-110 group-hover:rotate-6 transition-transform">🌱</span>
+            <span class="bg-green-500/30 text-green-300 px-1.5 sm:px-2 py-0.5 rounded-full text-[8px] sm:text-xs font-semibold">Niv.1</span>
+          </div>
+          <h3 class="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-white mb-1">Débutant</h3>
+          <p class="text-[10px] sm:text-xs text-orange-200 mb-2 sm:mb-3">Salutations, nombres</p>
+          <div class="space-y-1">
+            <div class="flex justify-between text-[8px] sm:text-xs">
+              <span class="text-orange-200">Prog.</span>
+              <span class="text-white">0%</span>
+            </div>
+            <div class="h-1 bg-white/20 rounded-full overflow-hidden">
+              <div class="w-0 h-full bg-gradient-to-r from-green-400 to-green-500 rounded-full transition-all duration-1000 group-hover:w-1/3"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white/10 backdrop-blur-lg rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-5 lg:p-6 hover:bg-white/20 transition-all duration-500 group">
+          <div class="flex items-center justify-between mb-2 sm:mb-3">
+            <span class="text-xl sm:text-2xl md:text-3xl lg:text-4xl transform group-hover:scale-110 group-hover:rotate-6 transition-transform">🌿</span>
+            <span class="bg-yellow-500/30 text-yellow-300 px-1.5 sm:px-2 py-0.5 rounded-full text-[8px] sm:text-xs font-semibold">Niv.2</span>
+          </div>
+          <h3 class="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-white mb-1">Intermédiaire</h3>
+          <p class="text-[10px] sm:text-xs text-orange-200 mb-2 sm:mb-3">Verbes, phrases</p>
+          <div class="space-y-1">
+            <div class="flex justify-between text-[8px] sm:text-xs">
+              <span class="text-orange-200">Prog.</span>
+              <span class="text-white">0%</span>
+            </div>
+            <div class="h-1 bg-white/20 rounded-full overflow-hidden">
+              <div class="w-0 h-full bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-full transition-all duration-1000 group-hover:w-1/2"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-span-2 md:col-span-1 bg-white/10 backdrop-blur-lg rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-5 lg:p-6 hover:bg-white/20 transition-all duration-500 group">
+          <div class="flex items-center justify-between mb-2 sm:mb-3">
+            <span class="text-xl sm:text-2xl md:text-3xl lg:text-4xl transform group-hover:scale-110 group-hover:rotate-6 transition-transform">🌳</span>
+            <span class="bg-red-500/30 text-red-300 px-1.5 sm:px-2 py-0.5 rounded-full text-[8px] sm:text-xs font-semibold">Niv.3</span>
+          </div>
+          <h3 class="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-white mb-1">Avancé</h3>
+          <p class="text-[10px] sm:text-xs text-orange-200 mb-2 sm:mb-3">Proverbes, contes</p>
+          <div class="space-y-1">
+            <div class="flex justify-between text-[8px] sm:text-xs">
+              <span class="text-orange-200">Prog.</span>
+              <span class="text-white">0%</span>
+            </div>
+            <div class="h-1 bg-white/20 rounded-full overflow-hidden">
+              <div class="w-0 h-full bg-gradient-to-r from-red-400 to-red-500 rounded-full transition-all duration-1000 group-hover:w-1/4"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center mt-6 sm:mt-8 md:mt-10 lg:mt-12 reveal">
+        <a href="/apprentissage" class="inline-flex items-center bg-white text-orange-900 px-5 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 rounded-xl sm:rounded-2xl font-bold hover:shadow-2xl transform hover:scale-105 transition-all duration-300 text-sm sm:text-base">
+          Commencer l'apprentissage
+          <svg class="w-4 sm:w-5 h-4 sm:h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <ScrollToTop />
 </Layout>

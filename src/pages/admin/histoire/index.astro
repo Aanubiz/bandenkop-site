@@ -1,0 +1,543 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import AdminLayout from '../../../components/admin/AdminLayout.astro';
+import AuthCheck from '../../../components/AuthCheck.astro';
+---
+
+<Layout title="Admin - Articles d'histoire">
+  <AuthCheck>
+    <AdminLayout>
+      <div class="space-y-6">
+        <div class="flex justify-between items-center">
+          <h1 class="text-2xl font-bold text-gray-800">📜 Articles d'histoire</h1>
+          <button onclick="openModal()" class="bg-gradient-to-r from-orange-600 to-red-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transition">
+            + Nouvel article
+          </button>
+        </div>
+
+        <!-- Liste des articles -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+          <table class="w-full">
+            <thead class="bg-orange-50">
+               <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-orange-800 uppercase">Image</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-orange-800 uppercase">Titre</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-orange-800 uppercase">Période</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-orange-800 uppercase">Chapitre</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-orange-800 uppercase">Vues</th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-orange-800 uppercase">Actions</th>
+               </tr>
+            </thead>
+            <tbody id="articles-list" class="divide-y divide-gray-200">
+               <tr><td colspan="6" class="px-6 py-4 text-center text-gray-500">Chargement...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Modal d'ajout/édition avec éditeur WYSIWYG -->
+      <div id="articleModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+          <div class="border-b-2 border-orange-600 pb-2 mb-4">
+            <h2 id="modalTitle" class="text-xl font-bold text-orange-700">📜 Article d'histoire</h2>
+          </div>
+          
+          <form id="articleForm" class="space-y-4">
+            <input type="hidden" id="articleId">
+            
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Titre *</label>
+                <input type="text" id="titre" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Slug (URL) *</label>
+                <input type="text" id="slug" required class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-orange-50 focus:ring-2 focus:ring-orange-500">
+                <p class="text-xs text-gray-500 mt-1">Généré automatiquement si vide</p>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Sous-titre</label>
+              <input type="text" id="sousTitre" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Période</label>
+                <input type="text" id="periode" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500" placeholder="ex: 1700-1750">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Chapitre</label>
+                <select id="chapitre" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500">
+                  <option value="origines">🌄 Origines</option>
+                  <option value="formation">🏛️ Formation</option>
+                  <option value="alliances">🤝 Alliances</option>
+                  <option value="batailles">⚔️ Batailles</option>
+                  <option value="resistance">✊ Résistance</option>
+                  <option value="exil">🚶 Exil</option>
+                  <option value="retour">🏡 Retour</option>
+                  <option value="reconstruction">🏗️ Reconstruction</option>
+                  <option value="perspectives">🚀 Perspectives</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Image de couverture avec upload -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Image de couverture</label>
+              <div class="flex items-center space-x-4">
+                <input type="text" id="imageCouverture" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500">
+                <div class="relative">
+                  <input type="file" id="imageFile" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer">
+                  <button type="button" onclick="document.getElementById('imageFile').click()" class="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition">📁 Parcourir</button>
+                </div>
+              </div>
+              <div id="imagePreview" class="mt-2 hidden">
+                <img id="previewImg" class="w-32 h-32 object-cover rounded-lg shadow">
+              </div>
+            </div>
+
+            <!-- Résumé -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Résumé</label>
+              <textarea id="resume" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"></textarea>
+            </div>
+
+            <!-- Éditeur WYSIWYG complet -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Contenu de l'article *</label>
+              
+              <!-- Barre d'outils complète -->
+              <div class="flex flex-wrap gap-1 mb-2 p-2 bg-gray-50 rounded-lg border border-gray-200 sticky top-0">
+                <button type="button" onclick="execCommand('bold')" class="p-2 hover:bg-gray-200 rounded" title="Gras"><b>G</b></button>
+                <button type="button" onclick="execCommand('italic')" class="p-2 hover:bg-gray-200 rounded" title="Italique"><i>I</i></button>
+                <button type="button" onclick="execCommand('underline')" class="p-2 hover:bg-gray-200 rounded" title="Souligné"><u>S</u></button>
+                <div class="w-px h-6 bg-gray-300 mx-1"></div>
+                <button type="button" onclick="execCommand('foreColor', '#f97316')" class="p-2 hover:bg-gray-200 rounded" title="Couleur orange"><span class="text-orange-600">A</span></button>
+                <button type="button" onclick="execCommand('foreColor', '#dc2626')" class="p-2 hover:bg-gray-200 rounded" title="Couleur rouge"><span class="text-red-600">A</span></button>
+                <button type="button" onclick="execCommand('foreColor', '#3b82f6')" class="p-2 hover:bg-gray-200 rounded" title="Couleur bleue"><span class="text-blue-600">A</span></button>
+                <button type="button" onclick="execCommand('foreColor', '#10b981')" class="p-2 hover:bg-gray-200 rounded" title="Couleur verte"><span class="text-green-600">A</span></button>
+                <div class="w-px h-6 bg-gray-300 mx-1"></div>
+                <select onchange="execCommand('fontSize', this.value)" class="p-1 border rounded text-sm">
+                  <option value="">Taille</option>
+                  <option value="1">Très petit</option>
+                  <option value="3">Normal</option>
+                  <option value="5">Grand</option>
+                  <option value="7">Très grand</option>
+                </select>
+                <div class="w-px h-6 bg-gray-300 mx-1"></div>
+                <button type="button" onclick="insertFormat('h2')" class="p-2 hover:bg-gray-200 rounded text-sm font-bold">Titre H2</button>
+                <button type="button" onclick="insertFormat('h3')" class="p-2 hover:bg-gray-200 rounded text-sm font-bold">Titre H3</button>
+                <button type="button" onclick="insertFormat('blockquote')" class="p-2 hover:bg-gray-200 rounded text-sm italic">Citation</button>
+                <div class="w-px h-6 bg-gray-300 mx-1"></div>
+                <button type="button" onclick="insertImageFloat('left')" class="p-2 hover:bg-gray-200 rounded text-sm">🖼️ Gauche</button>
+                <button type="button" onclick="insertImageFloat('right')" class="p-2 hover:bg-gray-200 rounded text-sm">🖼️ Droite</button>
+                <button type="button" onclick="insertImageFloat('center')" class="p-2 hover:bg-gray-200 rounded text-sm">🖼️ Centrée</button>
+                <button type="button" onclick="uploadAndInsertImage()" class="p-2 bg-orange-600 text-white rounded hover:bg-orange-700 text-sm">📤 Upload</button>
+                <div class="w-px h-6 bg-gray-300 mx-1"></div>
+                <button type="button" onclick="execCommand('insertUnorderedList')" class="p-2 hover:bg-gray-200 rounded" title="Liste à puces">• Liste</button>
+                <button type="button" onclick="execCommand('insertOrderedList')" class="p-2 hover:bg-gray-200 rounded" title="Liste numérotée">1. Liste</button>
+              </div>
+              
+              <!-- Zone d'édition (contenteditable) -->
+              <div 
+                id="editor" 
+                contenteditable="true" 
+                class="w-full min-h-[400px] p-4 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 overflow-y-auto prose prose-sm max-w-none"
+                style="font-family: 'Georgia', serif; line-height: 1.6;"
+              ></div>
+              
+              <!-- Champ caché pour le HTML -->
+              <textarea id="contenu" class="hidden"></textarea>
+              
+              <div class="mt-2 text-xs text-gray-500">
+                <details>
+                  <summary class="cursor-pointer text-orange-600 font-medium">📖 Guide de mise en forme</summary>
+                  <div class="mt-2 p-3 bg-orange-50 rounded-lg space-y-2">
+                    <p><strong>Mise en forme du texte :</strong> Sélectionnez le texte puis cliquez sur les boutons (Gras, Italique, Couleur)</p>
+                    <p><strong>Images flottantes :</strong> Cliquez sur 🖼️ Gauche/Droite/Centrée pour insérer une image</p>
+                    <p><strong>Citations :</strong> Sélectionnez le texte puis cliquez sur "Citation"</p>
+                  </div>
+                </details>
+              </div>
+            </div>
+
+            <!-- Auteur -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Auteur</label>
+              <input type="text" id="auteur" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500" value="Comité d'histoire de Bandenkop">
+            </div>
+
+            <!-- Tags -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Tags (séparés par des virgules)</label>
+              <input type="text" id="tags" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500">
+            </div>
+
+            <div class="flex space-x-3 pt-4">
+              <button type="submit" class="flex-1 bg-gradient-to-r from-orange-600 to-red-600 text-white py-2 rounded-lg font-semibold hover:shadow-lg transition">Enregistrer</button>
+              <button type="button" onclick="closeModal()" class="flex-1 bg-gray-200 text-gray-800 py-2 rounded-lg font-semibold hover:bg-gray-300 transition">Annuler</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </AdminLayout>
+  </AuthCheck>
+
+  <script>
+    import { getToken } from '../../../utils/auth';
+
+    interface HistoryArticle {
+      _id: string;
+      titre: string;
+      slug: string;
+      sousTitre?: string;
+      periode?: string;
+      chapitre?: string;
+      imageCouverture?: string;
+      resume?: string;
+      contenu?: string;
+      auteur?: string;
+      tags?: string[];
+      vues?: number;
+    }
+
+    type EditorFormat = 'h2' | 'h3' | 'blockquote';
+    type FloatPosition = 'left' | 'right' | 'center';
+
+    const appWindow = window as Window & typeof globalThis & {
+      openModal: () => void;
+      closeModal: () => void;
+      editArticle: (id: string) => Promise<void>;
+      deleteArticle: (id: string) => Promise<void>;
+      execCommand: (command: string, value?: string) => void;
+      insertFormat: (type: EditorFormat) => void;
+      insertImageFloat: (position: FloatPosition) => void;
+      uploadAndInsertImage: () => Promise<void>;
+      insertImageAtCursor: (html: string) => void;
+    };
+
+    const API_URL = 'http://localhost:3001';
+    let token = getToken();
+
+    // ===== FONCTIONS D'ÉDITION =====
+    function execCommand(command: string, value?: string) {
+      document.execCommand(command, false, value);
+      const editor = document.getElementById('editor');
+      editor?.focus();
+    }
+
+    function insertFormat(type: EditorFormat) {
+      const selection = window.getSelection();
+      if (!selection || selection.rangeCount === 0) return;
+      const range = selection.getRangeAt(0);
+      const selectedText = selection.toString();
+      
+      let html = '';
+      switch(type) {
+        case 'h2': html = `<h2>${selectedText || 'Titre de section'}</h2>`; break;
+        case 'h3': html = `<h3>${selectedText || 'Sous-titre'}</h3>`; break;
+        case 'blockquote': html = `<blockquote>${selectedText || 'Votre citation ici...'}<cite>— Auteur</cite></blockquote>`; break;
+        default: return;
+      }
+      
+      if (selectedText) {
+        range.deleteContents();
+        const fragment = range.createContextualFragment(html);
+        range.insertNode(fragment);
+      } else {
+        document.execCommand('insertHTML', false, html);
+      }
+    }
+    
+    function insertImageFloat(position: FloatPosition) {
+      const imageUrl = prompt('Entrez l\'URL de l\'image:', '/uploads/histoire/image.jpg');
+      if (!imageUrl) return;
+      const altText = prompt('Description de l\'image:', 'Description');
+      const imageHtml = `<img src="${imageUrl}" alt="${altText || ''}" class="float-${position}" style="max-width: 300px; margin: 0 1rem 1rem 0;" />`;
+      document.execCommand('insertHTML', false, imageHtml);
+    }
+    
+    async function uploadAndInsertImage() {
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = 'image/*';
+      fileInput.onchange = async (e: Event) => {
+        const file = (e.target as HTMLInputElement).files?.[0];
+        if (!file) return;
+        
+        const formData = new FormData();
+        formData.append('image', file);
+        
+        try {
+          const response = await fetch(`${API_URL}/api/histoire/upload`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${token}` },
+            body: formData
+          });
+          
+          if (response.ok) {
+            const data = await response.json();
+            const position = prompt('Position de l\'image? (left, right, center)', 'center');
+            const imageHtml = `<img src="${data.imageUrl}" alt="Image uploadée" class="float-${position}" style="max-width: 300px; margin: 1rem;" />`;
+            document.execCommand('insertHTML', false, imageHtml);
+          } else {
+            alert('Erreur lors de l\'upload');
+          }
+        } catch (error) {
+          console.error('Erreur upload:', error);
+          alert('Erreur de connexion');
+        }
+      };
+      fileInput.click();
+    }
+
+    function insertImageAtCursor(html: string) {
+      document.execCommand('insertHTML', false, html);
+    }
+    
+    function updateHiddenContent() {
+      const editor = document.getElementById('editor');
+      const hidden = document.getElementById('contenu') as HTMLTextAreaElement | null;
+      if (editor && hidden) {
+        hidden.value = editor.innerHTML;
+      }
+    }
+    
+    function setEditorContent(html: string) {
+      const editor = document.getElementById('editor');
+      if (editor) {
+        editor.innerHTML = html || '<p>Commencez à écrire votre article...</p>';
+        updateHiddenContent();
+      }
+    }
+    
+    function previewImage(input: HTMLInputElement) {
+      const preview = document.getElementById('imagePreview');
+      const previewImg = document.getElementById('previewImg') as HTMLImageElement | null;
+      if (!preview || !previewImg) return;
+      
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e: ProgressEvent<FileReader>) {
+          if (typeof e.target?.result === 'string') {
+            previewImg.src = e.target.result;
+            preview.classList.remove('hidden');
+          }
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    document.getElementById('imageFile')?.addEventListener('change', function() {
+      previewImage(this as HTMLInputElement);
+    });
+    
+    document.getElementById('editor')?.addEventListener('input', updateHiddenContent);
+    document.getElementById('editor')?.addEventListener('blur', updateHiddenContent);
+
+    // Générer le slug automatiquement
+    document.getElementById('titre')?.addEventListener('input', (e) => {
+      const slugInput = document.getElementById('slug') as HTMLInputElement;
+      if (!slugInput) return;
+      if (!slugInput.value || slugInput.value === '') {
+        const target = e.target as HTMLInputElement;
+        const slug = target.value
+          .toLowerCase()
+          .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-|-$/g, '');
+        slugInput.value = slug;
+      }
+    });
+
+    async function loadArticles() {
+      try {
+        const response = await fetch(`${API_URL}/api/histoire/articles`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const articles: HistoryArticle[] = await response.json();
+        const tbody = document.getElementById('articles-list');
+        if (!tbody) return;
+        
+        if (articles.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500">Aucun article</td></tr>';
+          return;
+        }
+        
+        tbody.innerHTML = articles.map((article: HistoryArticle) => `
+          <tr class="hover:bg-orange-50 transition-colors">
+            <td class="px-6 py-4">
+              <img src="${article.imageCouverture || '/images/default-article.jpg'}" class="w-12 h-12 rounded-lg object-cover">
+             </td>
+            <td class="px-6 py-4 font-medium text-gray-800">${article.titre}</td>
+            <td class="px-6 py-4 text-gray-600">${article.periode || '-'}</td>
+            <td class="px-6 py-4"><span class="px-2 py-1 text-xs rounded-full bg-orange-100 text-orange-800">${getChapitreIcon(article.chapitre)} ${article.chapitre || '-'}</span></td>
+            <td class="px-6 py-4 text-gray-600">${article.vues || 0}</td>
+            <td class="px-6 py-4 text-right space-x-2">
+              <button onclick="editArticle('${article._id}')" class="text-blue-600 hover:text-blue-800 p-1" title="Modifier">✏️</button>
+              <button onclick="deleteArticle('${article._id}')" class="text-red-600 hover:text-red-800 p-1" title="Supprimer">🗑️</button>
+             </td>
+           </tr>
+        `).join('');
+      } catch (error) {
+        console.error('Erreur chargement:', error);
+      }
+    }
+
+    function getChapitreIcon(chapitre?: string) {
+      const icons: Record<string, string> = {
+        origines: '🌄', formation: '🏛️', alliances: '🤝',
+        batailles: '⚔️', resistance: '✊', exil: '🚶',
+        retour: '🏡', reconstruction: '🏗️', perspectives: '🚀'
+      };
+      return chapitre ? (icons[chapitre] || '📜') : '📜';
+    }
+
+    appWindow.openModal = () => {
+      const modal = document.getElementById('articleModal');
+      if (!modal) return;
+      const modalTitle = document.getElementById('modalTitle');
+      if (modalTitle) modalTitle.textContent = '📜 Ajouter un article d\'histoire';
+      (document.getElementById('articleId') as HTMLInputElement).value = '';
+      (document.getElementById('articleForm') as HTMLFormElement).reset();
+      document.getElementById('imagePreview')?.classList.add('hidden');
+      setEditorContent('');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    };
+
+    appWindow.closeModal = () => {
+      const modal = document.getElementById('articleModal');
+      if (!modal) return;
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    };
+
+    appWindow.editArticle = async (id: string) => {
+      try {
+        const response = await fetch(`${API_URL}/api/histoire/articles/${id}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const article = await response.json();
+        
+        (document.getElementById('modalTitle') as HTMLElement).textContent = '✏️ Modifier l\'article d\'histoire';
+        (document.getElementById('articleId') as HTMLInputElement).value = article._id;
+        (document.getElementById('titre') as HTMLInputElement).value = article.titre;
+        (document.getElementById('slug') as HTMLInputElement).value = article.slug;
+        (document.getElementById('sousTitre') as HTMLInputElement).value = article.sousTitre || '';
+        (document.getElementById('periode') as HTMLInputElement).value = article.periode || '';
+        (document.getElementById('chapitre') as HTMLSelectElement).value = article.chapitre || '';
+        (document.getElementById('imageCouverture') as HTMLInputElement).value = article.imageCouverture || '';
+        (document.getElementById('resume') as HTMLTextAreaElement).value = article.resume || '';
+        (document.getElementById('auteur') as HTMLInputElement).value = article.auteur || 'Comité d\'histoire de Bandenkop';
+        (document.getElementById('tags') as HTMLInputElement).value = (article.tags || []).join(', ');
+        
+        setEditorContent(article.contenu || '');
+        
+        if (article.imageCouverture) {
+          const preview = document.getElementById('imagePreview');
+          const previewImg = document.getElementById('previewImg') as HTMLImageElement;
+          if (preview && previewImg) {
+            previewImg.src = article.imageCouverture;
+            preview.classList.remove('hidden');
+          }
+        }
+        
+        appWindow.openModal();
+      } catch (error) {
+        console.error('Erreur chargement article:', error);
+      }
+    };
+
+    appWindow.deleteArticle = async (id: string) => {
+      if (!confirm('Supprimer cet article définitivement ?')) return;
+      try {
+        await fetch(`${API_URL}/api/histoire/articles/${id}`, {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        loadArticles();
+      } catch (error) {
+        console.error('Erreur suppression:', error);
+      }
+    };
+
+    document.getElementById('articleForm')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      updateHiddenContent();
+      
+      const id = (document.getElementById('articleId') as HTMLInputElement).value;
+      const fileInput = document.getElementById('imageFile') as HTMLInputElement;
+      let imageUrl = (document.getElementById('imageCouverture') as HTMLInputElement).value;
+      
+      if (fileInput.files && fileInput.files[0]) {
+        const formData = new FormData();
+        formData.append('image', fileInput.files[0]);
+        
+        try {
+          const uploadResponse = await fetch(`${API_URL}/api/histoire/upload`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${token}` },
+            body: formData
+          });
+          if (uploadResponse.ok) {
+            const uploadData = await uploadResponse.json();
+            imageUrl = uploadData.imageUrl;
+          }
+        } catch (error) {
+          console.error('Erreur upload:', error);
+        }
+      }
+      
+      const data = {
+        titre: (document.getElementById('titre') as HTMLInputElement).value,
+        slug: (document.getElementById('slug') as HTMLInputElement).value,
+        sousTitre: (document.getElementById('sousTitre') as HTMLInputElement).value,
+        periode: (document.getElementById('periode') as HTMLInputElement).value,
+        chapitre: (document.getElementById('chapitre') as HTMLSelectElement).value,
+        imageCouverture: imageUrl,
+        resume: (document.getElementById('resume') as HTMLTextAreaElement).value,
+        contenu: (document.getElementById('contenu') as HTMLTextAreaElement).value,
+        auteur: (document.getElementById('auteur') as HTMLInputElement).value,
+        tags: (document.getElementById('tags') as HTMLInputElement).value.split(',').map((t: string) => t.trim()).filter((t: string) => t)
+      };
+      
+      const url = id ? `${API_URL}/api/histoire/articles/${id}` : `${API_URL}/api/histoire/articles`;
+      const method = id ? 'PUT' : 'POST';
+      
+      try {
+        const response = await fetch(url, {
+          method,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(data)
+        });
+        
+        if (response.ok) {
+          appWindow.closeModal();
+          loadArticles();
+        } else {
+          const error = await response.json();
+          alert('Erreur: ' + (error.error || 'Erreur inconnue'));
+        }
+      } catch (error) {
+        console.error('Erreur:', error);
+        alert('Erreur lors de l\'enregistrement');
+      }
+    });
+
+    // Exposer les fonctions globalement
+    appWindow.execCommand = execCommand;
+    appWindow.insertFormat = insertFormat;
+    appWindow.insertImageFloat = insertImageFloat;
+    appWindow.uploadAndInsertImage = uploadAndInsertImage;
+    appWindow.insertImageAtCursor = insertImageAtCursor;
+
+    loadArticles();
+  </script>
+</Layout>

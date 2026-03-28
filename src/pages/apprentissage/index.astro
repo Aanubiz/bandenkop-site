@@ -1,0 +1,309 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ClassementQuartiers from '../../components/Apprentissage/ClassementQuartiers.astro';
+
+const rubriques = [
+  {
+    id: 'quiz',
+    titre: 'Quiz culturel',
+    description: 'Teste tes connaissances sur l\'histoire et la culture',
+    icone: '📝',
+    couleur: 'from-orange-500 to-red-500',
+    statistiques: { questions: 50, utilisateurs: 234 }
+  },
+  {
+    id: 'prononciation',
+    titre: 'Prononciation',
+    description: 'Apprends à prononcer les mots correctement',
+    icone: '🎤',
+    couleur: 'from-green-500 to-emerald-500',
+    statistiques: { mots: 30, utilisateurs: 156 }
+  },
+  {
+    id: 'ecriture',
+    titre: 'Écriture',
+    description: 'Entraîne-toi à écrire en Bandenkop',
+    icone: '✍️',
+    couleur: 'from-blue-500 to-indigo-500',
+    statistiques: { caracteres: 25, utilisateurs: 89 }
+  },
+  {
+    id: 'phonetique',
+    titre: 'Phonétique',
+    description: 'Maîtrise les sons spécifiques',
+    icone: '🔊',
+    couleur: 'from-purple-500 to-pink-500',
+    statistiques: { sons: 20, utilisateurs: 67 }
+  },
+  {
+    id: 'association',
+    titre: 'Association mot-image',
+    description: 'Relie les mots aux images',
+    icone: '🎯',
+    couleur: 'from-yellow-500 to-amber-500',
+    statistiques: { paires: 40, utilisateurs: 123 }
+  }
+];
+---
+
+<Layout title="Apprentissage - Bandenkop">
+  <!-- Hero Section (plus compacte) -->
+  <section class="pt-20 pb-8 bg-gradient-to-br from-orange-900 to-red-900">
+    <div class="px-4 max-w-7xl mx-auto text-center text-white">
+      <h1 class="font-['Playfair_Display'] text-2xl sm:text-3xl md:text-4xl font-bold mb-2">
+        Apprentissage
+      </h1>
+      <p class="text-sm sm:text-base text-orange-100 max-w-2xl mx-auto">
+        Choisis ta rubrique et suis la compétition entre quartiers
+      </p>
+    </div>
+  </section>
+
+  <!-- Layout principal : Classement vertical + Rubriques -->
+  <section class="py-8 bg-gray-50">
+    <div class="px-4 max-w-7xl mx-auto">
+      <!-- Sur mobile : classement en haut, puis rubriques en 2 colonnes -->
+      <!-- Sur desktop : classement à gauche, rubriques à droite -->
+      <div class="flex flex-col lg:flex-row gap-8 lg:gap-10">
+        
+        <!-- ===== CLASSEMENT VERTICAL ===== -->
+        <div class="lg:w-80 xl:w-96 flex-shrink-0">
+          <div class="sticky top-24">
+            <ClassementQuartiers />
+          </div>
+        </div>
+        
+        <!-- Trait de séparation vertical pour desktop -->
+        <div class="hidden lg:block w-px bg-gradient-to-b from-transparent via-orange-300 to-transparent"></div>
+        
+        <!-- ===== RUBRIQUES EN 2 COLONNES SUR MOBILE ===== -->
+        <div class="flex-1">
+          <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+            {rubriques.map((rubrique) => (
+              <a 
+                href={`/apprentissage/${rubrique.id}`}
+                class="group relative bg-white rounded-xl sm:rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+              >
+                <div class={`absolute inset-0 bg-gradient-to-br ${rubrique.couleur} opacity-0 group-hover:opacity-10 transition-opacity`}></div>
+                <div class="p-3 sm:p-4 md:p-5">
+                  <!-- En-tête compact -->
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-2xl sm:text-3xl md:text-4xl">{rubrique.icone}</span>
+                    <span class="text-[10px] sm:text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded-full">
+                      {rubrique.statistiques.questions || rubrique.statistiques.mots}
+                    </span>
+                  </div>
+                  
+                  <!-- Titre -->
+                  <h2 class="text-sm sm:text-base md:text-lg font-bold text-gray-800 mb-1 leading-tight">
+                    {rubrique.titre}
+                  </h2>
+                  
+                  <!-- Description (cachée sur mobile, visible sur desktop) -->
+                  <p class="hidden sm:block text-xs text-gray-600 mb-2 line-clamp-2">
+                    {rubrique.description}
+                  </p>
+                  
+                  <!-- ===== PROGRESSION PERSONNELLE AVEC IDS DYNAMIQUES ===== -->
+                  <div class="mt-2 mb-2">
+                    <div class="flex justify-between text-[8px] sm:text-[10px]">
+                      <span class="text-gray-500">Ma progression</span>
+                      <span class="font-medium text-orange-600" id={`pourcentage-${rubrique.id}`}>0%</span>
+                    </div>
+                    <div class="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                      <div class="h-full bg-gradient-to-r from-orange-500 to-red-500 rounded-full transition-all duration-1000" 
+                           id={`progression-${rubrique.id}`} 
+                           style="width: 0%"></div>
+                    </div>
+                  </div>
+                  
+                  <!-- Mini classement des quartiers avec points colorés -->
+                  <div class="mt-2 pt-2 border-t border-gray-100">
+                    <div class="flex items-center justify-between text-[8px] sm:text-[10px] mb-1">
+                      <div class="flex items-center space-x-1">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                        <span class="text-gray-500">Dnkeng</span>
+                      </div>
+                      <div class="flex items-center space-x-1">
+                        <div class="w-12 sm:w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                          <div class="h-full bg-emerald-500 rounded-full" id={`mini-${rubrique.id}-dnkeng`} style="width: 0%"></div>
+                        </div>
+                        <span class="text-gray-600 font-medium" id={`mini-pts-${rubrique.id}-dnkeng`}>0</span>
+                      </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between text-[8px] sm:text-[10px] mb-1">
+                      <div class="flex items-center space-x-1">
+                        <span class="w-2 h-2 rounded-full bg-orange-500"></span>
+                        <span class="text-gray-500">Tsèmeuhia</span>
+                      </div>
+                      <div class="flex items-center space-x-1">
+                        <div class="w-12 sm:w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                          <div class="h-full bg-orange-500 rounded-full" id={`mini-${rubrique.id}-tsemeuhia`} style="width: 0%"></div>
+                        </div>
+                        <span class="text-gray-600 font-medium" id={`mini-pts-${rubrique.id}-tsemeuhia`}>0</span>
+                      </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between text-[8px] sm:text-[10px]">
+                      <div class="flex items-center space-x-1">
+                        <span class="w-2 h-2 rounded-full bg-blue-700"></span>
+                        <span class="text-gray-500">Tsèla</span>
+                      </div>
+                      <div class="flex items-center space-x-1">
+                        <div class="w-12 sm:w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                          <div class="h-full bg-blue-700 rounded-full" id={`mini-${rubrique.id}-tsela`} style="width: 0%"></div>
+                        </div>
+                        <span class="text-gray-600 font-medium" id={`mini-pts-${rubrique.id}-tsela`}>0</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Pied de carte compact -->
+                  <div class="mt-2 flex items-center justify-between text-[10px] sm:text-xs">
+                    <span class="text-gray-500">{rubrique.statistiques.utilisateurs} apprenants</span>
+                    <span class="text-orange-600 font-medium group-hover:translate-x-1 transition-transform">
+                      →
+                    </span>
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Statistiques globales (plus compactes) -->
+  <section class="py-8 bg-white">
+    <div class="px-4 max-w-7xl mx-auto">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
+        <div class="text-center p-3 bg-orange-50 rounded-xl">
+          <div class="text-lg sm:text-xl md:text-2xl font-bold text-orange-600">150+</div>
+          <div class="text-[10px] sm:text-xs text-gray-600">questions</div>
+        </div>
+        <div class="text-center p-3 bg-orange-50 rounded-xl">
+          <div class="text-lg sm:text-xl md:text-2xl font-bold text-orange-600">30+</div>
+          <div class="text-[10px] sm:text-xs text-gray-600">mots</div>
+        </div>
+        <div class="text-center p-3 bg-orange-50 rounded-xl">
+          <div class="text-lg sm:text-xl md:text-2xl font-bold text-orange-600">500+</div>
+          <div class="text-[10px] sm:text-xs text-gray-600">apprenants</div>
+        </div>
+        <div class="text-center p-3 bg-orange-50 rounded-xl">
+          <div class="text-lg sm:text-xl md:text-2xl font-bold text-orange-600">10</div>
+          <div class="text-[10px] sm:text-xs text-gray-600">niveaux</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  // Fonction pour charger la progression personnelle
+  async function chargerProgressionPersonnelle() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    
+    const rubriques = ['quiz', 'prononciation', 'ecriture', 'phonetique', 'association'];
+    
+    for (const rubrique of rubriques) {
+      try {
+        const response = await fetch(`http://localhost:3001/api/progression/user/${rubrique}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!response.ok) continue;
+        
+        const data = await response.json();
+        
+        // Mettre à jour la barre de progression personnelle
+        const barrePerso = document.getElementById(`progression-${rubrique}`);
+        if (barrePerso) {
+          barrePerso.style.width = `${data.progression}%`;
+          // Ajouter une classe pour l'animation
+          barrePerso.classList.add('transition-all', 'duration-1000');
+        }
+        
+        // Mettre à jour le pourcentage affiché
+        const pourcentageEl = document.getElementById(`pourcentage-${rubrique}`);
+        if (pourcentageEl) {
+          pourcentageEl.textContent = `${data.progression}%`;
+        }
+        
+        // Optionnel : ajouter des infos supplémentaires dans la console pour debug
+        if (data.progression > 0) {
+          console.log(`📊 ${rubrique}: ${data.progression}% (${data.questionsReussies}/${data.totalReponses})`);
+        }
+        
+      } catch (error) {
+        console.error(`Erreur progression ${rubrique}:`, error);
+      }
+    }
+  }
+
+  // Fonction pour charger les mini classements (existante)
+  async function chargerMiniClassements() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    
+    const rubriques = ['quiz', 'prononciation', 'ecriture', 'phonetique', 'association'];
+    
+    for (const rubrique of rubriques) {
+      try {
+        const response = await fetch(`http://localhost:3001/api/classement/rubrique/${rubrique}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!response.ok) continue;
+        
+        const data = await response.json();
+        
+        if (data.classement && data.classement.length > 0) {
+          // Calculer le max pour les barres
+          const maxPoints = Math.max(...data.classement.map((q: any) => q.points));
+          
+          // Mettre à jour pour chaque quartier
+          data.classement.forEach((quartier: any) => {
+            let quartierId = '';
+            if (quartier.quartier === 'Dnkeng') quartierId = 'dnkeng';
+            else if (quartier.quartier === 'Tsèmeuhia') quartierId = 'tsemeuhia';
+            else if (quartier.quartier === 'Tsèla') quartierId = 'tsela';
+            
+            // Mettre à jour la barre
+            const barreEl = document.getElementById(`mini-${rubrique}-${quartierId}`);
+            if (barreEl) {
+              const pourcentage = maxPoints > 0 ? (quartier.points / maxPoints) * 100 : 0;
+              barreEl.style.width = `${pourcentage}%`;
+            }
+            
+            // Mettre à jour les points
+            const pointsEl = document.getElementById(`mini-pts-${rubrique}-${quartierId}`);
+            if (pointsEl) {
+              pointsEl.textContent = quartier.points;
+            }
+          });
+        }
+      } catch (error) {
+        console.error(`Erreur pour ${rubrique}:`, error);
+      }
+    }
+  }
+  
+  // Charger au chargement de la page
+  document.addEventListener('DOMContentLoaded', () => {
+    chargerProgressionPersonnelle();
+    chargerMiniClassements();
+  });
+  
+  // Recharger toutes les 30 secondes pour les classements
+  setInterval(() => {
+    chargerMiniClassements();
+  }, 30000);
+  
+  // Recharger la progression personnelle toutes les 30 secondes aussi
+  setInterval(() => {
+    chargerProgressionPersonnelle();
+  }, 30000);
+</script>

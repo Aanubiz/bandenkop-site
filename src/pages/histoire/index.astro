@@ -1,0 +1,256 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ScrollToTop from '../../components/ScrollToTop.astro';
+---
+
+<Layout title="Histoire de Bandenkop">
+  <!-- Hero Section -->
+  <section class="pt-32 pb-20 bg-gradient-to-br from-orange-900 via-red-900 to-amber-900">
+    <div class="container mx-auto px-6 text-center text-white">
+      <h1 class="text-5xl md:text-7xl font-black mb-6">Notre Histoire</h1>
+      <p class="text-xl text-orange-100 max-w-3xl mx-auto">
+        Un voyage à travers les âges, des origines mystiques aux perspectives d'avenir
+      </p>
+    </div>
+  </section>
+
+  <!-- Loading -->
+  <div id="loading" class="py-20 text-center">
+    <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-600 border-t-transparent"></div>
+    <p class="mt-4 text-gray-600">Chargement de l'histoire...</p>
+  </div>
+
+  <!-- Timeline interactive -->
+  <section id="timeline" class="py-20 bg-gradient-to-b from-white to-orange-50 hidden">
+    <div class="container mx-auto px-6">
+      <div class="relative">
+        <!-- Ligne de temps centrale -->
+        <div class="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-orange-300 via-red-300 to-orange-300 hidden lg:block"></div>
+
+        <div id="timeline-content" class="space-y-12">
+          <!-- Rempli par JS avec les chapitres prédéfinis -->
+        </div>
+      </div>
+
+      <!-- Version mobile simplifiée -->
+      <div id="mobile-timeline" class="lg:hidden mt-12 space-y-4"></div>
+    </div>
+  </section>
+
+  <!-- Bouton retour en haut -->
+  <ScrollToTop />
+
+  <script>
+    // Les 9 chapitres de l'histoire (affichage fixe)
+    const chapitres = [
+      {
+        id: "origines",
+        periode: "1700-1750",
+        titre: "Origines de Bandenkop",
+        description: "Découvrez les origines mystiques et historiques de notre village, fondé par des chasseurs.",
+        image: "/images/histoire/stele_bouagang.png",
+        icone: "🌄",
+        details: [
+          "Migration des premiers habitants",
+          "Installation sur les terres actuelles",
+          "Fondation du village par le premier chef"
+        ]
+      },
+      {
+        id: "formation",
+        periode: "1750-1850",
+        titre: "La Formation du Village",
+        description: "La structuration sociale et politique, l'établissement des chefferies et des notabilités.",
+        image: "/images/histoire/formation.jpg",
+        icone: "🏛️",
+        details: [
+          "Création des premières institutions",
+          "Mise en place du système de notabilité",
+          "Développement des alliances matrimoniales",
+          "Organisation des premiers grands marchés"
+        ]
+      },
+      {
+        id: "alliances",
+        periode: "1850-1900",
+        titre: "Les Grandes Alliances",
+        description: "Les pactes d'amitié et de fraternité avec les villages voisins qui façonnent encore aujourd'hui nos relations.",
+        image: "/images/histoire/alliances.jpg",
+        icone: "🤝",
+        details: [
+          "Alliance avec Bangou",
+          "Pacte de non-agression avec les villages voisins",
+          "Création des liens de parenté rituelle",
+          "Établissement des routes commerciales"
+        ]
+      },
+      {
+        id: "batailles",
+        periode: "1900-1915",
+        titre: "Les Grandes Batailles",
+        description: "Les grandes batailles menées pour protéger le territoire et l'indépendance du village.",
+        image: "/images/histoire/batailles.jpg",
+        icone: "⚔️",
+        details: [
+          "Bataille de Nkogam",
+          "Défense contre les envahisseurs",
+          "Stratégies militaires traditionnelles",
+          "Héros tombés au combat"
+        ]
+      },
+      {
+        id: "resistance",
+        periode: "1915-1920",
+        titre: "La Résistance Anticoloniale",
+        description: "L'opposition farouche à la pénétration coloniale allemande puis française.",
+        image: "/images/histoire/resistance.jpg",
+        icone: "✊",
+        details: [
+          "Refus de l'impôt de capitation",
+          "Sabotage des travaux forcés",
+          "Cachette dans les montagnes",
+          "Le rôle des chefs dans la résistance"
+        ]
+      },
+      {
+        id: "exil",
+        periode: "1920-1930",
+        titre: "L'Exil Vers Bangou",
+        description: "La période sombre où une partie du peuple dut se réfugier chez nos voisins de Bangou.",
+        image: "/images/histoire/exil.jpg",
+        icone: "🚶",
+        details: [
+          "Les raisons de l'exil forcé",
+          "L'accueil par les frères de Bangou",
+          "La vie en terre d'accueil",
+          "La préservation des traditions en exil"
+        ]
+      },
+      {
+        id: "retour",
+        periode: "1930-1950",
+        titre: "Le Retour Triomphal",
+        description: "Le retour au village et la reconstruction de la communauté après des années d'absence.",
+        image: "/images/histoire/retour.jpg",
+        icone: "🏡",
+        details: [
+          "Les négociations pour le retour",
+          "La réinstallation sur les terres ancestrales",
+          "La renaissance des institutions",
+          "La réconciliation avec les voisins"
+        ]
+      },
+      {
+        id: "reconstruction",
+        periode: "1950-2000",
+        titre: "La Reconstruction",
+        description: "La reconstruction du village et le développement moderne tout en préservant l'héritage culturel.",
+        image: "/images/histoire/reconstruction.jpg",
+        icone: "🏗️",
+        details: [
+          "Construction des infrastructures modernes",
+          "Création des écoles et centres de santé",
+          "Modernisation de l'agriculture",
+          "Établissement des relations avec la diaspora"
+        ]
+      },
+      {
+        id: "perspectives",
+        periode: "2000-aujourd'hui",
+        titre: "Perspectives d'Avenir",
+        description: "Les projets de développement et la vision pour les générations futures.",
+        image: "/images/histoire/perspectives.jpg",
+        icone: "🚀",
+        details: [
+          "Projets de développement durable",
+          "Préservation du patrimoine culturel",
+          "Connectivité et technologies",
+          "Renforcement des liens avec la diaspora"
+        ]
+      }
+    ];
+
+    function generateTimeline() {
+      const loadingElement = document.getElementById('loading');
+      const timelineElement = document.getElementById('timeline');
+      const timelineContent = document.getElementById('timeline-content');
+      const mobileContent = document.getElementById('mobile-timeline');
+
+      if (!loadingElement || !timelineElement || !timelineContent || !mobileContent) {
+        return;
+      }
+      
+      let desktopHtml = '';
+      let mobileHtml = '';
+
+      chapitres.forEach((chapitre, index) => {
+        // Version desktop (alternance)
+        desktopHtml += `
+          <div class="relative flex flex-col lg:flex-row ${index % 2 === 0 ? '' : 'lg:flex-row-reverse'} items-center gap-8">
+            <!-- Point sur la timeline -->
+            <div class="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-orange-600 rounded-full border-4 border-white hidden lg:block"></div>
+            
+            <!-- Contenu -->
+            <div class="w-full lg:w-1/2 ${index % 2 === 0 ? 'lg:pr-12' : 'lg:pl-12'}">
+              <a href="/histoire/${chapitre.id}" class="block bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transform hover:scale-105 transition-all duration-500 group">
+                <div class="relative h-48 overflow-hidden">
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10"></div>
+                  <img src="${chapitre.image}" alt="${chapitre.titre}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" onerror="this.src='/images/histoire/default.jpg'" />
+                  <div class="absolute top-4 left-4 text-4xl z-20">${chapitre.icone}</div>
+                  <div class="absolute bottom-4 left-4 z-20">
+                    <span class="bg-orange-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                      ${chapitre.periode}
+                    </span>
+                  </div>
+                </div>
+                <div class="p-6">
+                  <h3 class="text-2xl font-bold text-gray-800 mb-3">${chapitre.titre}</h3>
+                  <p class="text-gray-600 mb-4">${chapitre.description}</p>
+                  <ul class="space-y-2">
+                    ${chapitre.details.slice(0, 2).map(detail => `
+                      <li class="flex items-start space-x-2">
+                        <svg class="w-5 h-5 text-orange-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span class="text-gray-600">${detail}</span>
+                      </li>
+                    `).join('')}
+                    <li class="text-xs text-gray-500 italic">...</li>
+                  </ul>
+                  <div class="mt-6 text-orange-600 font-semibold group-hover:text-orange-800 transition-colors flex items-center">
+                    Lire la suite
+                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                  </div>
+                </div>
+              </a>
+            </div>
+            
+            <!-- Espace vide pour l'alternance -->
+            <div class="hidden lg:block lg:w-1/2"></div>
+          </div>
+        `;
+        
+        // Version mobile
+        mobileHtml += `
+          <a href="/histoire/${chapitre.id}" class="block bg-white rounded-xl shadow-lg p-4 hover:shadow-xl transition-all duration-300">
+            <div class="flex items-center space-x-3 mb-2">
+              <span class="text-2xl">${chapitre.icone}</span>
+              <span class="text-sm font-semibold text-orange-600">${chapitre.periode}</span>
+            </div>
+            <h4 class="font-bold text-gray-800">${chapitre.titre}</h4>
+          </a>
+        `;
+      });
+      
+      timelineContent.innerHTML = desktopHtml;
+      mobileContent.innerHTML = mobileHtml;
+      
+      loadingElement.classList.add('hidden');
+      timelineElement.classList.remove('hidden');
+    }
+
+    document.addEventListener('DOMContentLoaded', generateTimeline);
+  </script>
+</Layout>

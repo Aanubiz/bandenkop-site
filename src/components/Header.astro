@@ -1,0 +1,361 @@
+---
+// src/components/Header.astro
+const menuItems = [
+  { name: 'Accueil', path: '/', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
+  { name: 'Wiki', path: '/wiki', icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253' },
+  { name: 'Discussion', path: '/discussion', icon: 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z' },
+  { name: 'Contact', path: '/contact', icon: 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' }
+];
+---
+
+<header class="fixed top-0 left-0 right-0 z-50 transition-all duration-500 bg-white shadow-lg" id="header">
+  <div class="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <nav class="flex items-center justify-between h-16 sm:h-20">
+      <!-- Logo et titre du site -->
+      <a href="/" class="relative group flex items-center space-x-2 sm:space-x-3">
+        <div class="relative">
+          <div class="absolute inset-0 bg-gradient-to-r from-orange-600 to-red-600 rounded-xl blur-lg opacity-50 group-hover:opacity-75 transition-opacity"></div>
+          <div class="relative flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-gradient-to-br from-orange-600 to-red-600 rounded-xl text-white font-black text-sm sm:text-base md:text-xl transform group-hover:scale-110 transition-transform duration-300">
+            B
+          </div>
+        </div>
+        <span class="font-['Playfair_Display'] text-base sm:text-lg md:text-xl lg:text-2xl font-black text-gray-800">
+          Bandenkop
+        </span>
+      </a>
+
+      <!-- Menu Desktop -->
+      <div class="hidden md:flex items-center space-x-1 lg:space-x-2">
+        {menuItems.map((item) => (
+          <a 
+            href={item.path}
+            class="relative px-3 lg:px-4 py-2 text-gray-700 hover:text-orange-600 font-medium transition-colors duration-300 group text-sm lg:text-base"
+          >
+            {item.name}
+            <span class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-orange-600 to-red-600 group-hover:w-full transition-all duration-300"></span>
+          </a>
+        ))}
+        
+        <!-- Zone d'authentification (remplie par JS) -->
+        <div id="auth-section" class="flex items-center ml-2 lg:ml-4">
+          <!-- Sera rempli par JavaScript -->
+        </div>
+      </div>
+
+      <!-- Menu Mobile Button -->
+      <button class="md:hidden relative w-8 h-8 sm:w-10 sm:h-10 focus:outline-none" id="menuBtn" aria-label="Menu">
+        <div class="absolute inset-0 bg-gradient-to-r from-orange-600 to-red-600 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <div class="relative flex flex-col items-center justify-center w-full h-full space-y-1.5">
+          <span class="block w-5 sm:w-6 h-0.5 bg-gray-800 transition-all duration-300" id="menuBar1"></span>
+          <span class="block w-5 sm:w-6 h-0.5 bg-gray-800 transition-all duration-300" id="menuBar2"></span>
+          <span class="block w-5 sm:w-6 h-0.5 bg-gray-800 transition-all duration-300" id="menuBar3"></span>
+        </div>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Menu Mobile Panel -->
+  <div class="fixed inset-0 top-16 sm:top-20 bg-white z-40 transform translate-x-full transition-transform duration-500 ease-out md:hidden shadow-2xl" id="mobileMenu">
+    <div class="absolute inset-0 bg-white"></div>
+    
+    <div class="relative z-10 flex flex-col h-full p-5 sm:p-6 pt-6 sm:pt-8">
+      <div class="flex-1 space-y-2 sm:space-y-3">
+        {menuItems.map((item) => (
+          <a 
+            href={item.path}
+            class="flex items-center space-x-3 sm:space-x-4 p-3 sm:p-4 rounded-xl hover:bg-gradient-to-r hover:from-orange-50 hover:to-red-50 transition-all duration-300 group bg-white"
+          >
+            <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-orange-100 to-red-100 rounded-lg flex items-center justify-center">
+              <svg class="w-4 h-4 sm:w-5 sm:h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d={item.icon} />
+              </svg>
+            </div>
+            <span class="text-base sm:text-lg font-semibold text-gray-800">{item.name}</span>
+          </a>
+        ))}
+      </div>
+      
+      <!-- Menu mobile auth (rempli par JS) -->
+      <div id="mobile-auth-section" class="space-y-3 sm:space-y-4 pt-6 sm:pt-8 border-t border-gray-200 bg-white">
+        <!-- Sera rempli par JavaScript -->
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Overlay sombre pour le fond -->
+<div class="fixed inset-0 bg-black/60 z-30 hidden md:hidden transition-opacity duration-500" id="menuOverlay"></div>
+
+<script>
+  (function() {
+    const appWindow = window as Window & typeof globalThis & {
+      logout: () => void;
+    };
+
+    // ===== GESTION DU HEADER SCROLL =====
+    const header = document.getElementById('header');
+    let lastScroll = 0;
+
+    window.addEventListener('scroll', () => {
+      const currentScroll = window.pageYOffset;
+      if (header) {
+        if (currentScroll > lastScroll && currentScroll > 100) {
+          header.style.transform = 'translateY(-100%)';
+        } else {
+          header.style.transform = 'translateY(0)';
+        }
+      }
+      lastScroll = currentScroll;
+    });
+
+    // ===== GESTION DU MENU MOBILE =====
+    const menuBtn = document.getElementById('menuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const menuOverlay = document.getElementById('menuOverlay');
+    const bars = ['menuBar1', 'menuBar2', 'menuBar3'].map(id => document.getElementById(id));
+
+    function openMenu() {
+      if (mobileMenu) mobileMenu.classList.remove('translate-x-full');
+      if (menuOverlay) menuOverlay.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      if (bars[0]) bars[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+      if (bars[1]) bars[1].style.opacity = '0';
+      if (bars[2]) bars[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
+    }
+
+    function closeMenu() {
+      if (mobileMenu) mobileMenu.classList.add('translate-x-full');
+      if (menuOverlay) menuOverlay.classList.add('hidden');
+      document.body.style.overflow = '';
+      if (bars[0]) bars[0].style.transform = 'none';
+      if (bars[1]) bars[1].style.opacity = '1';
+      if (bars[2]) bars[2].style.transform = 'none';
+    }
+
+    if (menuBtn) {
+      menuBtn.addEventListener('click', () => {
+        const isOpen = mobileMenu && !mobileMenu.classList.contains('translate-x-full');
+        if (isOpen) {
+          closeMenu();
+        } else {
+          openMenu();
+        }
+      });
+    }
+
+    if (menuOverlay) {
+      menuOverlay.addEventListener('click', closeMenu);
+    }
+
+    document.querySelectorAll('#mobileMenu a').forEach(link => {
+      link.addEventListener('click', closeMenu);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && mobileMenu && !mobileMenu.classList.contains('translate-x-full')) {
+        closeMenu();
+      }
+    });
+
+    // ===== GESTION DE L'AUTHENTIFICATION =====
+    let userMenuOpen = false;
+
+    function toggleUserMenu() {
+      const userMenu = document.getElementById('user-menu-dropdown');
+      if (userMenu) {
+        userMenuOpen = !userMenuOpen;
+        if (userMenuOpen) {
+          userMenu.classList.remove('hidden');
+        } else {
+          userMenu.classList.add('hidden');
+        }
+      }
+    }
+
+    function closeUserMenu() {
+      const userMenu = document.getElementById('user-menu-dropdown');
+      if (userMenu) {
+        userMenu.classList.add('hidden');
+        userMenuOpen = false;
+      }
+    }
+
+    function updateAuthDisplay() {
+      const token = localStorage.getItem('token');
+      const userStr = localStorage.getItem('user');
+      const user = userStr ? JSON.parse(userStr) : null;
+      
+      const authSection = document.getElementById('auth-section');
+      const mobileAuthSection = document.getElementById('mobile-auth-section');
+      
+      if (!authSection) return;
+      
+      if (token && user) {
+        // Desktop - Menu utilisateur avec lien admin si admin
+        authSection.innerHTML = `
+          <div class="relative" id="user-menu-container">
+            <button id="user-menu-button" class="flex items-center space-x-2 bg-orange-100 px-3 py-2 rounded-full hover:bg-orange-200 transition-colors">
+              <span class="text-sm font-medium text-gray-700">${user.prenom || user.nom || 'Utilisateur'}</span>
+              <div class="w-8 h-8 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white font-bold text-xs">
+                ${(user.prenom ? user.prenom[0] : user.nom ? user.nom[0] : 'U')}
+              </div>
+            </button>
+            <div id="user-menu-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl py-2 hidden z-50">
+              <a href="/profil" class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50">Mon profil</a>
+              <a href="/apprentissage" class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50">Apprentissage</a>
+              <a href="/discussion" class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50">Discussion</a>
+              <a href="/classement" class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50">Classement</a>
+              ${user.role === 'admin' ? `
+                <hr class="my-2">
+                <a href="/admin" class="block px-4 py-2 text-sm text-orange-600 hover:bg-orange-50 font-medium">
+                  ⚙️ Administration
+                </a>
+              ` : ''}
+              <hr class="my-2">
+              <button onclick="window.logout()" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">Déconnexion</button>
+            </div>
+          </div>
+        `;
+
+        // Ajouter l'événement de clic sur le bouton
+        setTimeout(() => {
+          const userMenuBtn = document.getElementById('user-menu-button');
+          if (userMenuBtn) {
+            userMenuBtn.addEventListener('click', (e) => {
+              e.stopPropagation();
+              toggleUserMenu();
+            });
+          }
+        }, 0);
+        
+        // Mobile - Menu utilisateur avec lien admin si admin
+        if (mobileAuthSection) {
+          mobileAuthSection.innerHTML = `
+            <div class="bg-orange-50 rounded-xl p-4 mb-4">
+              <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white font-bold text-lg">
+                  ${(user.prenom ? user.prenom[0] : user.nom ? user.nom[0] : 'U')}
+                </div>
+                <div>
+                  <p class="font-semibold text-gray-800">${user.prenom || ''} ${user.nom || ''}</p>
+                  <p class="text-xs text-orange-600">${user.quartier || 'Bandenkop'}</p>
+                  ${user.role === 'admin' ? '<p class="text-xs text-orange-500 mt-1">Administrateur</p>' : ''}
+                </div>
+              </div>
+            </div>
+            <a href="/profil" class="block w-full bg-white text-gray-800 px-4 py-3 rounded-xl font-semibold hover:bg-orange-50 transition-colors text-center mb-2 border border-gray-200">
+              Mon profil
+            </a>
+            <a href="/apprentissage" class="block w-full bg-white text-gray-800 px-4 py-3 rounded-xl font-semibold hover:bg-orange-50 transition-colors text-center mb-2 border border-gray-200">
+              Apprentissage
+            </a>
+            <a href="/classement" class="block w-full bg-white text-gray-800 px-4 py-3 rounded-xl font-semibold hover:bg-orange-50 transition-colors text-center mb-2 border border-gray-200">
+              Classement
+            </a>
+            ${user.role === 'admin' ? `
+              <a href="/admin" class="block w-full bg-orange-50 text-orange-600 px-4 py-3 rounded-xl font-semibold hover:bg-orange-100 transition-colors text-center mb-2 border border-orange-200">
+                ⚙️ Administration
+              </a>
+            ` : ''}
+            <button onclick="window.logout()" class="w-full bg-red-500 text-white px-4 py-3 rounded-xl font-semibold hover:bg-red-600 transition-colors">
+              Déconnexion
+            </button>
+          `;
+        }
+
+        setupInactivityTimer();
+      } else {
+        // Desktop - Non connecté
+        authSection.innerHTML = `
+          <a href="/connexion" class="bg-gradient-to-r from-orange-600 to-red-600 text-white px-6 py-2 rounded-full font-semibold hover:shadow-lg transition-all text-sm lg:text-base">
+            Connexion
+          </a>
+        `;
+        
+        // Mobile - Non connecté
+        if (mobileAuthSection) {
+          mobileAuthSection.innerHTML = `
+            <a href="/connexion" class="block w-full bg-gradient-to-r from-orange-600 to-red-600 text-white px-4 py-3 rounded-xl font-semibold hover:shadow-lg transition-all text-center">
+              Se connecter
+            </a>
+            <a href="/inscription" class="block w-full bg-gray-100 text-gray-800 px-4 py-3 rounded-xl font-semibold hover:bg-gray-200 transition-colors text-center">
+              S'inscrire
+            </a>
+          `;
+        }
+
+        clearInactivityTimer();
+      }
+    }
+
+    // Fermer le menu si on clique ailleurs
+    document.addEventListener('click', (e) => {
+      const userMenu = document.getElementById('user-menu-dropdown');
+      const userMenuBtn = document.getElementById('user-menu-button');
+      const target = e.target as Node | null;
+      
+      if (userMenu && userMenuBtn && target && !userMenuBtn.contains(target) && !userMenu.contains(target)) {
+        closeUserMenu();
+      }
+    });
+
+    // ===== GESTION DE L'INACTIVITÉ =====
+    let inactivityTimer: ReturnType<typeof window.setTimeout> | null = null;
+    const INACTIVITY_LIMIT = 60 * 60 * 1000;
+    let activityListenersBound = false;
+
+    function resetInactivityTimer() {
+      if (inactivityTimer) {
+        clearTimeout(inactivityTimer);
+      }
+
+      inactivityTimer = setTimeout(() => {
+        console.log('⏰ 60 minutes d\'inactivité - Déconnexion automatique');
+        appWindow.logout();
+      }, INACTIVITY_LIMIT);
+    }
+
+    function clearInactivityTimer() {
+      if (inactivityTimer) {
+        clearTimeout(inactivityTimer);
+        inactivityTimer = null;
+      }
+    }
+
+    function setupInactivityTimer() {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      if (!activityListenersBound) {
+        const events = ['mousedown', 'keydown', 'scroll', 'touchstart', 'mousemove'];
+        events.forEach((eventName) => {
+          document.addEventListener(eventName, resetInactivityTimer, { passive: true });
+        });
+        activityListenersBound = true;
+      }
+
+      resetInactivityTimer();
+    }
+
+    // ===== FONCTION DE DÉCONNEXION =====
+    appWindow.logout = function() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      clearInactivityTimer();
+      updateAuthDisplay();
+      window.location.href = '/';
+    };
+
+    // ===== SYNCHRONISATION ENTRE ONGLETS =====
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'token' || e.key === 'user') {
+        updateAuthDisplay();
+      }
+    });
+
+    // ===== INITIALISATION =====
+    document.addEventListener('DOMContentLoaded', () => {
+      updateAuthDisplay();
+    });
+  })();
+</script>

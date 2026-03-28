@@ -1,0 +1,435 @@
+---
+import Layout from '../layouts/Layout.astro';
+import AuthCheck from '../components/AuthCheck.astro';
+import { getToken, logout as authLogout } from '../utils/auth';
+---
+
+<Layout title="Mon Profil - Bandenkop">
+  <AuthCheck>
+    <div class="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 pt-24 pb-12">
+      <div class="px-4 max-w-4xl mx-auto">
+        
+        <!-- En-tête -->
+        <div class="text-center mb-8">
+          <h1 class="font-['Playfair_Display'] text-3xl sm:text-4xl font-bold text-gray-800 mb-2">
+            Mon Profil
+          </h1>
+          <p class="text-gray-600">
+            Consultez vos informations et gérez votre mot de passe
+          </p>
+        </div>
+
+        <!-- Contenu principal -->
+        <div class="grid md:grid-cols-3 gap-6">
+          
+          <!-- Colonne de gauche : Photo et infos de base (inchangée) -->
+          <div class="md:col-span-1">
+            <div class="bg-white rounded-2xl shadow-xl p-6 sticky top-24">
+              <!-- Photo de profil -->
+              <div class="text-center mb-4">
+                <div class="relative inline-block">
+                  <div id="avatar-container" class="w-32 h-32 rounded-full bg-gradient-to-br from-orange-100 to-red-100 mx-auto flex items-center justify-center text-orange-700 font-bold text-4xl border-4 border-orange-300 overflow-hidden">
+                    <!-- Rempli par JS -->
+                  </div>
+                  <!-- Bouton avatar commenté pour l'instant
+                  <button id="change-avatar-btn" class="absolute bottom-0 right-0 bg-orange-600 text-white p-2 rounded-full hover:bg-orange-700 transition-colors">
+                    ...
+                  </button>
+                  -->
+                </div>
+                <h2 class="text-xl font-bold text-gray-800 mt-4" id="user-name">Chargement...</h2>
+                <p class="text-orange-600" id="user-quartier">-</p>
+              </div>
+
+              <!-- Statistiques rapides -->
+              <div class="border-t border-gray-100 pt-4 mt-2">
+                <div class="flex justify-between mb-2">
+                  <span class="text-gray-600">Points totaux</span>
+                  <span class="font-bold text-orange-600" id="total-points">0</span>
+                </div>
+                <div class="flex justify-between mb-2">
+                  <span class="text-gray-600">Niveau global</span>
+                  <span class="font-bold text-orange-600" id="global-niveau">débutant</span>
+                </div>
+                <div class="flex justify-between mb-2">
+                  <span class="text-gray-600">Membre depuis</span>
+                  <span class="font-bold text-orange-600" id="member-since">-</span>
+                </div>
+              </div>
+
+              <!-- Bouton déconnexion -->
+              <button id="logout-btn" class="w-full mt-4 bg-red-500 text-white py-2 rounded-xl font-semibold hover:bg-red-600 transition-colors">
+                Se déconnecter
+              </button>
+            </div>
+          </div>
+
+          <!-- Colonne de droite : Informations détaillées -->
+          <div class="md:col-span-2 space-y-6">
+            
+            <!-- Progression par rubrique (inchangée) -->
+            <div class="bg-white rounded-2xl shadow-xl p-6">
+              <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                <svg class="w-5 h-5 mr-2 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                </svg>
+                Ma progression
+              </h2>
+              
+              <div class="space-y-4" id="progress-list">
+                <!-- Rempli par JS -->
+                <div class="text-center text-gray-500 py-4">Chargement...</div>
+              </div>
+            </div>
+
+            <!-- ===== INFORMATIONS PERSONNELLES (LECTURE SEULE) ===== -->
+            <div class="bg-white rounded-2xl shadow-xl p-6">
+              <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                <svg class="w-5 h-5 mr-2 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                </svg>
+                Informations personnelles
+              </h2>
+              
+              <div class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Prénom</label>
+                    <input type="text" id="prenom" class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-700 cursor-not-allowed" readonly disabled>
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nom</label>
+                    <input type="text" id="nom" class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-700 cursor-not-allowed" readonly disabled>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <input type="email" id="email" class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-700 cursor-not-allowed" readonly disabled>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Quartier</label>
+                  <input type="text" id="quartier" class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-700 cursor-not-allowed" readonly disabled>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Sexe</label>
+                  <input type="text" id="sexe" class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-700 cursor-not-allowed" readonly disabled>
+                </div>
+
+                <div class="bg-blue-50 p-4 rounded-lg">
+                  <p class="text-sm text-blue-800 flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Pour modifier vos informations personnelles, contactez l'administrateur.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- ===== CHANGEMENT DE MOT DE PASSE (EMAIL) ===== -->
+            <div class="bg-white rounded-2xl shadow-xl p-6">
+              <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                <svg class="w-5 h-5 mr-2 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                </svg>
+                Changer mon mot de passe
+              </h2>
+              
+              <div class="space-y-4">
+                <p class="text-sm text-gray-600">
+                  Un email de réinitialisation vous sera envoyé à votre adresse actuelle.
+                </p>
+                
+                <button id="reset-password-btn" class="w-full bg-gradient-to-r from-orange-600 to-red-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300">
+                  Envoyer l'email de réinitialisation
+                </button>
+              </div>
+            </div>
+
+            <!-- Zone de danger : Supprimer le compte -->
+            <div class="bg-white rounded-2xl shadow-xl p-6 border-2 border-red-200">
+              <h2 class="text-lg font-bold text-red-600 mb-4 flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
+                Zone de danger
+              </h2>
+              <p class="text-sm text-gray-600 mb-4">
+                Une fois votre compte supprimé, toutes vos données seront effacées définitivement. Cette action est irréversible.
+              </p>
+              <button id="delete-account-btn" class="w-full bg-red-500 text-white py-3 rounded-xl font-semibold hover:bg-red-600 transition-colors">
+                Supprimer mon compte
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modals (inchangés) -->
+    <div id="delete-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+      <!-- ... contenu du modal de suppression ... -->
+      <div class="bg-white rounded-2xl p-6 max-w-md mx-4">
+        <h3 class="text-xl font-bold text-gray-800 mb-4">Confirmer la suppression</h3>
+        <p class="text-gray-600 mb-6">
+          Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.
+        </p>
+        <div class="flex space-x-3">
+          <button id="confirm-delete" class="flex-1 bg-red-500 text-white py-2 rounded-lg font-semibold hover:bg-red-600">
+            Supprimer
+          </button>
+          <button id="cancel-delete" class="flex-1 bg-gray-200 text-gray-800 py-2 rounded-lg font-semibold hover:bg-gray-300">
+            Annuler
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Messages de notification -->
+    <div id="success-message" class="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg hidden"></div>
+    <div id="error-message" class="fixed bottom-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg hidden"></div>
+  </AuthCheck>
+
+  <script>
+    import { getToken, logout as authLogout } from '../utils/auth';
+
+    const API_URL = 'http://localhost:3001';
+    const rubriques = ['quiz', 'prononciation', 'ecriture', 'phonetique', 'association'] as const;
+    type Rubrique = (typeof rubriques)[number];
+    type MessageType = 'success' | 'error';
+
+    type ProfileUser = {
+      prenom?: string;
+      nom?: string;
+      email?: string;
+      quartier?: string;
+      sexe?: string;
+      dateInscription?: string;
+      statistiques?: {
+        totalPoints?: number;
+      };
+    };
+
+    type ProgressionData = {
+      points?: number;
+      niveau?: string;
+      questionsReussies?: number;
+      questionsRatees?: number;
+    };
+
+    const rubriqueNames: Record<Rubrique, string> = {
+      quiz: 'Quiz culturel',
+      prononciation: 'Prononciation',
+      ecriture: 'Écriture',
+      phonetique: 'Phonétique',
+      association: 'Association'
+    };
+
+    const niveauClasses: Record<string, string> = {
+      debutant: 'bg-gray-100 text-gray-800',
+      intermediaire: 'bg-blue-100 text-blue-800',
+      avance: 'bg-purple-100 text-purple-800'
+    };
+
+    function getHTMLElement(id: string) {
+      return document.getElementById(id) as HTMLElement | null;
+    }
+
+    function getInput(id: string) {
+      return document.getElementById(id) as HTMLInputElement | null;
+    }
+
+    function showMessage(type: MessageType, text: string) {
+      const msg = getHTMLElement(`${type}-message`);
+      if (!msg) return;
+
+      msg.textContent = text;
+      msg.classList.remove('hidden');
+
+      setTimeout(() => {
+        msg.classList.add('hidden');
+      }, 3000);
+    }
+
+    async function loadProfile() {
+      const token = getToken();
+      if (!token) return;
+
+      try {
+        const response = await fetch(`${API_URL}/api/auth/profile`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!response.ok) throw new Error('Erreur chargement');
+
+        const user = await response.json() as ProfileUser;
+
+        const avatarContainer = getHTMLElement('avatar-container');
+        const userName = getHTMLElement('user-name');
+        const userQuartier = getHTMLElement('user-quartier');
+        const totalPoints = getHTMLElement('total-points');
+        const globalNiveau = getHTMLElement('global-niveau');
+        const memberSince = getHTMLElement('member-since');
+        
+        // Champs en lecture seule
+        const prenomInput = getInput('prenom');
+        const nomInput = getInput('nom');
+        const emailInput = getInput('email');
+        const quartierInput = getInput('quartier');
+        const sexeInput = getInput('sexe');
+
+        if (avatarContainer && user.prenom && user.nom) {
+          avatarContainer.innerHTML = `
+            <span class="text-4xl font-bold">${user.prenom[0]}${user.nom[0]}</span>
+          `;
+        }
+
+        if (userName) userName.textContent = `${user.prenom || ''} ${user.nom || ''}`.trim();
+        if (userQuartier) userQuartier.textContent = user.quartier || '-';
+        if (totalPoints) totalPoints.textContent = String(user.statistiques?.totalPoints || 0);
+
+        const points = user.statistiques?.totalPoints || 0;
+        let niveau = 'débutant';
+        if (points >= 1000) niveau = 'avancé';
+        else if (points >= 500) niveau = 'intermédiaire';
+        if (globalNiveau) globalNiveau.textContent = niveau;
+
+        const date = user.dateInscription ? new Date(user.dateInscription) : null;
+        if (memberSince) {
+          memberSince.textContent = date ? date.toLocaleDateString('fr-FR') : '-';
+        }
+
+        // Remplir les champs en lecture seule
+        if (prenomInput) prenomInput.value = user.prenom || '';
+        if (nomInput) nomInput.value = user.nom || '';
+        if (emailInput) emailInput.value = user.email || '';
+        if (quartierInput) quartierInput.value = user.quartier || '';
+        if (sexeInput) sexeInput.value = user.sexe || '';
+
+        await loadProgressions();
+      } catch (error) {
+        console.error('Erreur chargement profil:', error);
+        showMessage('error', 'Erreur lors du chargement du profil');
+      }
+    }
+
+    async function loadProgressions() {
+      const token = getToken();
+      const progressList = getHTMLElement('progress-list');
+      if (!token || !progressList) return;
+
+      let html = '';
+
+      for (const rubrique of rubriques) {
+        try {
+          const response = await fetch(`${API_URL}/api/progression/user/${rubrique}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+
+          if (!response.ok) continue;
+
+          const data = await response.json() as ProgressionData;
+          const niveau = data.niveau || 'debutant';
+
+          html += `
+            <div class="border-b border-gray-100 pb-3 last:border-0">
+              <div class="flex items-center justify-between mb-1">
+                <span class="font-medium text-gray-800">${rubriqueNames[rubrique]}</span>
+                <span class="text-sm text-gray-500">${data.questionsReussies || 0}/${(data.questionsReussies || 0) + (data.questionsRatees || 0)}</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-xs text-gray-500">Points: ${data.points || 0}</span>
+                <span class="text-xs px-2 py-0.5 rounded-full ${niveauClasses[niveau]}">
+                  ${niveau}
+                </span>
+              </div>
+            </div>
+          `;
+        } catch (error) {
+          console.error(`Erreur chargement ${rubrique}:`, error);
+        }
+      }
+
+      progressList.innerHTML = html || '<div class="text-center text-gray-500 py-4">Aucune progression</div>';
+    }
+
+    // Bouton de réinitialisation de mot de passe
+    const resetPasswordBtn = getHTMLElement('reset-password-btn');
+    resetPasswordBtn?.addEventListener('click', async () => {
+      const token = getToken();
+      if (!token) {
+        showMessage('error', 'Session expirée');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_URL}/api/auth/forgot-password`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          showMessage('success', 'Email de réinitialisation envoyé ! Vérifiez votre boîte de réception.');
+        } else {
+          throw new Error(data.error || 'Erreur lors de l\'envoi');
+        }
+      } catch (error) {
+        console.error('Erreur envoi email:', error);
+        showMessage('error', error instanceof Error ? error.message : 'Erreur lors de l\'envoi');
+      }
+    });
+
+    // Gestion de la suppression de compte (inchangée)
+    const deleteBtn = getHTMLElement('delete-account-btn');
+    const deleteModal = getHTMLElement('delete-modal');
+    const confirmDelete = getHTMLElement('confirm-delete');
+    const cancelDelete = getHTMLElement('cancel-delete');
+
+    deleteBtn?.addEventListener('click', () => {
+      deleteModal?.classList.remove('hidden');
+    });
+
+    cancelDelete?.addEventListener('click', () => {
+      deleteModal?.classList.add('hidden');
+    });
+
+    confirmDelete?.addEventListener('click', async () => {
+      const token = getToken();
+      if (!token) {
+        showMessage('error', 'Session expirée');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_URL}/api/auth/delete-account`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!response.ok) throw new Error('Erreur suppression');
+
+        authLogout();
+        window.location.href = '/';
+      } catch (error) {
+        console.error('Erreur suppression:', error);
+        showMessage('error', 'Erreur lors de la suppression');
+        deleteModal?.classList.add('hidden');
+      }
+    });
+
+    const logoutBtn = getHTMLElement('logout-btn');
+    logoutBtn?.addEventListener('click', () => {
+      authLogout();
+    });
+
+    document.addEventListener('DOMContentLoaded', loadProfile);
+  </script>
+</Layout>

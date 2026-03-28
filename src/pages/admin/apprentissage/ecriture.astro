@@ -1,0 +1,232 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Admin - Écriture">
+    <div class="p-6 mt-24">
+      <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">Exercices d'écriture</h1>
+        <button onclick="openAddModal()" class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700">
+          + Ajouter un exercice
+        </button>
+      </div>
+
+      <!-- Modal d'ajout -->
+      <div id="addModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <h2 class="text-xl font-bold mb-4">Ajouter un exercice d'écriture</h2>
+          
+          <form id="ecritureForm" class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium mb-1">Type d'exercice *</label>
+              <select name="type" id="exerciseType" required class="w-full px-3 py-2 border rounded-lg">
+                <option value="phrase_a_trou">Phrase à trous</option>
+                <option value="traduction">Traduction</option>
+                <option value="composition">Composition libre</option>
+                <option value="appariement">Appariement mot-image</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1">Consigne *</label>
+              <input type="text" name="consigne" required class="w-full px-3 py-2 border rounded-lg" 
+                placeholder="Ex: Complète la phrase avec le mot manquant">
+            </div>
+
+            <!-- Section pour phrase à trous -->
+            <div id="phraseTrousSection" class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium mb-1">Phrase en français *</label>
+                <input type="text" name="phraseFrancais" class="w-full px-3 py-2 border rounded-lg"
+                  placeholder="Ex: Je _____ manger (veux / veut)">
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Phrase en Bandenkop *</label>
+                <input type="text" name="phraseBandenkop" class="w-full px-3 py-2 border rounded-lg"
+                  placeholder="Ex: Mba'a le _____ (nyu / nye)">
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Mots manquants (séparés par des virgules)</label>
+                <input type="text" name="motsManquants" class="w-full px-3 py-2 border rounded-lg"
+                  placeholder="veux, veut">
+              </div>
+            </div>
+
+            <!-- Section pour traduction -->
+            <div id="traductionSection" class="hidden space-y-4">
+              <div>
+                <label class="block text-sm font-medium mb-1">Texte à traduire *</label>
+                <textarea name="texteSource" rows="3" class="w-full px-3 py-2 border rounded-lg"></textarea>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Traduction attendue *</label>
+                <textarea name="texteCible" rows="3" class="w-full px-3 py-2 border rounded-lg"></textarea>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium mb-1">Niveau</label>
+                <select name="niveau" class="w-full px-3 py-2 border rounded-lg">
+                  <option value="debutant">Débutant</option>
+                  <option value="intermediaire">Intermédiaire</option>
+                  <option value="avance">Avancé</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Points</label>
+                <input type="number" name="points" value="10" min="1" class="w-full px-3 py-2 border rounded-lg">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1">Image (optionnel)</label>
+              <input type="file" id="imageFile" accept="image/*" class="w-full">
+            </div>
+
+            <div class="flex space-x-3 pt-4">
+              <button type="submit" class="flex-1 bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700">
+                Enregistrer
+              </button>
+              <button type="button" onclick="closeAddModal()" class="flex-1 bg-gray-200 py-2 rounded-lg hover:bg-gray-300">
+                Annuler
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Liste des exercices -->
+      <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+        <table class="w-full">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Consigne</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Niveau</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Points</th>
+              <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="ecriture-list" class="divide-y divide-gray-200">
+            <tr>
+              <td colspan="5" class="px-6 py-4 text-center text-gray-500">Chargement...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  <script>
+    import { getToken } from '../../../utils/auth';
+
+    declare global {
+      interface Window {
+        deleteItem: (id: string) => Promise<void>;
+        editItem: (id: string) => void;
+        openAddModal: () => void;
+        closeAddModal: () => void;
+      }
+    }
+
+    type EcritureItem = {
+      _id: string;
+      type: string;
+      consigne: string;
+      niveau: 'debutant' | 'intermediaire' | 'avance';
+      points: number;
+    };
+
+    const API_URL = 'http://localhost:3001';
+    const token = getToken();
+
+    if (!token) window.location.href = '/connexion';
+
+    const getElement = (id: string) => document.getElementById(id) as HTMLElement | null;
+    const getSelect = (id: string) => document.getElementById(id) as HTMLSelectElement | null;
+
+    // Gestion des sections selon le type
+    getSelect('exerciseType')?.addEventListener('change', (e) => {
+      const target = e.target as HTMLSelectElement | null;
+      if (!target) return;
+      const type = target.value;
+      const phraseTrousSection = getElement('phraseTrousSection');
+      const traductionSection = getElement('traductionSection');
+      if (phraseTrousSection) phraseTrousSection.style.display = type === 'phrase_a_trou' ? 'block' : 'none';
+      if (traductionSection) traductionSection.style.display = type === 'traduction' ? 'block' : 'none';
+    });
+
+    async function loadEcriture() {
+      try {
+        const response = await fetch(`${API_URL}/api/admin/ecriture`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json() as EcritureItem[];
+        
+        const tbody = document.getElementById('ecriture-list');
+        if (!tbody) return;
+
+        tbody.innerHTML = data.map((item: EcritureItem) => `
+          <tr>
+            <td class="px-6 py-4">
+              <span class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs">
+                ${item.type}
+              </span>
+            </td>
+            <td class="px-6 py-4">
+              <div class="font-medium">${item.consigne}</div>
+            </td>
+            <td class="px-6 py-4">
+              <span class="px-2 py-1 text-xs rounded-full ${
+                item.niveau === 'debutant' ? 'bg-green-100 text-green-800' :
+                item.niveau === 'intermediaire' ? 'bg-yellow-100 text-yellow-800' :
+                'bg-red-100 text-red-800'
+              }">${item.niveau}</span>
+            </td>
+            <td class="px-6 py-4">${item.points}</td>
+            <td class="px-6 py-4 text-right space-x-2">
+              <button onclick="editItem('${item._id}')" class="text-blue-600 hover:text-blue-800">✏️</button>
+              <button onclick="deleteItem('${item._id}')" class="text-red-600 hover:text-red-800">🗑️</button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (error) {
+        console.error('Erreur chargement:', error);
+      }
+    }
+
+    window.deleteItem = async (id: string) => {
+      if (!confirm('Supprimer cet exercice ?')) return;
+      
+      try {
+        await fetch(`${API_URL}/api/admin/ecriture/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        loadEcriture();
+      } catch (error) {
+        console.error('Erreur suppression:', error);
+      }
+    };
+
+    window.editItem = (id: string) => {
+      window.location.href = `/admin/apprentissage/ecriture/${id}`;
+    };
+
+    window.openAddModal = () => {
+      const addModal = getElement('addModal');
+      if (!addModal) return;
+      addModal.classList.remove('hidden');
+      addModal.classList.add('flex');
+    };
+
+    window.closeAddModal = () => {
+      const addModal = getElement('addModal');
+      if (!addModal) return;
+      addModal.classList.add('hidden');
+      addModal.classList.remove('flex');
+    };
+
+    loadEcriture();
+  </script>
+</Layout>

@@ -1,0 +1,133 @@
+---
+// src/pages/[rubrique]/[sousRubrique].astro
+import Layout from '../../layouts/Layout.astro';
+
+export async function getStaticPaths() {
+  const rubriques = {
+    histoire: {
+      titre: "Histoire",
+      sousRubriques: [
+        { slug: "origines", titre: "Origines de Bandenkop", contenu: "..." },
+        { slug: "formation", titre: "Formation du village", contenu: "..." },
+        { slug: "alliances", titre: "Les grandes alliances", contenu: "..." },
+        { slug: "batailles", titre: "Les grandes batailles", contenu: "..." },
+        { slug: "resistance", titre: "Résistance anticoloniale", contenu: "..." },
+        { slug: "exil", titre: "L'exil vers Bangou", contenu: "..." },
+        { slug: "retour", titre: "Le retour", contenu: "..." },
+        { slug: "reconstruction", titre: "La reconstruction", contenu: "..." },
+        { slug: "perspectives", titre: "Les perspectives d'avenir", contenu: "..." }
+      ]
+    },
+    culture: {
+      titre: "Culture",
+      sousRubriques: [
+        { slug: "danses", titre: "Danses traditionnelles", contenu: "..." },
+        { slug: "notabilite", titre: "La notabilité", contenu: "..." },
+        { slug: "chapeaux", titre: "Les types de chapeaux", contenu: "..." },
+        { slug: "chaises", titre: "Les types de chaises", contenu: "..." },
+        { slug: "ceremonies", titre: "Les cérémonies", contenu: "..." },
+        { slug: "initiation", titre: "Les initiations", contenu: "..." },
+        { slug: "khe", titre: "Le Khé - La vérité", contenu: "..." },
+        { slug: "prophetes", titre: "Prophètes et marabouts", contenu: "..." },
+        { slug: "rites", titre: "Les rites", contenu: "..." },
+        { slug: "interdits", titre: "Les interdits", contenu: "..." },
+        { slug: "semaine", titre: "Les jours de la semaine", contenu: "..." },
+        { slug: "divinite", titre: "La divinité", contenu: "..." }
+      ]
+    },
+    decouverte: {
+      titre: "Découverte",
+      sousRubriques: [
+        { slug: "geographie", titre: "Situation géographique", contenu: "..." },
+        { slug: "relief", titre: "Relief, végétation et climat", contenu: "..." },
+        { slug: "economie", titre: "Vie économique et sociale", contenu: "..." },
+        { slug: "tourisme", titre: "Activités touristiques", contenu: "..." },
+        { slug: "education", titre: "Éducation et santé", contenu: "..." },
+        { slug: "sport", titre: "Le sport", contenu: "..." },
+        { slug: "festivals", titre: "Les festivals", contenu: "..." },
+        { slug: "anthropologie", titre: "Anthropologie des Bandenkop", contenu: "..." }
+      ]
+    }
+  };
+
+  const paths = [];
+  
+  for (const [rubrique, data] of Object.entries(rubriques)) {
+    for (const sousRubrique of data.sousRubriques) {
+      paths.push({
+        params: { rubrique, sousRubrique: sousRubrique.slug },
+        props: { 
+          rubriqueTitre: data.titre,
+          sousRubriqueTitre: sousRubrique.titre,
+          contenu: sousRubrique.contenu
+        }
+      });
+    }
+  }
+
+  return paths;
+}
+
+const { rubriqueTitre, sousRubriqueTitre, contenu } = Astro.props;
+const { rubrique } = Astro.params;
+---
+
+<Layout title={`${sousRubriqueTitre} - ${rubriqueTitre} Bandenkop`}>
+  <section class="pt-32 pb-20 bg-gradient-to-br from-orange-50 to-red-50">
+    <div class="container mx-auto px-6">
+      <!-- Fil d'Ariane -->
+      <div class="mb-8">
+        <nav class="flex items-center space-x-2 text-gray-600">
+          <a href="/" class="hover:text-orange-600 transition-colors">Accueil</a>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+          <a href={`/${rubrique}`} class="hover:text-orange-600 transition-colors">{rubriqueTitre}</a>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+          <span class="text-orange-600 font-semibold">{sousRubriqueTitre}</span>
+        </nav>
+      </div>
+
+      <!-- Titre -->
+      <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-8 animate-fade-up">
+        {sousRubriqueTitre}
+      </h1>
+
+      <!-- Contenu -->
+      <div class="bg-white rounded-2xl shadow-xl p-8 md:p-12 prose prose-lg max-w-none">
+        <!-- Placeholder - À remplir avec le vrai contenu -->
+        <p class="text-gray-600 leading-relaxed">
+          Contenu détaillé de {sousRubriqueTitre} à venir...
+        </p>
+
+        <!-- Section médias -->
+        <div class="mt-8 grid md:grid-cols-2 gap-6">
+          <div class="relative h-64 bg-gray-100 rounded-lg overflow-hidden">
+            <img src="/images/placeholder.jpg" alt="Image illustrative" class="w-full h-full object-cover" />
+          </div>
+          <div class="relative h-64 bg-gray-100 rounded-lg overflow-hidden">
+            <img src="/images/placeholder2.jpg" alt="Image illustrative" class="w-full h-full object-cover" />
+          </div>
+        </div>
+
+        <!-- Navigation entre sous-rubriques -->
+        <div class="mt-12 flex justify-between">
+          <a href="#" class="flex items-center text-orange-600 hover:text-orange-800 transition-colors">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            Précédent
+          </a>
+          <a href="#" class="flex items-center text-orange-600 hover:text-orange-800 transition-colors">
+            Suivant
+            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

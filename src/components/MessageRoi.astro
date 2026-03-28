@@ -1,0 +1,61 @@
+---
+// src/components/MessageRoi.astro
+---
+
+<!-- L'ID doit être sur la section principale, PAS à l'intérieur -->
+<section id="message-roi" class="py-8 sm:py-12 md:py-16 lg:py-20 bg-white scroll-mt-20">
+  <div class="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <div class="reveal">
+      <!-- Badge -->
+      <div class="flex justify-center mb-6 sm:mb-8">
+        <div class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-orange-100 to-red-100 rounded-full">
+          <span class="w-2 h-2 bg-orange-600 rounded-full mr-2"></span>
+          <span class="text-sm font-medium text-orange-800">Message Royal</span>
+        </div>
+      </div>
+
+      <!-- Carte message -->
+      <div class="relative group">
+        <!-- Effet de bordure lumineuse -->
+        <div class="absolute -inset-1 bg-gradient-to-r from-orange-600 via-red-600 to-amber-600 rounded-3xl blur-xl opacity-30 group-hover:opacity-50 transition-opacity"></div>
+        
+        <div class="relative bg-white rounded-3xl p-6 sm:p-8 md:p-12 shadow-2xl">
+          <div class="flex flex-col md:flex-row items-center gap-6 sm:gap-8">
+            <!-- Photo du Roi -->
+            <div class="relative flex-shrink-0">
+              <div class="absolute inset-0 bg-gradient-to-r from-orange-600 to-red-600 rounded-full blur-xl opacity-50"></div>
+              <div class="relative w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-full border-4 border-white shadow-xl overflow-hidden">
+                <img src="/images/img2.jpeg" alt="Roi de Bandenkop" class="w-full h-full object-cover" />
+              </div>
+              <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 text-3xl sm:text-4xl animate-float">👑</div>
+            </div>
+
+            <!-- Contenu du message -->
+            <div class="flex-1 text-center md:text-left">
+              <svg class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-orange-200 mb-3 sm:mb-4 mx-auto md:mx-0" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+              </svg>
+              
+              <blockquote class="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-700 italic mb-4 sm:mb-6 leading-relaxed">
+                "Bienvenue sur la plateforme numérique de notre cher village Bandenkop. 
+                Que ce site soit un pont entre nos racines et l'avenir, un lieu de partage 
+                et de découverte pour tous les Bandenkop du monde et nos amis."
+              </blockquote>
+              
+              <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4">
+                <div>
+                  <p class="font-bold text-gray-900 text-base sm:text-lg">Sa Majesté</p>
+                  <p class="text-sm sm:text-base text-orange-600">Roi des Bandenkop</p>
+                </div>
+                <div class="hidden sm:block w-px h-8 bg-gray-300"></div>
+                <div class="opacity-50">
+                  <img src="/images/signature-roi.jpg" alt="Signature" class="h-8 sm:h-10 md:h-12" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

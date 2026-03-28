@@ -1,0 +1,237 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getToken } from '../../utils/auth';
+
+const { slug } = Astro.params;
+
+interface FigureComment {
+  prenom: string;
+  nom: string;
+  date: string;
+  texte: string;
+}
+
+interface WikiFigure {
+  _id: string;
+  prenom: string;
+  nom: string;
+  photo: string;
+  biographie: string;
+  contributions: string[];
+  citations: string[];
+  likes: number;
+  dislikes: number;
+  commentaires: FigureComment[];
+}
+
+// Ici on chargera la figure depuis l'API
+// Pour l'instant, données statiques
+const figure: WikiFigure = {
+  _id: '1',
+  prenom: 'Jean',
+  nom: 'Mekongo',
+  photo: '/images/figures/jean-mekongo.jpg',
+  biographie: '...',
+  contributions: ['...'],
+  citations: ['...'],
+  likes: 15,
+  dislikes: 2,
+  commentaires: []
+};
+---
+
+<Layout title={`${figure.prenom} ${figure.nom} - Wiki Bandenkop`}>
+  <div id="wiki-root" data-figure-id={figure._id} class="min-h-screen bg-gray-50 pt-32 pb-16">
+    <div class="container mx-auto px-6 max-w-4xl">
+      <!-- Bouton retour -->
+      <a href="/wiki" class="inline-flex items-center text-gray-600 hover:text-orange-600 mb-6">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+        Retour au Wiki
+      </a>
+
+      <!-- Profil -->
+      <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div class="relative h-96">
+          <img src={figure.photo} alt={`${figure.prenom} ${figure.nom}`} class="w-full h-full object-cover" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+          <div class="absolute bottom-8 left-8 text-white">
+            <h1 class="text-4xl md:text-5xl font-bold mb-2">{figure.prenom} {figure.nom}</h1>
+            <p class="text-orange-200">Figure emblématique de Bandenkop</p>
+          </div>
+        </div>
+
+        <div class="p-8">
+          <!-- Stats -->
+          <div class="flex items-center space-x-6 mb-8 pb-4 border-b border-gray-100">
+            <div class="flex items-center space-x-2">
+              <button id="likeBtn" class="flex items-center space-x-1 text-gray-500 hover:text-red-500 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                </svg>
+                <span id="likeCount">{figure.likes}</span>
+              </button>
+              <button id="dislikeBtn" class="flex items-center space-x-1 text-gray-500 hover:text-gray-700 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4m16 0l-4-4m4 4l-4 4"></path>
+                </svg>
+                <span id="dislikeCount">{figure.dislikes}</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Biographie -->
+          <div class="prose prose-lg max-w-none">
+            <h2>Biographie</h2>
+            <p>{figure.biographie}</p>
+            
+            {figure.contributions && figure.contributions.length > 0 && (
+              <>
+                <h2>Contributions</h2>
+                <ul>
+                  {figure.contributions.map((contrib: string) => (
+                    <li>{contrib}</li>
+                  ))}
+                </ul>
+              </>
+            )}
+            
+            {figure.citations && figure.citations.length > 0 && (
+              <>
+                <h2>Citations célèbres</h2>
+                {figure.citations.map((citation: string) => (
+                  <blockquote>
+                    "{citation}"
+                  </blockquote>
+                ))}
+              </>
+            )}
+          </div>
+
+          <!-- Section commentaires -->
+          <div class="mt-12 pt-8 border-t border-gray-100">
+            <h3 class="text-2xl font-bold text-gray-800 mb-6">Commentaires</h3>
+            
+            <div class="mb-8">
+              <textarea id="commentInput" rows="3" placeholder="Partagez votre avis..." class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500"></textarea>
+              <button id="submitComment" class="mt-3 bg-gradient-to-r from-orange-600 to-red-600 text-white px-6 py-2 rounded-lg hover:shadow-lg transition-all">
+                Publier
+              </button>
+            </div>
+
+            <div id="commentsList" class="space-y-4">
+              {figure.commentaires && figure.commentaires.length > 0 ? figure.commentaires.map((comment: FigureComment) => (
+                <div class="flex space-x-3 p-4 bg-gray-50 rounded-xl">
+                  <div class="w-10 h-10 rounded-full bg-gradient-to-br from-orange-100 to-red-100 flex items-center justify-center text-orange-700 font-bold">
+                    {comment.prenom ? comment.prenom[0] : 'A'}
+                  </div>
+                  <div class="flex-1">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="font-semibold text-gray-800">{comment.prenom} {comment.nom}</span>
+                      <span class="text-xs text-gray-500">{new Date(comment.date).toLocaleDateString('fr-FR')}</span>
+                    </div>
+                    <p class="text-gray-700">{comment.texte}</p>
+                  </div>
+                </div>
+              )) : (
+                <div class="text-center text-gray-500 py-8">
+                  Aucun commentaire pour le moment
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    import { getToken, getUser } from '../../utils/auth';
+    
+    const token = getToken();
+    const user = getUser();
+    const root = document.getElementById('wiki-root') as HTMLElement | null;
+    const figureId = root?.dataset.figureId || '';
+    
+    // Likes/Dislikes
+    document.getElementById('likeBtn')?.addEventListener('click', () => vote('like'));
+    document.getElementById('dislikeBtn')?.addEventListener('click', () => vote('dislike'));
+    
+    async function vote(type: 'like' | 'dislike') {
+      if (!token) {
+        window.location.href = '/connexion?redirect=' + window.location.pathname;
+        return;
+      }
+      if (!figureId) return;
+      
+      try {
+        const response = await fetch(`http://localhost:3001/api/figures/${figureId}/${type}`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+        const likeCount = document.getElementById('likeCount');
+        const dislikeCount = document.getElementById('dislikeCount');
+        if (likeCount) likeCount.textContent = String(data.likes ?? 0);
+        if (dislikeCount) dislikeCount.textContent = String(data.dislikes ?? 0);
+      } catch (error) {
+        console.error('Erreur vote:', error);
+      }
+    }
+    
+    // Commentaires
+    document.getElementById('submitComment')?.addEventListener('click', async () => {
+      if (!token) {
+        window.location.href = '/connexion?redirect=' + window.location.pathname;
+        return;
+      }
+      if (!figureId) return;
+      
+      const commentInput = document.getElementById('commentInput') as HTMLTextAreaElement | null;
+      if (!commentInput) return;
+
+      const text = commentInput.value.trim();
+      if (!text) return;
+      
+      try {
+        const response = await fetch(`http://localhost:3001/api/figures/${figureId}/commentaires`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ texte: text })
+        });
+        
+        if (response.ok) {
+          const commentsList = document.getElementById('commentsList');
+          if (!commentsList) return;
+          
+          if (commentsList.querySelector('.text-center')) {
+            commentsList.innerHTML = '';
+          }
+          
+          commentsList.insertAdjacentHTML('afterbegin', `
+            <div class="flex space-x-3 p-4 bg-gray-50 rounded-xl">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-br from-orange-100 to-red-100 flex items-center justify-center text-orange-700 font-bold">
+                ${user?.prenom ? user.prenom[0] : 'A'}
+              </div>
+              <div class="flex-1">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="font-semibold text-gray-800">${user?.prenom || ''} ${user?.nom || ''}</span>
+                  <span class="text-xs text-gray-500">À l'instant</span>
+                </div>
+                <p class="text-gray-700">${text}</p>
+              </div>
+            </div>
+          `);
+          
+          commentInput.value = '';
+        }
+      } catch (error) {
+        console.error('Erreur commentaire:', error);
+      }
+    });
+  </script>
+</Layout>

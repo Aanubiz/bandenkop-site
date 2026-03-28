@@ -1,0 +1,304 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import AuthCheck from '../../components/AuthCheck.astro';
+---
+
+<Layout title="Discussion - Bandenkop">
+  <AuthCheck>
+    <div class="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center pt-16">
+      <div class="container mx-auto px-4 py-12">
+        
+        <!-- Carte principale -->
+        <div class="max-w-4xl mx-auto bg-white/5 backdrop-blur-lg rounded-3xl overflow-hidden shadow-2xl border border-white/10">
+          
+          <!-- Animation de bulles de chat -->
+          <div class="relative h-64 bg-gradient-to-r from-orange-600/20 to-red-600/20 overflow-hidden">
+            <div class="absolute inset-0 flex items-center justify-center">
+              <div class="relative">
+                <!-- Bulle de chat animée -->
+                <div class="chat-bubble bubble-1 absolute">
+                  <div class="bg-white rounded-2xl p-3 shadow-lg">
+                    <p class="text-gray-800 text-sm">💬 La discussion arrive bientôt !</p>
+                  </div>
+                </div>
+                <div class="chat-bubble bubble-2 absolute">
+                  <div class="bg-orange-500 rounded-2xl p-3 shadow-lg">
+                    <p class="text-white text-sm">🎉 Une grande communauté vous attend</p>
+                  </div>
+                </div>
+                <div class="chat-bubble bubble-3 absolute">
+                  <div class="bg-gray-700 rounded-2xl p-3 shadow-lg">
+                    <p class="text-white text-sm">✨ Revenez bientôt !</p>
+                  </div>
+                </div>
+                <!-- Logo central -->
+                <div class="w-24 h-24 bg-gradient-to-br from-orange-600 to-red-600 rounded-2xl flex items-center justify-center mx-auto z-10 relative shadow-2xl animate-pulse-slow">
+                  <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Contenu -->
+          <div class="p-8 md:p-12 text-center">
+            <!-- Badge -->
+            <div class="inline-flex items-center px-4 py-2 bg-orange-500/20 rounded-full mb-6">
+              <span class="w-2 h-2 bg-orange-500 rounded-full animate-pulse mr-2"></span>
+              <span class="text-sm text-orange-400 font-medium">En développement actif</span>
+            </div>
+            
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
+              Discussion en
+              <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400">
+                construction
+              </span>
+            </h1>
+            
+            <p class="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
+              Nous travaillons actuellement sur un espace de discussion moderne et interactif pour rassembler la communauté Bandenkop. Revenez bientôt pour découvrir :
+            </p>
+            
+            <!-- Features à venir -->
+            <div class="grid md:grid-cols-3 gap-6 mb-10">
+              <div class="bg-white/5 rounded-2xl p-4 text-center hover:bg-white/10 transition-all">
+                <div class="text-3xl mb-2">💬</div>
+                <h3 class="font-semibold text-white mb-1">Salons en temps réel</h3>
+                <p class="text-sm text-gray-400">Discutez instantanément</p>
+              </div>
+              <div class="bg-white/5 rounded-2xl p-4 text-center hover:bg-white/10 transition-all">
+                <div class="text-3xl mb-2">🏘️</div>
+                <h3 class="font-semibold text-white mb-1">Salons par quartier</h3>
+                <p class="text-sm text-gray-400">Denkeng, Tsèmeuhia, Tsèla</p>
+              </div>
+              <div class="bg-white/5 rounded-2xl p-4 text-center hover:bg-white/10 transition-all">
+                <div class="text-3xl mb-2">🎨</div>
+                <h3 class="font-semibold text-white mb-1">Réactions et médias</h3>
+                <p class="text-sm text-gray-400">Partagez vos émotions</p>
+              </div>
+            </div>
+            
+            <!-- Compte à rebours perpétuel -->
+            <div class="bg-white/5 rounded-2xl p-6 mb-8">
+              <h3 class="text-lg font-semibold text-white mb-4">🔄 Prochaine phase de développement</h3>
+              <div class="flex justify-center space-x-4">
+                <div class="text-center">
+                  <div class="w-16 h-16 bg-orange-600/30 rounded-2xl flex items-center justify-center mb-2">
+                    <span class="text-3xl font-bold text-orange-400" id="days">0</span>
+                  </div>
+                  <span class="text-xs text-gray-400">Jours</span>
+                </div>
+                <div class="text-center">
+                  <div class="w-16 h-16 bg-orange-600/30 rounded-2xl flex items-center justify-center mb-2">
+                    <span class="text-3xl font-bold text-orange-400" id="hours">0</span>
+                  </div>
+                  <span class="text-xs text-gray-400">Heures</span>
+                </div>
+                <div class="text-center">
+                  <div class="w-16 h-16 bg-orange-600/30 rounded-2xl flex items-center justify-center mb-2">
+                    <span class="text-3xl font-bold text-orange-400" id="minutes">0</span>
+                  </div>
+                  <span class="text-xs text-gray-400">Minutes</span>
+                </div>
+                <div class="text-center">
+                  <div class="w-16 h-16 bg-orange-600/30 rounded-2xl flex items-center justify-center mb-2">
+                    <span class="text-3xl font-bold text-orange-400" id="seconds">0</span>
+                  </div>
+                  <span class="text-xs text-gray-400">Secondes</span>
+                </div>
+              </div>
+              <p class="text-sm text-gray-500 mt-4" id="cycle-info">Cycle de développement en cours</p>
+            </div>
+            
+            <!-- Bouton de notification -->
+            <button id="notifyBtn" class="bg-gradient-to-r from-orange-600 to-red-600 text-white px-8 py-4 rounded-xl font-semibold hover:shadow-2xl transform hover:scale-105 transition-all duration-300 inline-flex items-center space-x-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+              </svg>
+              <span>Être notifié du lancement</span>
+            </button>
+            
+            <!-- Message de confirmation -->
+            <div id="notificationMsg" class="mt-4 text-sm text-green-400 hidden">
+              ✅ Merci ! Vous serez averti dès l'ouverture.
+            </div>
+          </div>
+        </div>
+        
+        <!-- Avatars flottants -->
+        <div class="absolute bottom-8 left-8 opacity-20 hidden lg:block">
+          <div class="flex -space-x-2">
+            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white font-bold animate-float" style="animation-delay: 0s">
+              J
+            </div>
+            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white font-bold animate-float" style="animation-delay: 0.5s">
+              M
+            </div>
+            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white font-bold animate-float" style="animation-delay: 1s">
+              P
+            </div>
+            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white font-bold animate-float" style="animation-delay: 1.5s">
+              K
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </AuthCheck>
+
+  <script>
+    // Compteur perpétuel de 60 jours
+    // La clé "lastReset" stocke la date du dernier reset
+    // Si elle n'existe pas, on initialise à aujourd'hui
+    
+    const CYCLE_DAYS = 60; // 60 jours
+    
+    function getCurrentCycleEnd() {
+      let lastReset = localStorage.getItem('chat_last_reset');
+      const now = new Date();
+      
+      if (!lastReset) {
+        // Premier lancement, on initialise
+        lastReset = now.toISOString();
+        localStorage.setItem('chat_last_reset', lastReset);
+        localStorage.setItem('chat_cycle_count', '1');
+        return new Date(now.getTime() + CYCLE_DAYS * 24 * 60 * 60 * 1000);
+      }
+      
+      const lastResetDate = new Date(lastReset);
+      const cycleEnd = new Date(lastResetDate.getTime() + CYCLE_DAYS * 24 * 60 * 60 * 1000);
+      
+      // Si on a dépassé la date de fin, on reset
+      if (now > cycleEnd) {
+        const cycleCount = parseInt(localStorage.getItem('chat_cycle_count') || '1') + 1;
+        localStorage.setItem('chat_last_reset', now.toISOString());
+        localStorage.setItem('chat_cycle_count', cycleCount.toString());
+        return new Date(now.getTime() + CYCLE_DAYS * 24 * 60 * 60 * 1000);
+      }
+      
+      return cycleEnd;
+    }
+    
+    function updateCountdown() {
+      const now = Date.now();
+      const endDate = getCurrentCycleEnd();
+      const diff = endDate.getTime() - now;
+
+      const daysEl = document.getElementById('days');
+      const hoursEl = document.getElementById('hours');
+      const minutesEl = document.getElementById('minutes');
+      const secondsEl = document.getElementById('seconds');
+      const cycleInfoEl = document.getElementById('cycle-info');
+
+      if (!daysEl || !hoursEl || !minutesEl || !secondsEl || !cycleInfoEl) return;
+      
+      if (diff > 0) {
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        
+        daysEl.textContent = String(days);
+        hoursEl.textContent = String(hours);
+        minutesEl.textContent = String(minutes);
+        secondsEl.textContent = String(seconds);
+        
+        const cycleCount = localStorage.getItem('chat_cycle_count') || '1';
+        cycleInfoEl.innerHTML = `Cycle de développement #${cycleCount} • Prochaine phase dans ${days} jours`;
+      } else {
+        // Ce cas ne devrait pas arriver car getCurrentCycleEnd() retourne toujours une date future
+        // Mais on gère au cas où
+        daysEl.textContent = '0';
+        hoursEl.textContent = '0';
+        minutesEl.textContent = '0';
+        secondsEl.textContent = '0';
+        cycleInfoEl.innerHTML = `✨ Nouveau cycle de développement !`;
+        
+        // Forcer un reset
+        localStorage.removeItem('chat_last_reset');
+        localStorage.removeItem('chat_cycle_count');
+        updateCountdown();
+      }
+    }
+    
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+    
+    // Notification
+    document.getElementById('notifyBtn')?.addEventListener('click', () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Veuillez vous connecter pour recevoir les notifications');
+        window.location.href = '/connexion?redirect=/discussion';
+        return;
+      }
+      
+      const msg = document.getElementById('notificationMsg');
+      if (!msg) return;
+      msg.classList.remove('hidden');
+      setTimeout(() => {
+        msg.classList.add('hidden');
+      }, 3000);
+      
+      // Enregistrer la demande de notification
+      localStorage.setItem('chat_notify_requested', 'true');
+      localStorage.setItem('chat_notify_email', '');
+    });
+  </script>
+  
+  <style is:global>
+    /* Animations des bulles */
+    .chat-bubble {
+      animation: float 6s ease-in-out infinite;
+    }
+    
+    .bubble-1 {
+      top: 20%;
+      left: 10%;
+      animation-delay: 0s;
+    }
+    
+    .bubble-2 {
+      top: 60%;
+      right: 15%;
+      animation-delay: 2s;
+    }
+    
+    .bubble-3 {
+      bottom: 20%;
+      left: 20%;
+      animation-delay: 4s;
+    }
+    
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0px) translateX(0px);
+        opacity: 0.8;
+      }
+      50% {
+        transform: translateY(-20px) translateX(10px);
+        opacity: 1;
+      }
+    }
+    
+    @keyframes pulse-slow {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.4);
+      }
+      50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 15px rgba(249, 115, 22, 0);
+      }
+    }
+    
+    .animate-pulse-slow {
+      animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    
+    .animate-float {
+      animation: float 3s ease-in-out infinite;
+    }
+  </style>
+</Layout>

@@ -1,0 +1,372 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const API_URL = 'http://localhost:3001';
+
+// Les catégories
+const categories = [
+  {
+    id: 'vivants',
+    titre: "Ceux qui font briller Bandenkop",
+    description: "Des personnalités vivantes qui rayonnent aujourd'hui",
+    icone: "🌟",
+    couleur: "from-amber-500 to-orange-500"
+  },
+  {
+    id: 'traces',
+    titre: "Ceux qui ont laissé des traces indélébiles",
+    description: "Des figures historiques qui ont marqué notre histoire",
+    icone: "📜",
+    couleur: "from-blue-500 to-indigo-500"
+  },
+  {
+    id: 'etoiles',
+    titre: "Étoiles montantes",
+    description: "La relève qui promet un avenir radieux",
+    icone: "⭐",
+    couleur: "from-purple-500 to-pink-500"
+  }
+];
+
+const page = Number(Astro.url.searchParams.get('page')) || 1;
+const categorieActive = Astro.url.searchParams.get('categorie') || 'vivants';
+const limit = 4;
+---
+
+<Layout title="Wiki - Figures Bandenkop">
+  <div class="min-h-screen bg-gray-50">
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-20 bg-gradient-to-br from-orange-900 via-red-900 to-amber-900">
+      <div class="absolute inset-0 opacity-10" style="background-image: url('/patterns/african-pattern.svg'); background-size: 100px;"></div>
+      <div class="relative container mx-auto px-6 text-center text-white">
+        <h1 class="text-5xl md:text-7xl font-black mb-6">
+          Figures <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-yellow-300">Bandenkop</span>
+        </h1>
+        <p class="text-xl text-orange-100 max-w-3xl mx-auto">
+          Découvrez les personnalités qui font la fierté de notre village
+        </p>
+      </div>
+    </section>
+
+    <!-- Navigation par catégories -->
+    <section class="py-8 bg-white border-b sticky top-0 z-10">
+      <div class="container mx-auto px-6">
+        <div class="flex flex-wrap justify-center gap-3">
+          {categories.map(cat => (
+            <a 
+              href={`/wiki?categorie=${cat.id}&page=1`}
+              class={`px-6 py-3 rounded-full font-semibold transition-all duration-300 flex items-center space-x-2
+                ${categorieActive === cat.id 
+                  ? `bg-gradient-to-r ${cat.couleur} text-white shadow-lg` 
+                  : 'bg-gray-100 text-gray-700 hover:bg-orange-100'}`}
+            >
+              <span>{cat.icone}</span>
+              <span>{cat.titre}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Grille des figures (chargée dynamiquement) -->
+    <section class="py-16">
+      <div class="container mx-auto px-6">
+        <div id="loading" class="text-center py-12">
+          <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-600 border-t-transparent"></div>
+          <p class="mt-4 text-gray-600">Chargement des figures...</p>
+        </div>
+        
+        <div id="figures-container" class="hidden">
+          <div id="category-header" class="text-center mb-12">
+            <div class="inline-block p-4 rounded-full bg-gradient-to-r from-orange-100 to-red-100 mb-4">
+              <span id="category-icon" class="text-3xl">🌟</span>
+            </div>
+            <h2 id="category-title" class="text-3xl md:text-4xl font-bold text-gray-800 mb-3">Chargement...</h2>
+            <p id="category-desc" class="text-gray-600 max-w-2xl mx-auto"></p>
+          </div>
+          
+          <div id="figures-grid" class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Rempli par JS -->
+          </div>
+          
+          <div id="pagination" class="flex justify-center items-center space-x-2 mt-8"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    type CategoryKey = 'vivants' | 'traces' | 'etoiles';
+
+    interface CategoryMeta {
+      titre: string;
+      description: string;
+      icone: string;
+      couleur: string;
+    }
+
+    interface FigureData {
+      _id: string;
+      prenom: string;
+      nom: string;
+      photo?: string;
+      resume?: string;
+      biographie?: string;
+      contributions?: string[];
+      citations?: string[];
+      likes?: number;
+      dislikes?: number;
+    }
+
+    interface FiguresResponse {
+      figures?: FigureData[];
+      totalPages?: number;
+    }
+
+    declare global {
+      interface Window {
+        changePage: (page: number) => void;
+      }
+    }
+
+    const API_URL = 'http://localhost:3001';
+    const categories: Record<CategoryKey, CategoryMeta> = {
+      vivants: {
+        titre: "Ceux qui font briller Bandenkop",
+        description: "Des personnalités vivantes qui rayonnent aujourd'hui",
+        icone: "🌟",
+        couleur: "from-amber-500 to-orange-500"
+      },
+      traces: {
+        titre: "Ceux qui ont laissé des traces indélébiles",
+        description: "Des figures historiques qui ont marqué notre histoire",
+        icone: "📜",
+        couleur: "from-blue-500 to-indigo-500"
+      },
+      etoiles: {
+        titre: "Étoiles montantes",
+        description: "La relève qui promet un avenir radieux",
+        icone: "⭐",
+        couleur: "from-purple-500 to-pink-500"
+      }
+    };
+
+    const loading = document.getElementById('loading');
+    const container = document.getElementById('figures-container');
+    const iconEl = document.getElementById('category-icon');
+    const titleEl = document.getElementById('category-title');
+    const descEl = document.getElementById('category-desc');
+    const grid = document.getElementById('figures-grid');
+    const pagination = document.getElementById('pagination');
+
+    let currentCategorie: CategoryKey = 'vivants';
+    let currentPage = 1;
+    let totalPages = 1;
+
+    function parseCategory(value: string | null): CategoryKey {
+      if (value === 'traces' || value === 'etoiles') return value;
+      return 'vivants';
+    }
+
+    async function loadFigures() {
+      if (!loading || !container || !iconEl || !titleEl || !descEl || !grid || !pagination) return;
+
+      loading.classList.remove('hidden');
+      container.classList.add('hidden');
+
+      try {
+        const response = await fetch(`${API_URL}/api/figures?categorie=${currentCategorie}&page=${currentPage}&limit=4`);
+        const data: FiguresResponse = await response.json();
+
+        const cat = categories[currentCategorie];
+        iconEl.textContent = cat.icone;
+        titleEl.textContent = cat.titre;
+        descEl.textContent = cat.description;
+
+        const figures = Array.isArray(data.figures) ? data.figures : [];
+        if (figures.length === 0) {
+          grid.innerHTML = `
+            <div class="col-span-4 text-center py-12">
+              <div class="inline-block p-8 bg-white rounded-2xl shadow-lg">
+                <span class="text-6xl block mb-4">📖</span>
+                <p class="text-gray-500">Aucune figure dans cette catégorie pour le moment.</p>
+                <p class="text-sm text-gray-400 mt-2">Revenez bientôt !</p>
+              </div>
+            </div>
+          `;
+        } else {
+          grid.innerHTML = figures.map((figure: FigureData) => `
+            <div class="group relative bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500">
+              <div class="relative h-64 overflow-hidden">
+                <img
+                  src="${figure.photo || '/images/default-avatar.png'}"
+                  alt="${figure.prenom} ${figure.nom}"
+                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  onerror="this.src='/images/default-avatar.png'"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                <div class="absolute bottom-4 left-4 right-4">
+                  <h3 class="text-xl font-bold text-white mb-1">${figure.prenom} ${figure.nom}</h3>
+                  <p class="text-sm text-orange-200 line-clamp-2">${figure.resume || 'Contribution remarquable'}</p>
+                </div>
+              </div>
+
+              <div class="p-4">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center space-x-3">
+                    <button class="flex items-center space-x-1 text-gray-500 hover:text-red-500 transition-colors like-btn" data-id="${figure._id}">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                      </svg>
+                      <span id="likes-${figure._id}">${figure.likes || 0}</span>
+                    </button>
+                    <button class="flex items-center space-x-1 text-gray-500 hover:text-gray-700 transition-colors dislike-btn" data-id="${figure._id}">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4m16 0l-4-4m4 4l-4 4"></path>
+                      </svg>
+                      <span id="dislikes-${figure._id}">${figure.dislikes || 0}</span>
+                    </button>
+                  </div>
+                  <button class="text-orange-600 text-sm font-medium hover:text-orange-800 expand-btn" data-id="${figure._id}">
+                    Lire la suite
+                    <svg class="w-4 h-4 inline-block ml-1 expand-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                  </button>
+                </div>
+
+                <div id="bio-${figure._id}" class="hidden mt-3 pt-3 border-t border-gray-100">
+                  <div class="prose prose-sm max-w-none">
+                    <p class="text-gray-700 text-sm leading-relaxed">${figure.biographie || 'Biographie à venir...'}</p>
+                    ${(figure.contributions && figure.contributions.length > 0) ? `
+                      <h4 class="text-sm font-semibold text-gray-800 mt-3 mb-2">Contributions :</h4>
+                      <ul class="list-disc list-inside text-xs text-gray-600 space-y-1">
+                        ${figure.contributions.map((c: string) => `<li>${c}</li>`).join('')}
+                      </ul>
+                    ` : ''}
+                    ${(figure.citations && figure.citations.length > 0) ? `
+                      <h4 class="text-sm font-semibold text-gray-800 mt-3 mb-2">Citations :</h4>
+                      ${figure.citations.map((c: string) => `<blockquote class="italic text-xs text-gray-600 border-l-2 border-orange-300 pl-3 my-2">"${c}"</blockquote>`).join('')}
+                    ` : ''}
+                  </div>
+                </div>
+              </div>
+            </div>
+          `).join('');
+        }
+
+        totalPages = data.totalPages || 1;
+        if (totalPages > 1) {
+          let paginationHtml = `
+            <button onclick="changePage(${currentPage - 1})" class="px-4 py-2 rounded-lg border ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-orange-50'}" ${currentPage === 1 ? 'disabled' : ''}>
+              ←
+            </button>
+          `;
+
+          for (let i = 1; i <= totalPages; i++) {
+            if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+              paginationHtml += `
+                <button onclick="changePage(${i})" class="px-4 py-2 rounded-lg ${i === currentPage ? 'bg-orange-600 text-white' : 'hover:bg-orange-50'}">
+                  ${i}
+                </button>
+              `;
+            } else if (i === currentPage - 3 || i === currentPage + 3) {
+              paginationHtml += `<span class="px-2">...</span>`;
+            }
+          }
+
+          paginationHtml += `
+            <button onclick="changePage(${currentPage + 1})" class="px-4 py-2 rounded-lg border ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-orange-50'}" ${currentPage === totalPages ? 'disabled' : ''}>
+              →
+            </button>
+          `;
+
+          pagination.innerHTML = paginationHtml;
+          pagination.classList.remove('hidden');
+        } else {
+          pagination.classList.add('hidden');
+        }
+
+        loading.classList.add('hidden');
+        container.classList.remove('hidden');
+      } catch (error) {
+        console.error('Erreur chargement:', error);
+        loading.innerHTML = `
+          <div class="text-red-600">
+            <p class="text-xl mb-2">❌ Erreur de chargement</p>
+            <button onclick="location.reload()" class="mt-4 bg-orange-600 text-white px-6 py-2 rounded-lg">Réessayer</button>
+          </div>
+        `;
+      }
+    }
+
+    window.changePage = (page: number) => {
+      if (page >= 1 && page <= totalPages) {
+        currentPage = page;
+        void loadFigures();
+        window.history.pushState({}, '', `/wiki?categorie=${currentCategorie}&page=${page}`);
+      }
+    };
+
+    document.addEventListener('click', async (e: Event) => {
+      const target = e.target as Element | null;
+      if (!target) return;
+
+      const likeBtn = target.closest('.like-btn') as HTMLElement | null;
+      const dislikeBtn = target.closest('.dislike-btn') as HTMLElement | null;
+      const expandBtn = target.closest('.expand-btn') as HTMLElement | null;
+      const token = localStorage.getItem('token');
+
+      if (likeBtn && token) {
+        const id = likeBtn.dataset.id;
+        if (!id) return;
+        const response = await fetch(`${API_URL}/api/figures/${id}/like`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await response.json();
+        const likes = document.getElementById(`likes-${id}`);
+        const dislikes = document.getElementById(`dislikes-${id}`);
+        if (likes) likes.textContent = String(data.likes ?? 0);
+        if (dislikes) dislikes.textContent = String(data.dislikes ?? 0);
+      }
+
+      if (dislikeBtn && token) {
+        const id = dislikeBtn.dataset.id;
+        if (!id) return;
+        const response = await fetch(`${API_URL}/api/figures/${id}/dislike`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await response.json();
+        const likes = document.getElementById(`likes-${id}`);
+        const dislikes = document.getElementById(`dislikes-${id}`);
+        if (likes) likes.textContent = String(data.likes ?? 0);
+        if (dislikes) dislikes.textContent = String(data.dislikes ?? 0);
+      }
+
+      if (expandBtn) {
+        const id = expandBtn.dataset.id;
+        if (!id) return;
+        const bio = document.getElementById(`bio-${id}`);
+        if (!bio) return;
+
+        if (bio.classList.contains('hidden')) {
+          bio.classList.remove('hidden');
+          expandBtn.innerHTML = 'Réduire <svg class="w-4 h-4 inline-block ml-1 expand-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>';
+        } else {
+          bio.classList.add('hidden');
+          expandBtn.innerHTML = 'Lire la suite <svg class="w-4 h-4 inline-block ml-1 expand-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>';
+        }
+      }
+    });
+
+    const urlParams = new URLSearchParams(window.location.search);
+    currentCategorie = parseCategory(urlParams.get('categorie'));
+    currentPage = Number.parseInt(urlParams.get('page') ?? '1', 10) || 1;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      void loadFigures();
+    });
+  </script>
+</Layout>

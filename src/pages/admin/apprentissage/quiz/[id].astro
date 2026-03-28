@@ -1,0 +1,240 @@
+---
+import Layout from '../../../../layouts/Layout.astro';
+import AdminLayout from '../../../../components/admin/AdminLayout.astro';
+// ⚠️ SUPPRIME l'import de getToken ici !
+// import { getToken } from '../../../../utils/auth';
+
+const { id } = Astro.params;
+// ❌ Ne pas utiliser getToken() ici - localStorage n'existe pas côté serveur
+---
+
+<Layout title="Modifier la question">
+  <AdminLayout>
+    <div class="p-6">
+      <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold">Modifier la question</h1>
+        <a href="/admin/apprentissage/quiz" class="text-orange-600 hover:text-orange-800">
+          ← Retour
+        </a>
+      </div>
+
+      <div id="loading" class="text-center py-12">
+        <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-orange-600 border-t-transparent"></div>
+        <p class="mt-4 text-gray-600">Chargement...</p>
+      </div>
+
+      <div id="edit-form" class="hidden">
+        <!-- Le formulaire sera injecté par JavaScript -->
+      </div>
+    </div>
+  </AdminLayout>
+
+  <script>
+    import { getToken } from '../../../../utils/auth';
+
+    const API_URL = 'http://localhost:3001';
+    const token = getToken(); // ✅ Ici c'est côté client, ça fonctionne
+    const questionId = window.location.pathname.split('/').pop();
+
+    // Vérification du token côté client
+    if (!token) {
+      window.location.href = '/connexion';
+    }
+
+    async function loadQuestion() {
+      const loadingEl = document.getElementById('loading');
+      const editFormEl = document.getElementById('edit-form');
+
+      try {
+        console.log('📥 Chargement de la question:', questionId);
+        
+        const response = await fetch(`${API_URL}/api/admin/quiz/${questionId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!response.ok) throw new Error('Question non trouvée');
+        
+        const question = await response.json();
+        console.log('✅ Question chargée:', question);
+        
+        if (loadingEl) loadingEl.classList.add('hidden');
+        if (editFormEl) editFormEl.classList.remove('hidden');
+        
+        // Générer les options si c'est un QCM
+        let optionsHtml = '';
+        if (question.type === 'qcm' && question.options) {
+          optionsHtml = question.options.map((opt: string, index: number) => `
+            <div class="flex gap-2 mb-2">
+              <input type="text" name="options[]" value="${opt}" placeholder="Option ${index + 1}" class="flex-1 px-3 py-2 border rounded-lg">
+              <input type="radio" name="correctOption" value="${index}" ${question.reponse === opt ? 'checked' : ''} class="w-4 h-4 mt-3"> Bonne réponse
+            </div>
+          `).join('');
+        }
+        
+        // Afficher le formulaire pré-rempli
+        if (!editFormEl) return;
+        editFormEl.innerHTML = `
+          <form id="editQuestionForm" class="bg-white rounded-xl shadow-lg p-6 space-y-4">
+            <input type="hidden" name="id" value="${question._id}">
+            
+            <div>
+              <label class="block text-sm font-medium mb-1">Question (français) *</label>
+              <input type="text" name="question.fr" value="${question.question?.fr || ''}" required class="w-full px-3 py-2 border rounded-lg">
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium mb-1">Type</label>
+              <select name="type" disabled class="w-full px-3 py-2 border rounded-lg bg-gray-100">
+                <option value="qcm" ${question.type === 'qcm' ? 'selected' : ''}>QCM</option>
+                <option value="vrai-faux" ${question.type === 'vrai-faux' ? 'selected' : ''}>Vrai/Faux</option>
+              </select>
+            </div>
+
+            ${question.type === 'qcm' ? `
+              <div>
+                <label class="block text-sm font-medium mb-1">Options</label>
+                <div id="optionsContainer">
+                  ${optionsHtml}
+                </div>
+                <button type="button" onclick="addOption()" class="mt-2 text-orange-600 text-sm">+ Ajouter une option</button>
+              </div>
+            ` : ''}
+
+            ${question.type === 'vrai-faux' ? `
+              <div>
+                <label class="block text-sm font-medium mb-1">Bonne réponse</label>
+                <div class="flex gap-4">
+                  <label class="flex items-center">
+                    <input type="radio" name="vfCorrect" value="true" ${question.reponse === 'Vrai' ? 'checked' : ''} class="mr-2"> Vrai
+                  </label>
+                  <label class="flex items-center">
+                    <input type="radio" name="vfCorrect" value="false" ${question.reponse === 'Faux' ? 'checked' : ''} class="mr-2"> Faux
+                  </label>
+                </div>
+              </div>
+            ` : ''}
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium mb-1">Niveau</label>
+                <select name="niveau" class="w-full px-3 py-2 border rounded-lg">
+                  <option value="debutant" ${question.niveau === 'debutant' ? 'selected' : ''}>Débutant</option>
+                  <option value="intermediaire" ${question.niveau === 'intermediaire' ? 'selected' : ''}>Intermédiaire</option>
+                  <option value="avance" ${question.niveau === 'avance' ? 'selected' : ''}>Avancé</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Points</label>
+                <input type="number" name="points" value="${question.points || 10}" class="w-full px-3 py-2 border rounded-lg">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1">Tags</label>
+              <input type="text" name="tags" value="${(question.tags || []).join(', ')}" class="w-full px-3 py-2 border rounded-lg">
+            </div>
+
+            <div class="flex space-x-3 pt-4">
+              <button type="submit" class="flex-1 bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700">
+                Mettre à jour
+              </button>
+              <a href="/admin/apprentissage/quiz" class="flex-1 bg-gray-200 text-center py-2 rounded-lg hover:bg-gray-300">
+                Annuler
+              </a>
+            </div>
+          </form>
+        `;
+
+        // Ajouter la fonction addOption pour le formulaire d'édition
+        window.addOption = function() {
+          const container = document.getElementById('optionsContainer');
+          if (!container) return;
+          
+          const optionCount = container.querySelectorAll('.flex').length;
+          const newOption = document.createElement('div');
+          newOption.className = 'flex gap-2 mb-2';
+          newOption.innerHTML = `
+            <input type="text" name="options[]" placeholder="Option ${optionCount + 1}" class="flex-1 px-3 py-2 border rounded-lg">
+            <input type="radio" name="correctOption" value="${optionCount}" class="w-4 h-4 mt-3"> Bonne réponse
+          `;
+          container.appendChild(newOption);
+        };
+
+        document.getElementById('editQuestionForm')?.addEventListener('submit', async (e) => {
+          e.preventDefault();
+
+          const form = e.currentTarget as HTMLFormElement | null;
+          if (!form) return;
+
+          const formData = new FormData(form);
+          
+          // Construire l'objet de mise à jour
+          const updatedQuestion: any = {
+            rubrique: 'quiz',
+            type: question.type,
+            question: {
+              fr: formData.get('question.fr')
+            },
+            niveau: formData.get('niveau'),
+            points: parseInt(formData.get('points') as string),
+            tags: formData.get('tags') ? (formData.get('tags') as string).split(',').map(t => t.trim()) : []
+          };
+
+          // Gérer les options selon le type
+          if (question.type === 'qcm') {
+            const options: string[] = [];
+            const optionInputs = document.querySelectorAll('input[name="options[]"]') as NodeListOf<HTMLInputElement>;
+            optionInputs.forEach((input: HTMLInputElement) => {
+              if (input.value.trim()) options.push(input.value.trim());
+            });
+            updatedQuestion.options = options;
+            
+            const checked = document.querySelector('input[name="correctOption"]:checked') as HTMLInputElement | null;
+            const correctIndex = checked ? parseInt(checked.value) : 0;
+            if (options[correctIndex]) {
+              updatedQuestion.reponse = options[correctIndex];
+            }
+          } else if (question.type === 'vrai-faux') {
+            const vfCorrect = formData.get('vfCorrect');
+            updatedQuestion.options = ['Vrai', 'Faux'];
+            updatedQuestion.reponse = vfCorrect === 'true' ? 'Vrai' : 'Faux';
+          }
+
+          try {
+            const response = await fetch(`${API_URL}/api/admin/quiz/${questionId}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              },
+              body: JSON.stringify(updatedQuestion)
+            });
+
+            if (response.ok) {
+              window.location.href = '/admin/apprentissage/quiz';
+            } else {
+              const error = await response.json();
+              alert('Erreur: ' + error.error);
+            }
+          } catch (error) {
+            console.error('Erreur mise à jour:', error);
+            alert('Erreur lors de la mise à jour');
+          }
+        });
+
+      } catch (error) {
+        console.error('Erreur chargement:', error);
+        const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
+        if (!loadingEl) return;
+        loadingEl.innerHTML = `
+          <div class="text-red-600">
+            <p>❌ Erreur de chargement: ${errorMessage}</p>
+            <a href="/admin/apprentissage/quiz" class="text-orange-600 mt-4 inline-block">Retour</a>
+          </div>
+        `;
+      }
+    }
+
+    loadQuestion();
+  </script>
+</Layout>

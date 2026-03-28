@@ -1,0 +1,155 @@
+---
+// src/components/ProjetSection.astro
+const projets = [
+  {
+    titre: "Construction d'un centre culturel",
+    statut: "En cours",
+    avancement: 65,
+    budget: "50M FCFA",
+    description: "Création d'un espace dédié à la préservation et à la transmission de la culture Bandenkop",
+    image: "/images/projets/centre-culturel.jpg",
+    couleur: "from-orange-500 to-red-500"
+  },
+  {
+    titre: "Adduction d'eau potable",
+    statut: "Planification",
+    avancement: 25,
+    budget: "30M FCFA",
+    description: "Installation de bornes fontaines dans tous les quartiers du village",
+    image: "/images/projets/eau.jpg",
+    couleur: "from-blue-500 to-cyan-500"
+  },
+  {
+    titre: "Électrification rurale",
+    statut: "Étude",
+    avancement: 10,
+    budget: "80M FCFA",
+    description: "Extension du réseau électrique aux zones non desservies",
+    image: "/images/projets/electricite.jpg",
+    couleur: "from-yellow-500 to-amber-500"
+  },
+  {
+    titre: "Piste rurale Bangou-Bandenkop",
+    statut: "Financement",
+    avancement: 40,
+    budget: "120M FCFA",
+    description: "Aménagement et bitumage de la route reliant les deux villages",
+    image: "/images/projets/route.jpg",
+    couleur: "from-green-500 to-emerald-500"
+  },
+  {
+    titre: "École des métiers traditionnels",
+    statut: "En cours",
+    avancement: 55,
+    budget: "25M FCFA",
+    description: "Formation des jeunes aux métiers d'art et à l'artisanat local",
+    image: "/images/projets/ecole.jpg",
+    couleur: "from-purple-500 to-pink-500"
+  },
+  {
+    titre: "Centre de santé modernisé",
+    statut: "Démarrage",
+    avancement: 15,
+    budget: "45M FCFA",
+    description: "Rénovation et équipement du centre de santé existant",
+    image: "/images/projets/sante.jpg",
+    couleur: "from-red-500 to-pink-500"
+  }
+];
+---
+
+<section class="py-20 bg-gray-50">
+  <div class="container mx-auto px-6">
+    <div class="text-center mb-12">
+      <h2 class="text-4xl md:text-5xl font-black text-gray-800 mb-4">
+        Projets de <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600">Développement</span>
+      </h2>
+      <p class="text-xl text-gray-600">
+        Ensemble, construisons l'avenir de Bandenkop
+      </p>
+    </div>
+
+    <!-- Statistiques globales -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+      <div class="bg-white rounded-xl p-4 text-center shadow-lg">
+        <div class="text-3xl font-bold text-orange-600">6</div>
+        <div class="text-sm text-gray-600">Projets en cours</div>
+      </div>
+      <div class="bg-white rounded-xl p-4 text-center shadow-lg">
+        <div class="text-3xl font-bold text-orange-600">350M</div>
+        <div class="text-sm text-gray-600">Budget total FCFA</div>
+      </div>
+      <div class="bg-white rounded-xl p-4 text-center shadow-lg">
+        <div class="text-3xl font-bold text-orange-600">35%</div>
+        <div class="text-sm text-gray-600">Avancement moyen</div>
+      </div>
+      <div class="bg-white rounded-xl p-4 text-center shadow-lg">
+        <div class="text-3xl font-bold text-orange-600">200+</div>
+        <div class="text-sm text-gray-600">Bénéficiaires directs</div>
+      </div>
+    </div>
+
+    <!-- Grille des projets -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {projets.map((projet) => (
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transform hover:scale-105 transition-all duration-500">
+          <div class="relative h-48 overflow-hidden">
+            <img src={projet.image} alt={projet.titre} class="w-full h-full object-cover" />
+            <div class={`absolute inset-0 bg-gradient-to-t ${projet.couleur} opacity-60`}></div>
+            <div class="absolute top-4 right-4">
+              <span class="bg-white text-gray-800 px-3 py-1 rounded-full text-sm font-semibold">
+                {projet.statut}
+              </span>
+            </div>
+          </div>
+          
+          <div class="p-6">
+            <h3 class="text-xl font-bold text-gray-800 mb-2">{projet.titre}</h3>
+            <p class="text-gray-600 text-sm mb-4">{projet.description}</p>
+            
+            <!-- Barre de progression -->
+            <div class="mb-4">
+              <div class="flex justify-between text-sm mb-1">
+                <span class="text-gray-600">Avancement</span>
+                <span class="font-semibold text-orange-600">{projet.avancement}%</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2">
+                <div 
+                  class={`bg-gradient-to-r ${projet.couleur} h-2 rounded-full`}
+                  style={`width: ${projet.avancement}%`}
+                ></div>
+              </div>
+            </div>
+            
+            <!-- Budget -->
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-gray-600 text-sm">Budget:</span>
+              <span class="font-bold text-gray-800">{projet.budget}</span>
+            </div>
+            
+            <!-- Bouton soutenir -->
+            <button class="w-full bg-gradient-to-r from-orange-600 to-red-600 text-white py-2 rounded-lg font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-300">
+              Soutenir ce projet
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <!-- Appel aux dons -->
+    <div class="mt-12 bg-gradient-to-r from-orange-600 to-red-600 rounded-2xl p-8 text-white text-center">
+      <h3 class="text-3xl font-bold mb-4">Contribuez au développement de Bandenkop</h3>
+      <p class="text-xl mb-6 opacity-90">
+        Chaque contribution compte pour bâtir un avenir meilleur
+      </p>
+      <div class="flex justify-center space-x-4">
+        <button class="bg-white text-orange-600 px-8 py-3 rounded-full font-bold hover:bg-orange-100 transition-colors">
+          Faire un don
+        </button>
+        <button class="border-2 border-white text-white px-8 py-3 rounded-full font-bold hover:bg-white hover:text-orange-600 transition-colors">
+          Devenir partenaire
+        </button>
+      </div>
+    </div>
+  </div>
+</section>

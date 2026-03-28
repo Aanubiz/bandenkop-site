@@ -1,0 +1,137 @@
+/* src/styles/global.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply text-gray-900;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Syne', sans-serif;
+  }
+}
+
+@layer components {
+  /* Container mobile-first */
+  .container-premium {
+    @apply px-6 mx-auto max-w-7xl sm:px-8 lg:px-12;
+  }
+  
+  /* Titres responsives */
+  .title-xl {
+    @apply text-4xl font-black leading-tight sm:text-5xl md:text-6xl lg:text-7xl;
+  }
+  
+  .title-lg {
+    @apply text-3xl font-bold leading-tight sm:text-4xl md:text-5xl;
+  }
+  
+  .title-md {
+    @apply text-2xl font-bold sm:text-3xl;
+  }
+  
+  /* Animations au scroll */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  /* Cartes premium */
+  .card-premium {
+    @apply bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden backdrop-blur-sm;
+    background: rgba(255, 255, 255, 0.95);
+  }
+  
+  /* Boutons premium */
+  .btn-premium {
+    @apply relative inline-flex items-center justify-center px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base font-semibold text-white overflow-hidden rounded-2xl transition-all duration-300;
+    background: linear-gradient(135deg, #f97316 0%, #dc2626 100%);
+  }
+  
+  .btn-premium::before {
+    content: '';
+    @apply absolute inset-0 opacity-0 transition-opacity duration-300;
+    background: linear-gradient(135deg, #dc2626 0%, #f97316 100%);
+  }
+  
+  .btn-premium:hover::before {
+    @apply opacity-100;
+  }
+  
+  .btn-premium span {
+    @apply relative z-10;
+  }
+  
+  /* Glassmorphism */
+  .glass-premium {
+    @apply backdrop-blur-xl bg-white/10 border border-white/20;
+  }
+  
+  /* Grille responsive */
+  .grid-premium {
+    @apply grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-8;
+  }
+}
+
+/* Animations clés */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Utilitaires d'animation */
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+/* Tap highlight suppression pour mobile */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Scrollbar personnalisée */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #f97316, #dc2626);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #dc2626, #f97316);
+}

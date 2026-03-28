@@ -1,0 +1,49 @@
+---
+interface Props {
+  user?: {
+    prenom?: string;
+    nom?: string;
+    avatar?: string;
+    quartier?: string;
+    statistiques?: {
+      totalPoints?: number;
+      joursConsecutifs?: number;
+    };
+  };
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+}
+
+const { user, size = 'md' }: Props = Astro.props;
+
+const sizeClasses = {
+  sm: 'w-8 h-8 text-xs',
+  md: 'w-10 h-10 text-sm',
+  lg: 'w-12 h-12 text-base',
+  xl: 'w-16 h-16 text-lg'
+}[size] || 'w-10 h-10 text-sm';
+
+const initiales = user?.prenom && user?.nom 
+  ? `${user.prenom[0]}${user.nom[0]}`.toUpperCase()
+  : 'U';
+---
+
+<div class="relative group">
+  <!-- Avatar -->
+  <div class={`${sizeClasses} rounded-full bg-gradient-to-br from-orange-100 to-red-100 flex items-center justify-center overflow-hidden border-2 border-orange-300 hover:border-orange-600 transition-all duration-300 cursor-pointer`}>
+    {user?.avatar ? (
+      <img src={user.avatar} alt={`${user.prenom} ${user.nom}`} class="w-full h-full object-cover" />
+    ) : (
+      <span class="font-bold text-orange-700">{initiales}</span>
+    )}
+  </div>
+
+  <!-- Tooltip au survol -->
+  <div class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl p-3 hidden group-hover:block z-50 border border-gray-100">
+    <p class="font-semibold text-gray-800">{user?.prenom} {user?.nom}</p>
+    <p class="text-xs text-orange-600">{user?.quartier}</p>
+    <div class="mt-2 pt-2 border-t border-gray-100">
+      <p class="text-xs text-gray-500">Points: {user?.statistiques?.totalPoints || 0}</p>
+      <p class="text-xs text-gray-500">Série: {user?.statistiques?.joursConsecutifs || 0} jours</p>
+    </div>
+  </div>
+</div>

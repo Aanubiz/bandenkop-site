@@ -1,23 +1,80 @@
-<!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
-	</head>
-	<body>
-		<slot />
-	</body>
-</html>
+---
+// src/layouts/Layout.astro
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
 
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
-</style>
+const { title } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Bandenkop - {title}</title>
+    <meta name="description" content="Découvrez le village Bandenkop, son histoire millénaire, sa culture riche et sa communauté vibrante" />
+    
+    <!-- Fonts Premium -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <link href="/styles/global.css" rel="stylesheet" />
+  </head>
+  <body class="font-sans antialiased bg-[#faf8f5]">
+    <Header />
+    <main class="relative overflow-x-hidden">
+      <slot />
+    </main>
+    <Footer />
+    
+    <!-- UN SEUL SCRIPT CONTENANT TOUT LE CODE -->
+    <script>
+      // Intersection Observer pour les animations
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '50px' });
+
+      document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+      // Gestionnaire de clic pour tous les liens avec ancre
+      document.addEventListener('click', function(e) {
+        if (e.target) {
+          const link = (e.target as Element).closest('a[href^="#"]') as HTMLAnchorElement;
+          if (link) {
+            e.preventDefault();
+            const targetId = link.getAttribute('href');
+            if (targetId) {
+              const targetElement = document.querySelector(targetId);
+              
+              if (targetElement) {
+                targetElement.scrollIntoView({
+                  behavior: 'smooth',
+                  block: 'start'
+                });
+                
+                history.pushState(null, '', targetId);
+              }
+            }
+          }
+        }
+      });
+
+      // Si quelqu'un arrive directement avec #message-roi dans l'URL
+      if (window.location.hash === '#message-roi') {
+        setTimeout(() => {
+          const target = document.querySelector('#message-roi');
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 100);
+      }
+    </script>
+  </body>
+</html>

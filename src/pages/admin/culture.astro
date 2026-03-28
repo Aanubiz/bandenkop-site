@@ -1,0 +1,363 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import AdminLayout from '../../components/admin/AdminLayout.astro';
+import AuthCheck from '../../components/AuthCheck.astro';
+---
+
+<Layout title="Admin - Articles Culture">
+  <AuthCheck>
+    <AdminLayout>
+      <div class="space-y-6">
+        <div class="flex justify-between items-center">
+          <h1 class="text-2xl font-bold text-gray-800">Gestion des articles culturels</h1>
+          <button onclick="appWindow.openModal()" class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700">
+            + Nouvel article
+          </button>
+        </div>
+
+        <!-- Liste des articles culturels -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+          <table class="w-full">
+            <thead class="bg-gray-50">
+               <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Image</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Titre</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Catégorie</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+               </tr>
+            </thead>
+            <tbody id="culture-list" class="divide-y divide-gray-200">
+               <tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">Chargement...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Modal d'ajout/édition -->
+      <div id="cultureModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <h2 id="modalTitle" class="text-xl font-bold mb-4">Ajouter un article culturel</h2>
+          <form id="cultureForm" class="space-y-4">
+            <input type="hidden" id="articleId">
+            
+            <div>
+              <label class="block text-sm font-medium mb-1">Titre *</label>
+              <input type="text" id="titre" required class="w-full px-3 py-2 border rounded-lg">
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1">Slug (URL) *</label>
+              <input type="text" id="slug" required class="w-full px-3 py-2 border rounded-lg bg-gray-50" placeholder="ex: danses-traditionnelles">
+              <p class="text-xs text-gray-500 mt-1">Généré automatiquement si vide</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium mb-1">Période</label>
+                <input type="text" id="periode" class="w-full px-3 py-2 border rounded-lg" placeholder="ex: 1700-1750">
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Catégorie</label>
+                <select id="categorie" class="w-full px-3 py-2 border rounded-lg">
+                  <option value="Danses">Danses traditionnelles</option>
+                  <option value="Notabilité">Notabilité</option>
+                  <option value="Chapeaux">Chapeaux traditionnels</option>
+                  <option value="Chaises">Chaises et trônes</option>
+                  <option value="Cérémonies">Cérémonies</option>
+                  <option value="Initiation">Initiation</option>
+                  <option value="Khe">Le Khé - La Vérité</option>
+                  <option value="Prophètes">Prophètes et marabouts</option>
+                  <option value="Rites">Rites</option>
+                  <option value="Interdits">Interdits</option>
+                  <option value="Semaines">Jours de la semaine</option>
+                  <option value="Divinité">Divinité</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1">Image de couverture (URL)</label>
+              <div class="flex items-center space-x-4">
+                <input type="text" id="image" class="flex-1 px-3 py-2 border rounded-lg" placeholder="/images/culture/danses.jpg">
+                <div class="relative">
+                  <input type="file" id="imageFile" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer">
+                  <button type="button" onclick="document.getElementById('imageFile').click()" class="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200">
+                    📁 Parcourir
+                  </button>
+                </div>
+              </div>
+              <div id="imagePreview" class="mt-2 hidden">
+                <img id="previewImg" class="w-32 h-32 object-cover rounded-lg">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1">Résumé *</label>
+              <textarea id="resume" rows="3" required class="w-full px-3 py-2 border rounded-lg"></textarea>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1">Contenu complet *</label>
+              <textarea id="contenu" rows="12" required class="w-full px-3 py-2 border rounded-lg font-mono text-sm"></textarea>
+              <p class="text-xs text-gray-500 mt-1">Utilisez les balises HTML : &lt;p&gt;, &lt;h2&gt;, &lt;blockquote&gt;, &lt;img&gt;</p>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1">Auteur</label>
+              <input type="text" id="auteur" class="w-full px-3 py-2 border rounded-lg" value="Comité culturel de Bandenkop">
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1">Tags (séparés par des virgules)</label>
+              <input type="text" id="tags" class="w-full px-3 py-2 border rounded-lg" placeholder="culture, tradition, danses">
+            </div>
+
+            <div class="flex space-x-3 pt-4">
+              <button type="submit" class="flex-1 bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700">
+                Enregistrer
+              </button>
+              <button type="button" onclick="closeModal()" class="flex-1 bg-gray-200 py-2 rounded-lg hover:bg-gray-300">
+                Annuler
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </AdminLayout>
+  </AuthCheck>
+
+  <script>
+    import { getToken } from '../../utils/auth';
+    
+    function getElement<T extends HTMLElement>(id: string): T | null {
+      return document.getElementById(id) as T | null;
+    }
+
+    const API_URL = 'http://localhost:3001';
+    let token = getToken();
+
+    const appWindow = window as Window & typeof globalThis & {
+      openModal: () => void;
+      closeModal: () => void;
+      editArticle: (id: string) => Promise<void>;
+      deleteArticle: (id: string) => Promise<void>;
+    };
+
+    function previewImage(input: HTMLInputElement) {
+      const preview = getElement<HTMLElement>('imagePreview');
+      const previewImg = getElement<HTMLImageElement>('previewImg');
+      
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e: ProgressEvent<FileReader>) {
+          if (previewImg && typeof e.target?.result === 'string') {
+            previewImg.src = e.target.result;
+            if (preview) preview.classList.remove('hidden');
+          }
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    const imageFile = getElement<HTMLInputElement>('imageFile');
+    imageFile?.addEventListener('change', function() {
+      previewImage(this);
+    });
+
+    // Générer le slug automatiquement
+    const titreInput = getElement<HTMLInputElement>('titre');
+    titreInput?.addEventListener('input', (e) => {
+      const slugInput = getElement<HTMLInputElement>('slug');
+      const target = e.target as HTMLInputElement;
+      if (slugInput && (!slugInput.value || slugInput.value === '')) {
+        const slug = target.value
+          .toLowerCase()
+          .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-|-$/g, '');
+        slugInput.value = slug;
+      }
+    });
+
+    async function loadArticles() {
+      try {
+        const response = await fetch(`${API_URL}/api/culture/articles`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const articles = await response.json();
+        const tbody = getElement<HTMLElement>('culture-list');
+        
+        if (!tbody) return;
+        
+        if (articles.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-gray-500">Aucun article culturel</td></tr>';
+          return;
+        }
+        
+        tbody.innerHTML = articles.map((article: any) => `
+          <tr class="hover:bg-gray-50">
+            <td class="px-6 py-4">
+              <img src="${article.image || '/images/default-article.jpg'}" alt="${article.titre}" class="w-12 h-12 rounded-lg object-cover">
+             </td>
+            <td class="px-6 py-4 font-medium">${article.titre}</td>
+            <td class="px-6 py-4">
+              <span class="px-2 py-1 text-xs rounded-full bg-purple-100 text-purple-800">${article.categorie || 'Culture'}</span>
+             </td>
+            <td class="px-6 py-4">${new Date(article.date).toLocaleDateString('fr-FR')}</td>
+            <td class="px-6 py-4 text-right space-x-2">
+              <button onclick="editArticle('${article._id}')" class="text-blue-600 hover:text-blue-800">✏️</button>
+              <button onclick="deleteArticle('${article._id}')" class="text-red-600 hover:text-red-800">🗑️</button>
+             </td>
+           </tr>
+        `).join('');
+      } catch (error) {
+        console.error('Erreur:', error);
+      }
+    }
+
+    appWindow.openModal = () => {
+      const modalTitle = getElement<HTMLElement>('modalTitle');
+      const articleId = getElement<HTMLInputElement>('articleId');
+      const form = getElement<HTMLFormElement>('cultureForm');
+      const preview = getElement<HTMLElement>('imagePreview');
+      const modal = getElement<HTMLElement>('cultureModal');
+      
+      if (modalTitle) modalTitle.textContent = 'Ajouter un article culturel';
+      if (articleId) articleId.value = '';
+      if (form) form.reset();
+      if (preview) preview.classList.add('hidden');
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
+    };
+
+    appWindow.closeModal = () => {
+      const modal = getElement<HTMLElement>('cultureModal');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    };
+
+    appWindow.editArticle = async (id: string) => {
+      const response = await fetch(`${API_URL}/api/culture/articles/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const article = await response.json();
+      
+      const modalTitle = getElement<HTMLElement>('modalTitle');
+      const articleId = getElement<HTMLInputElement>('articleId');
+      const titre = getElement<HTMLInputElement>('titre');
+      const slug = getElement<HTMLInputElement>('slug');
+      const periode = getElement<HTMLInputElement>('periode');
+      const categorie = getElement<HTMLSelectElement>('categorie');
+      const image = getElement<HTMLInputElement>('image');
+      const resume = getElement<HTMLTextAreaElement>('resume');
+      const contenu = getElement<HTMLTextAreaElement>('contenu');
+      const auteur = getElement<HTMLInputElement>('auteur');
+      const tags = getElement<HTMLInputElement>('tags');
+      const previewImg = getElement<HTMLImageElement>('previewImg');
+      const preview = getElement<HTMLElement>('imagePreview');
+      
+      if (modalTitle) modalTitle.textContent = 'Modifier l\'article culturel';
+      if (articleId) articleId.value = article._id;
+      if (titre) titre.value = article.titre;
+      if (slug) slug.value = article.slug;
+      if (periode) periode.value = article.periode || '';
+      if (categorie) categorie.value = article.categorie || '';
+      if (image) image.value = article.image || '';
+      if (resume) resume.value = article.resume || '';
+      if (contenu) contenu.value = article.contenu || '';
+      if (auteur) auteur.value = article.auteur || '';
+      if (tags) tags.value = (article.tags || []).join(', ');
+      
+      if (article.image) {
+        if (previewImg) previewImg.src = article.image;
+        if (preview) preview.classList.remove('hidden');
+      }
+      
+      appWindow.openModal();
+    };
+
+    appWindow.deleteArticle = async (id: string) => {
+      if (!confirm('Supprimer cet article ?')) return;
+      await fetch(`${API_URL}/api/culture/articles/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      loadArticles();
+    };
+
+    const form = getElement<HTMLFormElement>('cultureForm');
+    if (form) {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const articleId = getElement<HTMLInputElement>('articleId');
+        const fileInput = getElement<HTMLInputElement>('imageFile');
+        const imageElem = getElement<HTMLInputElement>('image');
+        
+        const id = articleId?.value || '';
+        let imageUrl = imageElem?.value || '';
+        
+        // Upload de l'image si un fichier est sélectionné
+        if (fileInput?.files?.[0]) {
+          const formData = new FormData();
+          formData.append('image', fileInput.files[0]);
+          
+          try {
+            const uploadResponse = await fetch(`${API_URL}/api/culture/upload`, {
+              method: 'POST',
+              headers: { Authorization: `Bearer ${token}` },
+              body: formData
+            });
+            const uploadData = await uploadResponse.json();
+            imageUrl = uploadData.imageUrl;
+          } catch (error) {
+            console.error('Erreur upload:', error);
+          }
+        }
+        
+        const titre = getElement<HTMLInputElement>('titre');
+        const slug = getElement<HTMLInputElement>('slug');
+        const periode = getElement<HTMLInputElement>('periode');
+        const categorie = getElement<HTMLSelectElement>('categorie');
+        const resume = getElement<HTMLTextAreaElement>('resume');
+        const contenu = getElement<HTMLTextAreaElement>('contenu');
+        const auteur = getElement<HTMLInputElement>('auteur');
+        const tags = getElement<HTMLInputElement>('tags');
+        
+        const data = {
+          titre: titre?.value || '',
+          slug: slug?.value || '',
+          periode: periode?.value || '',
+          categorie: categorie?.value || '',
+          image: imageUrl,
+          resume: resume?.value || '',
+          contenu: contenu?.value || '',
+          auteur: auteur?.value || 'Comité culturel de Bandenkop',
+          tags: (tags?.value || '').split(',').map((t: string) => t.trim()).filter((t: string) => t)
+        };
+        
+        const url = id ? `${API_URL}/api/culture/articles/${id}` : `${API_URL}/api/culture/articles`;
+        const method = id ? 'PUT' : 'POST';
+        
+        await fetch(url, {
+          method,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(data)
+        });
+        
+        appWindow.closeModal();
+        loadArticles();
+      });
+    }
+
+    loadArticles();
+  </script>
+</Layout>
