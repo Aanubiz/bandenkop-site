@@ -1,6 +1,8 @@
 import express from 'express';
 import Prononciation from '../models/Prononciation.js';
 import CategoriePrononciation from '../models/CategoriePrononciation.js';
+import Progression from '../models/Progression.js';
+import User from '../models/User.js';
 import { verifyToken, verifyAdmin } from './auth.js';
 import multer from 'multer';
 import path from 'path';
@@ -51,6 +53,8 @@ router.get('/categories', verifyToken, async (req, res) => {
 router.get('/mots', verifyToken, async (req, res) => {
   try {
     const { page = 1, limit = 12, search = '', categorie = '', niveau = '' } = req.query;
+    const pageNum = Number(page) || 1;
+    const limitNum = Number(limit) || 12;
     
     const filter = {};
     
@@ -65,21 +69,59 @@ router.get('/mots', verifyToken, async (req, res) => {
       ];
     }
 
+    const progression = await Progression.findOne({
+      userId: req.userId,
+      rubrique: 'prononciation'
+    }).select('reponses.questionId');
+
+    const seenIds = (progression?.reponses || [])
+      .map((r) => r.questionId)
+      .filter(Boolean);
+
+    const pickRandomIds = async (match, size) => {
+      if (size <= 0) return [];
+      const rows = await Prononciation.aggregate([
+        { $match: match },
+        { $sample: { size } },
+        { $project: { _id: 1 } }
+      ]);
+      return rows.map((r) => r._id);
+    };
+
     const total = await Prononciation.countDocuments(filter);
-    const totalPages = Math.ceil(total / Number(limit));
-    
-    const mots = await Prononciation.find(filter)
-      .populate('categorie')
-      .sort({ dateAjout: -1 })
-      .limit(Number(limit))
-      .skip((Number(page) - 1) * Number(limit));
+    const totalPages = Math.ceil(total / limitNum);
+
+    const unseenFilter = seenIds.length
+      ? { ...filter, _id: { $nin: seenIds } }
+      : { ...filter };
+
+    const unseenIds = await pickRandomIds(unseenFilter, limitNum);
+    const selectedIds = [...unseenIds];
+
+    if (selectedIds.length < limitNum) {
+      const fillIds = await pickRandomIds(filter, limitNum - selectedIds.length);
+      const existing = new Set(selectedIds.map((id) => String(id)));
+      for (const id of fillIds) {
+        if (!existing.has(String(id))) {
+          selectedIds.push(id);
+          existing.add(String(id));
+        }
+      }
+    }
+
+    const motsList = await Prononciation.find({ _id: { $in: selectedIds } })
+      .populate('categorie');
+    const byId = new Map(motsList.map((m) => [String(m._id), m]));
+    const mots = selectedIds
+      .map((id) => byId.get(String(id)))
+      .filter(Boolean);
 
     res.json({
       mots,
       total,
-      page: Number(page),
+      page: pageNum,
       totalPages,
-      limit: Number(limit)
+      limit: limitNum
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -99,6 +141,77 @@ router.get('/mots/:id', verifyToken, async (req, res) => {
   }
 });
 
+// Comptabiliser la pratique d'un mot (1 seule fois par mot et par utilisateur)
+router.post('/pratiquer', verifyToken, async (req, res) => {
+  try {
+    const { motId } = req.body || {};
+
+    if (!motId) {
+      return res.status(400).json({ error: 'motId est requis' });
+    }
+
+    const mot = await Prononciation.findById(motId);
+    if (!mot) {
+      return res.status(404).json({ error: 'Mot non trouvé' });
+    }
+
+    let progression = await Progression.findOne({
+      userId: req.userId,
+      rubrique: 'prononciation'
+    });
+
+    if (!progression) {
+      progression = new Progression({
+        userId: req.userId,
+        rubrique: 'prononciation'
+      });
+    }
+
+    const dejaComptabilise = progression.reponses.some(
+      (r) => String(r.questionId) === String(mot._id) && r.reponseJuste === true
+    );
+
+    if (dejaComptabilise) {
+      return res.json({
+        success: true,
+        dejaComptabilise: true,
+        pointsGagnes: 0,
+        totalRubrique: progression.points || 0
+      });
+    }
+
+    const points = Number(mot.points || 5);
+
+    progression.reponses.push({
+      questionId: mot._id,
+      reponseJuste: true,
+      tempsReponse: 0
+    });
+    progression.questionsReussies += 1;
+    progression.points += points;
+    progression.serieActuelle += 1;
+    if (progression.serieActuelle > progression.meilleureSerie) {
+      progression.meilleureSerie = progression.serieActuelle;
+    }
+    progression.derniereActivite = new Date();
+    progression.mettreAJourNiveau();
+    await progression.save();
+
+    await User.findByIdAndUpdate(req.userId, {
+      $inc: { 'statistiques.totalPoints': points }
+    });
+
+    return res.json({
+      success: true,
+      dejaComptabilise: false,
+      pointsGagnes: points,
+      totalRubrique: progression.points
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
 // ===== ROUTES ADMIN =====
 
 // Upload audio
@@ -107,7 +220,7 @@ router.post('/admin/upload/audio', verifyToken, verifyAdmin, upload.single('audi
     if (!req.file) {
       return res.status(400).json({ error: 'Aucun fichier uploadé' });
     }
-    const audioUrl = `/uploads/audio/${req.file.filename}`;
+    const audioUrl = `/api/uploads/audio/${req.file.filename}`;
     res.json({ audioUrl });
   } catch (error) {
     res.status(500).json({ error: error.message });

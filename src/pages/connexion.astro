@@ -1,6 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { setUser } from '../utils/auth';
+import { getApiUrl } from '../config';
+
+const API_URL = getApiUrl();
 ---
 
 <Layout title="Connexion - Bandenkop">
@@ -75,6 +77,9 @@ import { setUser } from '../utils/auth';
 
   <script>
     import { setUser } from '../utils/auth';
+    import { getApiUrl } from '../config';
+
+    const API_URL = getApiUrl();
 
     const loginForm = document.getElementById("loginForm");
     const errorDiv = document.getElementById("error-message");
@@ -96,7 +101,9 @@ import { setUser } from '../utils/auth';
         const password = passwordInput.value;
 
         try {
-          const response = await fetch("http://localhost:3001/api/auth/login", {
+          console.log("🔐 Tentative de connexion vers:", `${API_URL}/api/auth/login`);
+          
+          const response = await fetch(`${API_URL}/api/auth/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password }),
@@ -108,6 +115,12 @@ import { setUser } from '../utils/auth';
             localStorage.setItem("token", data.token);
             setUser(data.user);
             localStorage.setItem("loginTime", Date.now().toString());
+
+            // Synchroniser aussi le token en cookie pour le middleware (maintenance/admin)
+            const rememberInput = document.querySelector<HTMLInputElement>("#remember");
+            const remember = Boolean(rememberInput?.checked);
+            const maxAge = remember ? 60 * 60 * 24 * 30 : 60 * 60 * 12; // 30j ou 12h
+            document.cookie = `token=${encodeURIComponent(data.token)}; Path=/; Max-Age=${maxAge}; SameSite=Lax`;
             
             // ✅ REDIRECTION SELON LE RÔLE
             const userRole = data.user.role;
@@ -133,7 +146,7 @@ import { setUser } from '../utils/auth';
             errorDiv.classList.remove("hidden");
           }
         } catch (error) {
-          console.error("Erreur:", error);
+          console.error("❌ Erreur:", error);
           errorDiv.textContent = "Erreur de connexion au serveur";
           errorDiv.classList.remove("hidden");
         }

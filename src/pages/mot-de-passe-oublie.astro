@@ -52,6 +52,9 @@ import Layout from '../layouts/Layout.astro';
   </div>
 
   <script>
+    import { getApiUrl } from '../config';
+
+    const API_URL = getApiUrl();
     const form = document.getElementById('forgotForm') as HTMLFormElement | null;
     const successDiv = document.getElementById('success-message') as HTMLElement | null;
     const errorDiv = document.getElementById('error-message') as HTMLElement | null;
@@ -87,7 +90,7 @@ import Layout from '../layouts/Layout.astro';
       }
 
       try {
-        const response = await fetch('http://localhost:3001/api/auth/forgot-password', {
+        const response = await fetch(`${API_URL}/api/auth/forgot-password`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email })

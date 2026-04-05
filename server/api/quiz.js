@@ -47,8 +47,7 @@ router.get('/questions/:rubrique', verifyToken, async (req, res) => {
     if (questions.length < limite) {
       const questionsAnciennes = await Question.aggregate([
         { $match: { rubrique, niveau } },
-        { $sort: { dateDerniereUtilisation: 1 } },
-        { $limit: limite - questions.length }
+        { $sample: { size: parseInt(limite) - questions.length } }
       ]);
       questions = [...questions, ...questionsAnciennes];
     }

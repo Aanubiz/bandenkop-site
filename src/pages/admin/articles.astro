@@ -2,6 +2,9 @@
 import Layout from "../../layouts/Layout.astro";
 import AdminLayout from "../../components/admin/AdminLayout.astro";
 import AuthCheck from "../../components/AuthCheck.astro";
+import { getApiUrl } from '../../config';
+
+const API_URL = getApiUrl();
 ---
 
 <Layout title="Admin - Articles Actualités">
@@ -23,6 +26,7 @@ import AuthCheck from "../../components/AuthCheck.astro";
           <table class="w-full">
             <thead class="bg-orange-50">
               <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-orange-800 uppercase">#</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-orange-800 uppercase">Image</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-orange-800 uppercase">Titre</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-orange-800 uppercase">Catégorie</th>
@@ -33,7 +37,7 @@ import AuthCheck from "../../components/AuthCheck.astro";
             </thead>
             <tbody id="articles-list" class="divide-y divide-gray-200">
               <tr>
-                <td colspan="6" class="px-6 py-4 text-center text-gray-500">Chargement...</td>
+                <td colspan="7" class="px-6 py-4 text-center text-gray-500">Chargement...</td>
               </tr>
             </tbody>
           </table>
@@ -71,6 +75,9 @@ import AuthCheck from "../../components/AuthCheck.astro";
                   <option value="Développement">🏗️ Développement</option>
                   <option value="Diaspora">🌍 Diaspora</option>
                   <option value="Culture">🎨 Culture</option>
+                  <option value="Santé">🩺 Santé</option>
+                  <option value="Sport">⚽ Sport</option>
+                  <option value="Éducation">📚 Éducation</option>
                 </select>
               </div>
               <!-- Date -->
@@ -268,6 +275,7 @@ import AuthCheck from "../../components/AuthCheck.astro";
         openModal: (isEdit?: boolean) => void;
         closeModal: () => void;
         editArticle: (id: string) => Promise<void>;
+        moveArticle: (id: string, direction: "up" | "down") => Promise<void>;
         deleteArticle: (id: string) => Promise<void>;
       }
     }
@@ -280,10 +288,12 @@ import AuthCheck from "../../components/AuthCheck.astro";
       openModal: (isEdit?: boolean) => void;
       closeModal: () => void;
       editArticle: (id: string) => Promise<void>;
+      moveArticle: (id: string, direction: "up" | "down") => Promise<void>;
       deleteArticle: (id: string) => Promise<void>;
     };
 
-    const API_URL = "http://localhost:3001";
+    import { getApiUrl } from '../../config';
+    const API_URL = getApiUrl();
     let token = getToken();
 
     // ===== FONCTIONS D'ÉDITION =====
@@ -342,7 +352,7 @@ import AuthCheck from "../../components/AuthCheck.astro";
         formData.append("image", file);
 
         try {
-          const response = await fetch(`${API_URL}/api/articles/upload`, {
+          const response = await fetch(`${API_URL}/api/upload`, {
             method: "POST",
             headers: { Authorization: `Bearer ${token}` },
             body: formData,
@@ -351,7 +361,7 @@ import AuthCheck from "../../components/AuthCheck.astro";
           if (response.ok) {
             const data = await response.json();
             const position = prompt("Position de l'image? (left, right, center)", "center");
-            const imageHtml = `<img src="${data.imageUrl}" alt="Image uploadée" class="float-${position}" style="max-width: 300px; margin: 1rem;" />`;
+            const imageHtml = `<img src="${data.url}" alt="Image uploadée" class="float-${position}" style="max-width: 300px; margin: 1rem;" />`;
             document.execCommand("insertHTML", false, imageHtml);
           } else {
             alert("Erreur lors de l'upload");
@@ -414,14 +424,15 @@ import AuthCheck from "../../components/AuthCheck.astro";
         if (!tbody) return;
 
         if (articles.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500">Aucun article</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-8 text-center text-gray-500">Aucun article</td></tr>';
           return;
         }
 
         tbody.innerHTML = articles
           .map(
-            (article: AdminArticle) => `
+            (article: AdminArticle, idx: number) => `
           <tr class="hover:bg-orange-50 transition-colors">
+            <td class="px-6 py-4 text-gray-400 text-sm w-10">${idx + 1}</td>
             <td class="px-6 py-4">
               <img src="${article.image || "/images/default-article.jpg"}" class="w-12 h-12 rounded-lg object-cover">
               </td>
@@ -430,6 +441,8 @@ import AuthCheck from "../../components/AuthCheck.astro";
             <td class="px-6 py-4 text-gray-600">${article.datePublication ? new Date(article.datePublication).toLocaleDateString("fr-FR") : "-"}</td>
             <td class="px-6 py-4 text-gray-600">${article.auteur || "-"}</td>
             <td class="px-6 py-4 text-right space-x-2">
+              <button onclick="moveArticle('${article._id}', 'up')" class="text-gray-600 hover:text-gray-900 p-1" title="Monter">⬆️</button>
+              <button onclick="moveArticle('${article._id}', 'down')" class="text-gray-600 hover:text-gray-900 p-1" title="Descendre">⬇️</button>
               <button onclick="editArticle('${article._id}')" class="text-blue-600 hover:text-blue-800 p-1" title="Modifier">✏️</button>
               <button onclick="deleteArticle('${article._id}')" class="text-red-600 hover:text-red-800 p-1" title="Supprimer">🗑️</button>
               </td>
@@ -518,6 +531,29 @@ import AuthCheck from "../../components/AuthCheck.astro";
       }
     }
 
+    async function moveArticle(id: string, direction: "up" | "down") {
+      try {
+        const response = await fetch(`${API_URL}/api/admin/articles/${id}/move`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ direction }),
+        });
+
+        if (!response.ok) {
+          const err = await response.json().catch(() => ({}));
+          throw new Error(err.error || "Erreur de réorganisation");
+        }
+
+        await loadArticles();
+      } catch (error) {
+        console.error("Erreur déplacement:", error);
+        alert(error instanceof Error ? error.message : "Impossible de déplacer l'article");
+      }
+    }
+
     document.getElementById("articleForm")?.addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -532,14 +568,14 @@ import AuthCheck from "../../components/AuthCheck.astro";
         formData.append("image", fileInput.files[0]);
 
         try {
-          const uploadResponse = await fetch(`${API_URL}/api/articles/upload`, {
+          const uploadResponse = await fetch(`${API_URL}/api/upload`, {
             method: "POST",
             headers: { Authorization: `Bearer ${token}` },
             body: formData,
           });
           if (uploadResponse.ok) {
             const uploadData = await uploadResponse.json();
-            imageUrl = uploadData.imageUrl;
+            imageUrl = uploadData.url;
           }
         } catch (error) {
           console.error("Erreur upload:", error);
@@ -595,6 +631,7 @@ import AuthCheck from "../../components/AuthCheck.astro";
     appWindow.openModal = openModal;
     appWindow.closeModal = closeModal;
     appWindow.editArticle = editArticle;
+    appWindow.moveArticle = moveArticle;
     appWindow.deleteArticle = deleteArticle;
 
     loadArticles();

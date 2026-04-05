@@ -7,9 +7,17 @@ import CategoriePrononciation from '../models/CategoriePrononciation.js';
 import ArticleHistoire from '../models/ArticleHistoire.js';
 import Article from '../models/Article.js'; // ← AJOUT IMPORTANT
 import Figure from '../models/Figure.js'; // ← AJOUT IMPORTANT
-import { verifyToken, verifyAdmin } from './auth.js';
+import { verifyToken, verifyAdmin, verifyAdminPermissionByMethod, verifySuperAdmin } from './auth.js';
 
 const router = express.Router();
+
+// Permissions par section
+router.use('/histoire', verifyToken, verifyAdmin, verifyAdminPermissionByMethod('histoire'));
+router.use('/articles', verifyToken, verifyAdmin, verifyAdminPermissionByMethod('articles'));
+router.use('/figures', verifyToken, verifyAdmin, verifyAdminPermissionByMethod('figures'));
+router.use('/prononciation', verifyToken, verifyAdmin, verifyAdminPermissionByMethod('prononciation'));
+router.use('/categories', verifyToken, verifyAdmin, verifyAdminPermissionByMethod('prononciation'));
+router.use('/utilisateurs', verifyToken, verifyAdmin, verifyAdminPermissionByMethod('utilisateurs'));
 
 // ===== STATISTIQUES DASHBOARD COMPLÈTES =====
 router.get('/stats', verifyToken, verifyAdmin, async (req, res) => {
@@ -274,6 +282,63 @@ router.put('/articles/:id', verifyToken, verifyAdmin, async (req, res) => {
   }
 });
 
+// Déplacer un article dans la liste admin (haut / bas)
+router.post('/articles/:id/move', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const { direction } = req.body || {};
+    if (!['up', 'down'].includes(direction)) {
+      return res.status(400).json({ error: 'Direction invalide (up|down)' });
+    }
+
+    const articles = await Article.find()
+      .sort({ datePublication: -1, _id: 1 })
+      .select('_id datePublication createdAt');
+
+    const currentIndex = articles.findIndex((a) => String(a._id) === String(req.params.id));
+    if (currentIndex === -1) {
+      return res.status(404).json({ error: 'Article introuvable' });
+    }
+
+    const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+    if (targetIndex < 0 || targetIndex >= articles.length) {
+      return res.json({ success: true, moved: false });
+    }
+
+    const current = articles[currentIndex];
+    const target = articles[targetIndex];
+
+    const currentDate = new Date(current.datePublication || current.createdAt || Date.now());
+    const targetDate = new Date(target.datePublication || target.createdAt || Date.now());
+
+    const newCurrentDate = direction === 'up'
+      ? new Date(targetDate.getTime() + 1)
+      : new Date(targetDate.getTime() - 1);
+
+    const newTargetDate = direction === 'up'
+      ? new Date(currentDate.getTime() - 1)
+      : new Date(currentDate.getTime() + 1);
+
+    await Article.bulkWrite([
+      {
+        updateOne: {
+          filter: { _id: current._id },
+          update: { $set: { datePublication: newCurrentDate } }
+        }
+      },
+      {
+        updateOne: {
+          filter: { _id: target._id },
+          update: { $set: { datePublication: newTargetDate } }
+        }
+      }
+    ]);
+
+    return res.json({ success: true, moved: true });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
 router.delete('/articles/:id', verifyToken, verifyAdmin, async (req, res) => {
   try {
     await Article.findByIdAndDelete(req.params.id);
@@ -425,7 +490,79 @@ router.get('/utilisateurs', verifyToken, verifyAdmin, async (req, res) => {
   }
 });
 
-router.delete('/utilisateurs/:id', verifyToken, verifyAdmin, async (req, res) => {
+router.put('/utilisateurs/:id', verifyToken, verifyAdmin, verifySuperAdmin, async (req, res) => {
+  try {
+    const { role, adminScope, adminPermissions } = req.body;
+    if (role && !['user', 'admin'].includes(role)) {
+      return res.status(400).json({ error: 'Rôle invalide' });
+    }
+
+    if (adminScope && !['super', 'limited'].includes(adminScope)) {
+      return res.status(400).json({ error: 'Scope admin invalide' });
+    }
+
+    const validAdminPermissions = [
+      'quiz:view', 'quiz:edit',
+      'prononciation:view', 'prononciation:edit',
+      'association:view', 'association:edit',
+      'ecriture:view', 'ecriture:edit',
+      'phonetique:view', 'phonetique:edit',
+      'histoire:view', 'histoire:edit',
+      'culture:view', 'culture:edit',
+      'articles:view', 'articles:edit',
+      'figures:view', 'figures:edit',
+      'utilisateurs:view', 'utilisateurs:edit'
+    ];
+
+    if (adminPermissions !== undefined) {
+      if (!Array.isArray(adminPermissions)) {
+        return res.status(400).json({ error: 'adminPermissions doit être un tableau' });
+      }
+      const invalid = adminPermissions.filter((p) => !validAdminPermissions.includes(p));
+      if (invalid.length > 0) {
+        return res.status(400).json({ error: `Permissions invalides: ${invalid.join(', ')}` });
+      }
+    }
+
+    const currentUser = await User.findById(req.params.id).select('-password');
+    if (!currentUser) return res.status(404).json({ error: 'Utilisateur introuvable' });
+
+    const nextRole = role || currentUser.role;
+    const update = {};
+
+    if (role) update.role = role;
+
+    if (nextRole !== 'admin') {
+      update.adminScope = 'super';
+      update.adminPermissions = [];
+    } else {
+      if (adminScope) update.adminScope = adminScope;
+      if (adminPermissions !== undefined) update.adminPermissions = adminPermissions;
+
+      // Promotion en admin sans paramètre explicite => limité par défaut
+      if (currentUser.role !== 'admin' && !adminScope) {
+        update.adminScope = 'limited';
+      }
+    }
+
+    const updateOp = {
+      $set: update,
+      $inc: { tokenVersion: 1 }
+    };
+
+    const utilisateur = await User.findByIdAndUpdate(
+      req.params.id,
+      updateOp,
+      { new: true }
+    ).select('-password');
+    if (!utilisateur) return res.status(404).json({ error: 'Utilisateur introuvable' });
+    res.json(utilisateur);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.delete('/utilisateurs/:id', verifyToken, verifyAdmin, verifySuperAdmin, async (req, res) => {
   try {
     await Progression.deleteMany({ userId: req.params.id });
     await User.findByIdAndDelete(req.params.id);

@@ -4,9 +4,14 @@ import Layout from "../../../layouts/Layout.astro";
 
 <Layout title="Admin - Prononciation">
   <div class="p-6 mt-24">
+    <a href="/admin" class="inline-flex items-center gap-1 text-sm text-orange-600 hover:text-orange-800 mb-4 transition-colors">← Panneau admin</a>
     <div class="flex justify-between items-center mb-6">
       <h1 class="text-2xl font-bold">Gestion de la prononciation</h1>
       <button onclick="openAddModal()" class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700"> + Ajouter un mot </button>
+    </div>
+
+    <div class="mb-4">
+      <input id="searchFilter" type="text" placeholder="Rechercher un mot français, bandenkop, anglais ou niveau..." class="w-full md:w-[460px] px-3 py-2 border rounded-lg" />
     </div>
 
     <!-- Formulaire d'ajout (modal) -->
@@ -21,8 +26,20 @@ import Layout from "../../../layouts/Layout.astro";
           </div>
 
           <div>
+            <label class="block text-sm font-medium mb-1">Mot en anglais (optionnel)</label>
+            <input type="text" name="motAnglais" class="w-full px-3 py-2 border rounded-lg" />
+          </div>
+
+          <div>
             <label class="block text-sm font-medium mb-1">Mot en Bandenkop *</label>
             <input type="text" name="motBandenkop" required class="w-full px-3 py-2 border rounded-lg" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-1">Catégorie *</label>
+            <select name="categorie" id="categorieSelect" required class="w-full px-3 py-2 border rounded-lg">
+              <option value="">Sélectionner une catégorie</option>
+            </select>
           </div>
 
           <div>
@@ -44,6 +61,11 @@ import Layout from "../../../layouts/Layout.astro";
                 <span class="text-sm">Upload en cours...</span>
               </div>
             </div>
+          </div>
+
+          <div class="p-4 bg-gray-50 rounded-lg">
+            <label class="block text-sm font-medium mb-2">Image illustrative (optionnel)</label>
+            <input type="file" id="imageFile" name="imageFile" accept="image/*" class="w-full" />
           </div>
 
           <div>
@@ -85,6 +107,7 @@ import Layout from "../../../layouts/Layout.astro";
       <table class="w-full">
         <thead class="bg-gray-50">
           <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">#</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Mot</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Audio</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Niveau</th>
@@ -94,7 +117,7 @@ import Layout from "../../../layouts/Layout.astro";
         </thead>
         <tbody id="prononciation-list" class="divide-y divide-gray-200">
           <tr>
-            <td colspan="5" class="px-6 py-4 text-center text-gray-500">Chargement...</td>
+            <td colspan="6" class="px-6 py-4 text-center text-gray-500">Chargement...</td>
           </tr>
         </tbody>
       </table>
@@ -118,19 +141,108 @@ import Layout from "../../../layouts/Layout.astro";
       _id: string;
       motBandenkop: string;
       motFrancais: string;
+      motAnglais?: string;
       audioUrl: string;
+      imageUrl?: string;
       niveau: "debutant" | "intermediaire" | "avance";
       points: number;
+    };
+
+    type CategorieItem = {
+      _id: string;
+      nom: string;
     };
 
     type UploadResponse = {
       audioUrl: string;
     };
 
-    const API_URL = "http://localhost:3001";
+    import { getApiUrl } from '../../../config';
+    const API_URL = getApiUrl();
     const token = getToken();
+    let prononciationCache: PrononciationItem[] = [];
 
     if (!token) window.location.href = "/connexion";
+
+    function renderPrononciation(data: PrononciationItem[]) {
+      const tbody = document.getElementById("prononciation-list");
+      if (!tbody) return;
+
+      const search = (document.getElementById('searchFilter') as HTMLInputElement | null)?.value.toLowerCase().trim() || '';
+      const filtered = search
+        ? data.filter((item) => {
+            const txt = `${item.motBandenkop} ${item.motFrancais} ${item.motAnglais || ''} ${item.niveau}`.toLowerCase();
+            return txt.includes(search);
+          })
+        : data;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="px-6 py-8 text-center text-gray-500">
+              Aucun mot de prononciation trouvé
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = filtered
+        .map(
+          (item: PrononciationItem, idx: number) => `
+            <tr>
+              <td class="px-6 py-4 text-gray-400 text-sm w-10">${idx + 1}</td>
+              <td class="px-6 py-4">
+                <div class="font-medium">${item.motBandenkop}</div>
+                <div class="text-sm text-gray-500">${item.motFrancais}</div>
+                ${item.motAnglais ? `<div class="text-xs text-gray-400">EN: ${item.motAnglais}</div>` : ''}
+              </td>
+              <td class="px-6 py-4">
+                <button onclick="playAudio('${item.audioUrl}')" class="text-orange-600 hover:text-orange-800">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                </button>
+              </td>
+              <td class="px-6 py-4">
+                <span class="px-2 py-1 text-xs rounded-full ${
+                  item.niveau === "debutant"
+                    ? "bg-green-100 text-green-800"
+                    : item.niveau === "intermediaire"
+                      ? "bg-yellow-100 text-yellow-800"
+                      : "bg-red-100 text-red-800"
+                }">${item.niveau}</span>
+              </td>
+              <td class="px-6 py-4">${item.points}</td>
+              <td class="px-6 py-4 text-right space-x-2">
+                <button onclick="editItem('${item._id}')" class="text-blue-600 hover:text-blue-800">✏️</button>
+                <button onclick="deleteItem('${item._id}')" class="text-red-600 hover:text-red-800">🗑️</button>
+              </td>
+            </tr>
+          `,
+        )
+        .join("");
+    }
+
+    async function loadCategoriesForForm() {
+      try {
+        const response = await fetch(`${API_URL}/api/prononciation/admin/categories`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = (await response.json()) as CategorieItem[];
+
+        const select = document.getElementById('categorieSelect') as HTMLSelectElement | null;
+        if (!select) return;
+
+        select.innerHTML = `
+          <option value="">Sélectionner une catégorie</option>
+          ${Array.isArray(data) ? data.map((cat) => `<option value="${cat._id}">${cat.nom}</option>`).join('') : ''}
+        `;
+      } catch (error) {
+        console.error('Erreur chargement catégories prononciation:', error);
+      }
+    }
 
     async function loadPrononciation() {
       console.log("📥 Chargement des mots de prononciation...");
@@ -147,7 +259,7 @@ import Layout from "../../../layouts/Layout.astro";
         if (!Array.isArray(data)) {
           tbody.innerHTML = `
             <tr>
-              <td colspan="5" class="px-6 py-8 text-center text-red-600">
+              <td colspan="6" class="px-6 py-8 text-center text-red-600">
                 ❌ Erreur: ${data.error || "Format de données invalide"}
               </td>
             </tr>
@@ -155,58 +267,15 @@ import Layout from "../../../layouts/Layout.astro";
           return;
         }
 
-        if (data.length === 0) {
-          tbody.innerHTML = `
-            <tr>
-              <td colspan="5" class="px-6 py-8 text-center text-gray-500">
-                Aucun mot de prononciation trouvé
-              </td>
-            </tr>
-          `;
-          return;
-        }
-
-        tbody.innerHTML = data
-          .map(
-            (item: PrononciationItem) => `
-              <tr>
-                <td class="px-6 py-4">
-                  <div class="font-medium">${item.motBandenkop}</div>
-                  <div class="text-sm text-gray-500">${item.motFrancais}</div>
-                </td>
-                <td class="px-6 py-4">
-                  <button onclick="playAudio('${item.audioUrl}')" class="text-orange-600 hover:text-orange-800">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                  </button>
-                </td>
-                <td class="px-6 py-4">
-                  <span class="px-2 py-1 text-xs rounded-full ${
-                    item.niveau === "debutant"
-                      ? "bg-green-100 text-green-800"
-                      : item.niveau === "intermediaire"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : "bg-red-100 text-red-800"
-                  }">${item.niveau}</span>
-                </td>
-                <td class="px-6 py-4">${item.points}</td>
-                <td class="px-6 py-4 text-right space-x-2">
-                  <button onclick="editItem('${item._id}')" class="text-blue-600 hover:text-blue-800">✏️</button>
-                  <button onclick="deleteItem('${item._id}')" class="text-red-600 hover:text-red-800">🗑️</button>
-                </td>
-              </tr>
-            `,
-          )
-          .join("");
+        prononciationCache = data as PrononciationItem[];
+        renderPrononciation(prononciationCache);
       } catch (error) {
         console.error("❌ Erreur chargement:", error);
         const tbody = document.getElementById("prononciation-list");
         if (tbody) {
           tbody.innerHTML = `
             <tr>
-              <td colspan="5" class="px-6 py-8 text-center text-red-600">
+              <td colspan="6" class="px-6 py-8 text-center text-red-600">
                 ❌ Erreur de chargement: ${error instanceof Error ? error.message : "Erreur inconnue"}
               </td>
             </tr>
@@ -329,14 +398,44 @@ import Layout from "../../../layouts/Layout.astro";
         const transcriptionPhonetique = formData.get("transcriptionPhonetique");
         const exempleFrancais = formData.get("exempleFrancais");
         const exempleBandenkop = formData.get("exempleBandenkop");
+        const motAnglais = formData.get("motAnglais");
+        const categorie = formData.get("categorie");
         const difficulte = formData.get("difficulte");
         const points = formData.get("points");
 
+        if (!categorie || typeof categorie !== 'string') {
+          throw new Error('Veuillez sélectionner une catégorie');
+        }
+
+        let imageUrl = '';
+        const imageInput = document.getElementById('imageFile') as HTMLInputElement | null;
+        if (imageInput?.files && imageInput.files.length > 0) {
+          const imageFormData = new FormData();
+          imageFormData.append('image', imageInput.files[0]);
+
+          const imageUploadResponse = await fetch(`${API_URL}/api/admin/prononciation/upload/image`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${token}` },
+            body: imageFormData,
+          });
+
+          if (!imageUploadResponse.ok) {
+            const err = await imageUploadResponse.json().catch(() => ({}));
+            throw new Error(err.error || 'Erreur upload image');
+          }
+
+          const imageUploadData = await imageUploadResponse.json() as { imageUrl?: string };
+          imageUrl = imageUploadData.imageUrl || '';
+        }
+
         const data = {
           motFrancais: motFrancais,
+            motAnglais: motAnglais || "",
           motBandenkop: motBandenkop,
+            categorie,
           niveau: niveau,
           audioUrl: uploadData.audioUrl,
+            imageUrl,
           transcriptionPhonetique: transcriptionPhonetique || "",
           exemplePhrase: {
             francais: exempleFrancais || "",
@@ -371,6 +470,8 @@ import Layout from "../../../layouts/Layout.astro";
       }
     }
 
+    loadCategoriesForForm();
+    document.getElementById('searchFilter')?.addEventListener('input', () => renderPrononciation(prononciationCache));
     loadPrononciation();
   </script>
 </Layout>

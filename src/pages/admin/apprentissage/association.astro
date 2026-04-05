@@ -3,38 +3,33 @@ import Layout from '../../../layouts/Layout.astro';
 ---
 
 <Layout title="Admin - Association">
-    <div class="p-6">
+  <div class="p-6 mt-24">
+      <a href="/admin" class="inline-flex items-center gap-1 text-sm text-orange-600 hover:text-orange-800 mb-4 transition-colors">← Panneau admin</a>
       <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold">Association mot-image</h1>
+        <h1 class="text-2xl font-bold">Association FR ↔ Bandenkop</h1>
         <button onclick="openAddModal()" class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700">
-          + Ajouter une paire
+          + Ajouter 6 paires
         </button>
+      </div>
+
+      <div class="mb-4">
+        <input id="searchFilter" type="text" placeholder="Rechercher un bloc, un mot, une catégorie, un niveau..." class="w-full md:w-[460px] px-3 py-2 border rounded-lg" />
       </div>
 
       <!-- Modal d'ajout -->
       <div id="addModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
         <div class="bg-white rounded-xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-          <h2 class="text-xl font-bold mb-4">Ajouter une association mot-image</h2>
+          <h2 class="text-xl font-bold mb-2">Ajouter un bloc de 6 paires</h2>
+          <p class="text-sm text-gray-500 mb-4">Saisis 6 mots Bandenkop et leurs 6 équivalents français.</p>
           
           <form id="associationForm" class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium mb-1">Mot en Bandenkop *</label>
-              <input type="text" name="motBandenkop" required class="w-full px-3 py-2 border rounded-lg">
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium mb-1">Mot en français *</label>
-              <input type="text" name="motFrancais" required class="w-full px-3 py-2 border rounded-lg">
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium mb-1">Image *</label>
-              <input type="file" id="imageFile" accept="image/*" required class="w-full">
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium mb-1">Audio (prononciation) - optionnel</label>
-              <input type="file" id="audioFile" accept="audio/*" class="w-full">
+            <div class="space-y-2">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2" data-row={i + 1}>
+                  <input type="text" name={`motBandenkop${i + 1}`} required class="w-full px-3 py-2 border rounded-lg" placeholder={`Mot Bandenkop ${i + 1}`} />
+                  <input type="text" name={`motFrancais${i + 1}`} required class="w-full px-3 py-2 border rounded-lg" placeholder={`Équivalent français ${i + 1}`} />
+                </div>
+              ))}
             </div>
 
             <div>
@@ -58,8 +53,8 @@ import Layout from '../../../layouts/Layout.astro';
                 </select>
               </div>
               <div>
-                <label class="block text-sm font-medium mb-1">Points</label>
-                <input type="number" name="points" value="10" min="1" class="w-full px-3 py-2 border rounded-lg">
+                <label class="block text-sm font-medium mb-1">Score max du bloc</label>
+                <input type="number" value="6" disabled class="w-full px-3 py-2 border rounded-lg bg-gray-100 text-gray-500">
               </div>
             </div>
 
@@ -75,13 +70,64 @@ import Layout from '../../../layouts/Layout.astro';
         </div>
       </div>
 
+      <!-- Modal d'édition bloc -->
+      <div id="editModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <h2 class="text-xl font-bold mb-2">Éditer un bloc de 6 paires</h2>
+          <p class="text-sm text-gray-500 mb-4">Modifie les mots puis enregistre.</p>
+
+          <form id="editAssociationForm" class="space-y-4">
+            <input type="hidden" name="blocId" id="editBlocId" />
+
+            <div class="space-y-2">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2" data-edit-row={i + 1}>
+                  <input type="text" name={`editMotBandenkop${i + 1}`} required class="w-full px-3 py-2 border rounded-lg" placeholder={`Mot Bandenkop ${i + 1}`} />
+                  <input type="text" name={`editMotFrancais${i + 1}`} required class="w-full px-3 py-2 border rounded-lg" placeholder={`Équivalent français ${i + 1}`} />
+                </div>
+              ))}
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium mb-1">Catégorie</label>
+                <select name="editCategorie" id="editCategorie" class="w-full px-3 py-2 border rounded-lg">
+                  <option value="objet">Objet</option>
+                  <option value="animal">Animal</option>
+                  <option value="personne">Personne</option>
+                  <option value="action">Action</option>
+                  <option value="nature">Nature</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Niveau</label>
+                <select name="editNiveau" id="editNiveau" class="w-full px-3 py-2 border rounded-lg">
+                  <option value="debutant">Débutant</option>
+                  <option value="intermediaire">Intermédiaire</option>
+                  <option value="avance">Avancé</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="flex space-x-3 pt-4">
+              <button type="submit" class="flex-1 bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700">
+                Enregistrer modifications
+              </button>
+              <button type="button" onclick="closeEditModal()" class="flex-1 bg-gray-200 py-2 rounded-lg hover:bg-gray-300">
+                Annuler
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
       <!-- Liste des associations -->
       <div class="bg-white rounded-xl shadow-lg overflow-hidden">
         <table class="w-full">
           <thead class="bg-gray-50">
             <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Mot</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Image</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">#</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Bloc</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Catégorie</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Niveau</th>
               <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
@@ -101,87 +147,181 @@ import Layout from '../../../layouts/Layout.astro';
 
     declare global {
       interface Window {
-        deleteItem: (id: string) => Promise<void>;
-        editItem: (id: string) => void;
+        deleteBloc: (blocId: string) => Promise<void>;
+        editBloc: (blocId: string) => void;
         openAddModal: () => void;
         closeAddModal: () => void;
+        closeEditModal: () => void;
       }
     }
 
-    type AssociationItem = {
+    type PaireItem = {
       _id: string;
       motBandenkop: string;
       motFrancais: string;
-      imageUrl: string;
-      categorie: string;
-      niveau: 'debutant' | 'intermediaire' | 'avance';
     };
 
-    const API_URL = 'http://localhost:3001';
+    type AssociationBloc = {
+      blocId: string;
+      isLegacy?: boolean;
+      count: number;
+      itemIds?: string[];
+      categorie: string;
+      niveau: 'debutant' | 'intermediaire' | 'avance';
+      paires: PaireItem[];
+    };
+
+    type PairePayload = {
+      motBandenkop: string;
+      motFrancais: string;
+    };
+
+    import { getApiUrl } from '../../../config';
+    const API_URL = getApiUrl();
     const token = getToken();
+    let blocsCache: AssociationBloc[] = [];
 
     if (!token) window.location.href = '/connexion';
 
     const getElement = (id: string) => document.getElementById(id) as HTMLElement | null;
 
+    function renderAssociation(blocs: AssociationBloc[]) {
+      const tbody = document.getElementById('association-list');
+      if (!tbody) return;
+
+      const search = (document.getElementById('searchFilter') as HTMLInputElement | null)?.value.toLowerCase().trim() || '';
+      const filtered = search
+        ? blocs.filter((bloc) => {
+            const pairesText = bloc.paires.map((p) => `${p.motBandenkop} ${p.motFrancais}`).join(' ');
+            const txt = `${bloc.blocId} ${bloc.categorie} ${bloc.niveau} ${pairesText}`.toLowerCase();
+            return txt.includes(search);
+          })
+        : blocs;
+
+      if (!filtered.length) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="px-6 py-10 text-center text-gray-500">
+              <p class="mb-3">Aucun bloc trouvé.</p>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map((bloc: AssociationBloc, idx: number) => {
+        const resume = bloc.paires.slice(0, 3).map((p) => `${p.motBandenkop}→${p.motFrancais}`).join(' • ');
+        const reste = Math.max(0, bloc.count - 3);
+        const canEdit = !bloc.isLegacy && bloc.count === 6;
+        return `
+        <tr>
+          <td class="px-6 py-4 text-gray-400 text-sm w-10">${idx + 1}</td>
+          <td class="px-6 py-4">
+            <div class="font-medium">Bloc ${bloc.blocId.slice(-6)} (${bloc.count}/6 paires)</div>
+            <div class="text-sm text-gray-500">${resume}${reste ? ` • +${reste}` : ''}</div>
+          </td>
+          <td class="px-6 py-4">
+            <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+              ${bloc.categorie}
+            </span>
+          </td>
+          <td class="px-6 py-4">
+            <span class="px-2 py-1 text-xs rounded-full ${
+              bloc.niveau === 'debutant' ? 'bg-green-100 text-green-800' :
+              bloc.niveau === 'intermediaire' ? 'bg-yellow-100 text-yellow-800' :
+              'bg-red-100 text-red-800'
+            }">${bloc.niveau}</span>
+          </td>
+          <td class="px-6 py-4 text-right space-x-2">
+            <button ${canEdit ? '' : 'disabled title="Édition disponible uniquement pour les blocs complets de 6"'} onclick="editBloc('${bloc.blocId}')" class="text-blue-600 hover:text-blue-800 disabled:opacity-30">✏️</button>
+            <button onclick="deleteBloc('${bloc.blocId}')" class="text-red-600 hover:text-red-800">🗑️</button>
+          </td>
+        </tr>
+      `;
+      }).join('');
+    }
+
     async function loadAssociation() {
       try {
-        const response = await fetch(`${API_URL}/api/admin/association`, {
+        const response = await fetch(`${API_URL}/api/admin/association/blocs`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
-        const data = await response.json() as AssociationItem[];
+        const data = await response.json() as AssociationBloc[];
+        blocsCache = Array.isArray(data) ? data : [];
         
         const tbody = document.getElementById('association-list');
         if (!tbody) return;
 
-        tbody.innerHTML = data.map((item: AssociationItem) => `
-          <tr>
-            <td class="px-6 py-4">
-              <div class="font-medium">${item.motBandenkop}</div>
-              <div class="text-sm text-gray-500">${item.motFrancais}</div>
-            </td>
-            <td class="px-6 py-4">
-              <img src="${item.imageUrl}" alt="${item.motBandenkop}" class="w-12 h-12 object-cover rounded">
-            </td>
-            <td class="px-6 py-4">
-              <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
-                ${item.categorie}
-              </span>
-            </td>
-            <td class="px-6 py-4">
-              <span class="px-2 py-1 text-xs rounded-full ${
-                item.niveau === 'debutant' ? 'bg-green-100 text-green-800' :
-                item.niveau === 'intermediaire' ? 'bg-yellow-100 text-yellow-800' :
-                'bg-red-100 text-red-800'
-              }">${item.niveau}</span>
-            </td>
-            <td class="px-6 py-4 text-right space-x-2">
-              <button onclick="editItem('${item._id}')" class="text-blue-600 hover:text-blue-800">✏️</button>
-              <button onclick="deleteItem('${item._id}')" class="text-red-600 hover:text-red-800">🗑️</button>
-            </td>
-          </tr>
-        `).join('');
+        if (!blocsCache.length) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="5" class="px-6 py-10 text-center text-gray-500">
+                <p class="mb-3">Aucune paire enregistrée pour le moment.</p>
+                <button onclick="openAddModal()" class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700">
+                  + Ajouter 6 paires
+                </button>
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        renderAssociation(blocsCache);
       } catch (error) {
         console.error('Erreur chargement:', error);
       }
     }
 
-    window.deleteItem = async (id: string) => {
-      if (!confirm('Supprimer cette association ?')) return;
+    document.getElementById('searchFilter')?.addEventListener('input', () => renderAssociation(blocsCache));
+
+    window.deleteBloc = async (blocId: string) => {
+      const bloc = blocsCache.find((b) => b.blocId === blocId);
+      if (!bloc) return;
+      if (!confirm(bloc.isLegacy ? 'Supprimer cette entrée ?' : 'Supprimer ce bloc de 6 paires ?')) return;
       
       try {
-        await fetch(`${API_URL}/api/admin/association/${id}`, {
-          method: 'DELETE',
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
+        if (bloc.isLegacy && bloc.itemIds?.[0]) {
+          await fetch(`${API_URL}/api/admin/association/${bloc.itemIds[0]}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+        } else {
+          await fetch(`${API_URL}/api/admin/association/bloc/${blocId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+        }
         loadAssociation();
       } catch (error) {
         console.error('Erreur suppression:', error);
       }
     };
 
-    window.editItem = (id: string) => {
-      window.location.href = `/admin/apprentissage/association/${id}`;
+    window.editBloc = (blocId: string) => {
+      const bloc = blocsCache.find((b) => b.blocId === blocId);
+      if (!bloc) return;
+
+      const blocIdInput = document.getElementById('editBlocId') as HTMLInputElement | null;
+      if (blocIdInput) blocIdInput.value = bloc.blocId;
+
+      const categorie = document.getElementById('editCategorie') as HTMLSelectElement | null;
+      if (categorie) categorie.value = bloc.categorie;
+
+      const niveau = document.getElementById('editNiveau') as HTMLSelectElement | null;
+      if (niveau) niveau.value = bloc.niveau;
+
+      for (let i = 1; i <= 6; i++) {
+        const pair = bloc.paires[i - 1];
+        const bk = document.querySelector(`[name="editMotBandenkop${i}"]`) as HTMLInputElement | null;
+        const fr = document.querySelector(`[name="editMotFrancais${i}"]`) as HTMLInputElement | null;
+        if (bk) bk.value = pair?.motBandenkop || '';
+        if (fr) fr.value = pair?.motFrancais || '';
+      }
+
+      const editModal = getElement('editModal');
+      if (!editModal) return;
+      editModal.classList.remove('hidden');
+      editModal.classList.add('flex');
     };
 
     window.openAddModal = () => {
@@ -196,7 +336,121 @@ import Layout from '../../../layouts/Layout.astro';
       if (!addModal) return;
       addModal.classList.add('hidden');
       addModal.classList.remove('flex');
+
+      const form = document.getElementById('associationForm') as HTMLFormElement | null;
+      form?.reset();
     };
+
+    window.closeEditModal = () => {
+      const editModal = getElement('editModal');
+      if (!editModal) return;
+      editModal.classList.add('hidden');
+      editModal.classList.remove('flex');
+
+      const form = document.getElementById('editAssociationForm') as HTMLFormElement | null;
+      form?.reset();
+    };
+
+    const associationForm = document.getElementById('associationForm');
+    associationForm?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const form = e.currentTarget as HTMLFormElement | null;
+      if (!form) return;
+
+      const formData = new FormData(form);
+      const paires: PairePayload[] = [];
+
+      for (let i = 1; i <= 6; i++) {
+        const motBandenkop = String(formData.get(`motBandenkop${i}`) || '').trim();
+        const motFrancais = String(formData.get(`motFrancais${i}`) || '').trim();
+        if (!motBandenkop || !motFrancais) {
+          alert(`Veuillez compléter la paire ${i}.`);
+          return;
+        }
+        paires.push({ motBandenkop, motFrancais });
+      }
+
+      try {
+        const payload = {
+          paires,
+          categorie: formData.get('categorie'),
+          niveau: formData.get('niveau'),
+          points: 1
+        };
+
+        const response = await fetch(`${API_URL}/api/admin/association`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          const err = await response.json().catch(() => ({}));
+          throw new Error(err.error || 'Erreur lors de la création');
+        }
+
+        window.closeAddModal();
+        await loadAssociation();
+      } catch (error) {
+        console.error('Erreur création association:', error);
+        alert(error instanceof Error ? error.message : 'Erreur inconnue');
+      }
+    });
+
+    const editAssociationForm = document.getElementById('editAssociationForm');
+    editAssociationForm?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const form = e.currentTarget as HTMLFormElement | null;
+      if (!form) return;
+
+      const formData = new FormData(form);
+      const blocId = String(formData.get('blocId') || '').trim();
+      if (!blocId) return;
+
+      const paires: PairePayload[] = [];
+      for (let i = 1; i <= 6; i++) {
+        const motBandenkop = String(formData.get(`editMotBandenkop${i}`) || '').trim();
+        const motFrancais = String(formData.get(`editMotFrancais${i}`) || '').trim();
+        if (!motBandenkop || !motFrancais) {
+          alert(`Veuillez compléter la paire ${i}.`);
+          return;
+        }
+        paires.push({ motBandenkop, motFrancais });
+      }
+
+      try {
+        const payload = {
+          paires,
+          categorie: formData.get('editCategorie'),
+          niveau: formData.get('editNiveau')
+        };
+
+        const response = await fetch(`${API_URL}/api/admin/association/bloc/${blocId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          const err = await response.json().catch(() => ({}));
+          throw new Error(err.error || 'Erreur lors de la mise à jour');
+        }
+
+        window.closeEditModal();
+        await loadAssociation();
+      } catch (error) {
+        console.error('Erreur édition association:', error);
+        alert(error instanceof Error ? error.message : 'Erreur inconnue');
+      }
+    });
 
     loadAssociation();
   </script>

@@ -1,18 +1,21 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
+import { getApiUrl } from '../../..//config';
+
+const API_URL = getApiUrl();
 const { id } = Astro.params;
 ---
 
 <Layout title="Modifier l'article - Administration">
   <div class="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 pt-24 pb-12">
     <div class="px-4 max-w-4xl mx-auto">
-      
+      <a href="/admin" class="inline-flex items-center gap-1 text-sm text-orange-600 hover:text-orange-800 mb-4 transition-colors">← Panneau admin</a>
       <div class="flex items-center justify-between mb-8">
         <h1 class="font-['Playfair_Display'] text-3xl font-bold text-gray-800">
           Modifier l'article
         </h1>
         <a href="/admin/articles" class="text-orange-600 hover:text-orange-800">
-          ← Retour
+          ← Retour aux articles
         </a>
       </div>
       
@@ -35,7 +38,8 @@ const { id } = Astro.params;
       }
     }
 
-    const API_URL = 'http://localhost:3001';
+    import { getApiUrl } from '../../../config';
+    const API_URL = getApiUrl();
     const token = getToken();
     const articleId = window.location.pathname.split('/').pop();
 
@@ -80,6 +84,9 @@ const { id } = Astro.params;
                   <option value="Diaspora" ${article.categorie === 'Diaspora' ? 'selected' : ''}>Diaspora</option>
                   <option value="Politique" ${article.categorie === 'Politique' ? 'selected' : ''}>Politique</option>
                   <option value="Culture" ${article.categorie === 'Culture' ? 'selected' : ''}>Culture</option>
+                  <option value="Santé" ${article.categorie === 'Santé' ? 'selected' : ''}>Santé</option>
+                  <option value="Sport" ${article.categorie === 'Sport' ? 'selected' : ''}>Sport</option>
+                  <option value="Éducation" ${article.categorie === 'Éducation' ? 'selected' : ''}>Éducation</option>
                 </select>
               </div>
               

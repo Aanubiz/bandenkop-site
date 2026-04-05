@@ -1,0 +1,161 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import AdminLayout from '../../components/admin/AdminLayout.astro';
+---
+
+<Layout title="Messages Contact - Admin">
+  <AdminLayout title="Messages contact">
+    <div class="space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <h1 class="text-2xl font-bold text-gray-800">Messages des utilisateurs</h1>
+        <div class="flex items-center gap-2">
+          <button id="filter-all" class="px-3 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium">Tous</button>
+          <button id="filter-unread" class="px-3 py-2 rounded-lg bg-orange-100 text-orange-700 text-sm font-medium">Non lus</button>
+          <span id="unread-badge" class="px-3 py-2 rounded-lg bg-red-100 text-red-700 text-sm font-semibold">0 non lus</span>
+        </div>
+      </div>
+
+      <div id="messages-list" class="space-y-4">
+        <div class="bg-white rounded-xl shadow p-6 text-gray-500">Chargement des messages...</div>
+      </div>
+
+      <div class="flex justify-center gap-2" id="pagination"></div>
+    </div>
+  </AdminLayout>
+
+  <script>
+    import { getToken } from '../../utils/auth';
+    import { getApiUrl } from '../../config';
+
+    interface ContactAdminMessage {
+      _id: string;
+      nom: string;
+      email: string;
+      subject: string;
+      message: string;
+      lu: boolean;
+      createdAt: string;
+    }
+
+    const token = getToken();
+    const API_URL = getApiUrl();
+
+    const listEl = document.getElementById('messages-list');
+    const unreadBadge = document.getElementById('unread-badge');
+    const paginationEl = document.getElementById('pagination');
+    const filterAllBtn = document.getElementById('filter-all');
+    const filterUnreadBtn = document.getElementById('filter-unread');
+
+    let currentPage = 1;
+    let totalPages = 1;
+    let filter = 'all';
+
+    async function loadMessages() {
+      if (!token || !listEl) return;
+
+      listEl.innerHTML = '<div class="bg-white rounded-xl shadow p-6 text-gray-500">Chargement...</div>';
+
+      try {
+        const response = await fetch(`${API_URL}/api/contact/admin/messages?page=${currentPage}&limit=20&status=${filter}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data?.error || 'Erreur de chargement');
+
+        totalPages = data.totalPages || 1;
+        if (unreadBadge) unreadBadge.textContent = `${data.unread || 0} non lus`;
+
+        const messages: ContactAdminMessage[] = Array.isArray(data.messages) ? data.messages : [];
+        if (!messages.length) {
+          listEl.innerHTML = '<div class="bg-white rounded-xl shadow p-6 text-gray-500">Aucun message trouvé.</div>';
+        } else {
+          listEl.innerHTML = messages.map((m: ContactAdminMessage) => `
+            <article class="bg-white rounded-xl shadow p-5 border ${m.lu ? 'border-gray-100' : 'border-orange-200'}">
+              <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-3">
+                <div>
+                  <h3 class="text-lg font-bold text-gray-800">${m.subject || '(Sans sujet)'}</h3>
+                  <p class="text-sm text-gray-500">${m.nom || ''} • ${m.email || ''}</p>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xs px-2 py-1 rounded ${m.lu ? 'bg-gray-100 text-gray-600' : 'bg-orange-100 text-orange-700'}">${m.lu ? 'Lu' : 'Non lu'}</span>
+                  ${m.lu ? '' : `<button data-id="${m._id}" class="mark-read-btn px-3 py-1.5 text-xs rounded bg-orange-600 text-white hover:bg-orange-700">Marquer lu</button>`}
+                </div>
+              </div>
+              <p class="text-gray-700 whitespace-pre-wrap">${m.message || ''}</p>
+              <p class="mt-3 text-xs text-gray-400">${new Date(m.createdAt).toLocaleString('fr-FR')}</p>
+            </article>
+          `).join('');
+        }
+
+        renderPagination();
+      } catch (error) {
+        console.error('Erreur chargement messages:', error);
+        listEl.innerHTML = '<div class="bg-red-50 border border-red-200 rounded-xl p-6 text-red-700">Impossible de charger les messages.</div>';
+      }
+    }
+
+    function renderPagination() {
+      if (!paginationEl) return;
+      if (totalPages <= 1) {
+        paginationEl.innerHTML = '';
+        return;
+      }
+
+      let html = '';
+      for (let i = 1; i <= totalPages; i++) {
+        html += `<button data-page="${i}" class="page-btn px-3 py-2 rounded ${i === currentPage ? 'bg-orange-600 text-white' : 'bg-white text-gray-700 border'}">${i}</button>`;
+      }
+      paginationEl.innerHTML = html;
+    }
+
+    async function markAsRead(id: string) {
+      if (!token) return;
+      try {
+        const response = await fetch(`${API_URL}/api/contact/admin/messages/${id}/read`, {
+          method: 'PATCH',
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!response.ok) {
+          const data = await response.json();
+          throw new Error(data?.error || 'Erreur');
+        }
+        await loadMessages();
+      } catch (error) {
+        console.error('Erreur marquage lu:', error);
+      }
+    }
+
+    filterAllBtn?.addEventListener('click', () => {
+      filter = 'all';
+      currentPage = 1;
+      void loadMessages();
+    });
+
+    filterUnreadBtn?.addEventListener('click', () => {
+      filter = 'unread';
+      currentPage = 1;
+      void loadMessages();
+    });
+
+    document.addEventListener('click', (e) => {
+      const target = e.target;
+      if (!(target instanceof HTMLElement)) return;
+
+      const readBtn = target.closest('.mark-read-btn');
+      if (readBtn instanceof HTMLElement && readBtn.dataset.id) {
+        void markAsRead(readBtn.dataset.id);
+      }
+
+      const pageBtn = target.closest('.page-btn');
+      if (pageBtn instanceof HTMLElement && pageBtn.dataset.page) {
+        currentPage = Number(pageBtn.dataset.page);
+        void loadMessages();
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      void loadMessages();
+    });
+  </script>
+</Layout>

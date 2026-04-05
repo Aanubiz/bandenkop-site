@@ -1,0 +1,365 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import AuthCheck from '../../components/AuthCheck.astro';
+import { getApiUrl } from '../../config';
+
+const API_URL = getApiUrl();
+---
+
+<Layout title="Écriture - Apprentissage Bandenkop">
+  <AuthCheck>
+    <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
+      <header class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="px-4 max-w-4xl mx-auto h-16 flex items-center justify-between">
+          <a id="back-link" href="/apprentissage" class="flex items-center text-gray-600 hover:text-indigo-600">
+            <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            Retour
+          </a>
+          <h1 class="text-lg font-semibold text-gray-800">Écriture</h1>
+          <div class="w-20"></div>
+        </div>
+      </header>
+
+      <div class="px-4 py-6 max-w-3xl mx-auto">
+        <div id="loading" class="text-center py-12">
+          <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-600 border-t-transparent"></div>
+          <p class="mt-4 text-gray-600">Chargement des exercices...</p>
+        </div>
+
+        <div id="exercise-container" class="hidden space-y-6">
+          <div class="bg-white rounded-xl shadow-sm p-4">
+            <div class="flex items-center justify-between mb-3">
+              <span id="counter" class="text-sm text-gray-500">Exercice 1/1</span>
+              <span id="niveau" class="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs">Débutant</span>
+            </div>
+            <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div id="progress" class="h-full bg-gradient-to-r from-indigo-500 to-blue-500 transition-all duration-300" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl shadow-lg p-6 space-y-4">
+            <p id="consigne" class="text-lg font-bold text-gray-800">Consigne</p>
+            <p id="phrase-fr" class="text-gray-700"></p>
+            <p id="mot-liaison" class="text-sm text-gray-500"></p>
+            <img id="image-indice" class="hidden w-full max-h-56 object-cover rounded-xl" alt="Indice" />
+
+            <div>
+              <label for="reponse" class="block text-sm font-medium text-gray-700 mb-1">Votre réponse</label>
+              <textarea id="reponse" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" placeholder="Écrivez votre réponse ici..."></textarea>
+            </div>
+
+            <button id="submit-btn" class="w-full bg-gradient-to-r from-indigo-600 to-blue-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all">
+              Vérifier
+            </button>
+
+            <div id="feedback" class="hidden rounded-lg p-3 text-sm"></div>
+          </div>
+        </div>
+
+        <div id="end" class="hidden bg-white rounded-2xl shadow-xl p-8 text-center">
+          <h2 id="end-title" class="text-2xl font-bold text-gray-800 mb-2">Bloc terminé</h2>
+          <p id="end-text" class="text-gray-600 mb-4"></p>
+          <div class="flex flex-col sm:flex-row gap-3 justify-center">
+            <button id="continue-btn" class="hidden bg-indigo-600 text-white px-6 py-3 rounded-xl">Continuer (5 suivantes)</button>
+            <button id="restart-btn" class="bg-gray-700 text-white px-6 py-3 rounded-xl">Recommencer</button>
+            <a href="/apprentissage" class="bg-gray-200 text-gray-800 px-6 py-3 rounded-xl">Retour apprentissage</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </AuthCheck>
+
+  <script>
+    import { getToken } from '../../utils/auth';
+    import { getApiUrl } from '../../config';
+
+    const API_URL = getApiUrl();
+
+    type EcritureExercice = {
+      _id: string;
+      type: string;
+      niveau?: string;
+      consigne?: string;
+      motFrancais?: string;
+      motAnglais?: string;
+      phraseFrancais?: string;
+      imageIndice?: string;
+      points?: number;
+      reponseAttendue?: string;
+    };
+
+    type ReponseBloc = {
+      exerciceId: string;
+      reponse: string;
+      tempsReponse: number;
+      localEstJuste: boolean;
+    };
+
+    const normalize = (value: string) => value
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    const BLOCK_SIZE = 5;
+
+    type ExerciceResponse = {
+      exercices: EcritureExercice[];
+      page: number;
+      limit: number;
+      hasMore: boolean;
+    };
+
+    class EcritureApp {
+      exercices = [] as EcritureExercice[];
+      current = 0;
+      page = 1;
+      hasMore = false;
+      blocReponses = [] as ReponseBloc[];
+      blocBonnes = 0;
+      blocPoints = 0;
+      totalBonnes = 0;
+      totalPoints = 0;
+      token = null as string | null;
+      startedCurrentBlock = false;
+
+      constructor() {
+        this.init();
+      }
+
+      async init() {
+        this.token = getToken();
+        if (!this.token) {
+          window.location.href = '/connexion';
+          return;
+        }
+
+        this.attachEvents();
+
+        await this.loadBlock(1);
+      }
+
+      attachEvents() {
+        document.getElementById('submit-btn')?.addEventListener('click', () => void this.submit());
+        document.getElementById('continue-btn')?.addEventListener('click', () => void this.continuer());
+        document.getElementById('restart-btn')?.addEventListener('click', () => {
+          window.location.reload();
+        });
+
+        document.getElementById('back-link')?.addEventListener('click', (e) => {
+          if (this.startedCurrentBlock && this.current < BLOCK_SIZE && this.current < this.exercices.length) {
+            const ok = window.confirm('Vous quittez avant de terminer le bloc de 5. Les points de ce bloc ne seront pas comptabilisés. Continuer ?');
+            if (!ok) e.preventDefault();
+          }
+        });
+      }
+
+      async loadBlock(page: number) {
+        this.page = page;
+        this.current = 0;
+        this.blocReponses = [];
+        this.blocBonnes = 0;
+        this.blocPoints = 0;
+        this.startedCurrentBlock = false;
+
+        document.getElementById('end')?.classList.add('hidden');
+        document.getElementById('loading')?.classList.remove('hidden');
+        document.getElementById('exercise-container')?.classList.add('hidden');
+
+        try {
+          const response = await fetch(`${API_URL}/api/ecriture/exercices?niveau=debutant&limite=${BLOCK_SIZE}&page=${page}`, {
+            headers: { Authorization: `Bearer ${this.token}` }
+          });
+
+          if (!response.ok) throw new Error('Impossible de charger les exercices');
+
+          const payload = await response.json() as ExerciceResponse;
+          this.exercices = Array.isArray(payload.exercices) ? payload.exercices : [];
+          this.hasMore = Boolean(payload.hasMore);
+
+          if (!Array.isArray(this.exercices) || this.exercices.length === 0) {
+            throw new Error('Aucune question texte disponible. Ajoutez des questions de type "texte" dans le quiz admin.');
+          }
+
+          document.getElementById('loading')?.classList.add('hidden');
+          document.getElementById('exercise-container')?.classList.remove('hidden');
+
+          this.render();
+        } catch (error) {
+          const loading = document.getElementById('loading');
+          if (loading) {
+            loading.innerHTML = `<p class="text-red-600">${error instanceof Error ? error.message : 'Erreur de chargement'}</p>`;
+          }
+        }
+      }
+
+      render() {
+        const ex = this.exercices[this.current];
+        if (!ex) return;
+
+        const counter = document.getElementById('counter');
+        const niveau = document.getElementById('niveau');
+        const progress = document.getElementById('progress');
+        const consigne = document.getElementById('consigne');
+        const phraseFr = document.getElementById('phrase-fr');
+        const motLiaison = document.getElementById('mot-liaison');
+        const imageIndice = document.getElementById('image-indice');
+        const reponse = document.getElementById('reponse');
+        const feedback = document.getElementById('feedback');
+
+        if (counter) counter.textContent = `Exercice ${this.current + 1}/${Math.min(BLOCK_SIZE, this.exercices.length)}`;
+        if (niveau) niveau.textContent = ex.niveau || 'debutant';
+        if (progress) progress.style.width = `${(this.current / Math.max(1, Math.min(BLOCK_SIZE, this.exercices.length))) * 100}%`;
+        if (consigne) consigne.textContent = ex.consigne || 'Répondez par écrit';
+
+        if (phraseFr) phraseFr.textContent = ex.phraseFrancais || '';
+        if (motLiaison) {
+          const fr = ex.motFrancais ? `FR: ${ex.motFrancais}` : '';
+          const en = ex.motAnglais ? `EN: ${ex.motAnglais}` : '';
+          motLiaison.textContent = [fr, en].filter(Boolean).join(' • ');
+        }
+
+        if (imageIndice instanceof HTMLImageElement) {
+          if (ex.imageIndice) {
+            imageIndice.src = ex.imageIndice;
+            imageIndice.classList.remove('hidden');
+          } else {
+            imageIndice.classList.add('hidden');
+            imageIndice.removeAttribute('src');
+          }
+        }
+
+        if (reponse instanceof HTMLTextAreaElement) reponse.value = '';
+        feedback?.classList.add('hidden');
+      }
+
+      async submit() {
+        const ex = this.exercices[this.current];
+        if (!ex) return;
+
+        const reponseEl = document.getElementById('reponse');
+        if (!(reponseEl instanceof HTMLTextAreaElement)) return;
+
+        const value = reponseEl.value.trim();
+        if (!value) {
+          alert('Veuillez écrire une réponse.');
+          return;
+        }
+
+        this.startedCurrentBlock = true;
+
+        try {
+          const attendu = ex.reponseAttendue || '';
+          const estJuste = normalize(value) === normalize(attendu);
+
+          const feedback = document.getElementById('feedback');
+          if (feedback) {
+            feedback.classList.remove('hidden');
+            if (estJuste) {
+              feedback.className = 'rounded-lg p-3 text-sm bg-green-100 text-green-800';
+              feedback.textContent = `✅ Bonne réponse (+${ex.points || 10} points)`;
+              this.blocBonnes += 1;
+              this.blocPoints += ex.points || 10;
+            } else {
+              feedback.className = 'rounded-lg p-3 text-sm bg-red-100 text-red-800';
+              feedback.textContent = `❌ Mauvaise réponse. Réponse attendue: ${attendu || '-'}`;
+            }
+          }
+
+          this.blocReponses.push({
+            exerciceId: ex._id,
+            reponse: value,
+            tempsReponse: 5,
+            localEstJuste: estJuste
+          });
+
+          setTimeout(() => {
+            this.current += 1;
+            if (this.current < this.exercices.length && this.current < BLOCK_SIZE) {
+              this.render();
+            } else {
+              void this.finaliserBloc();
+            }
+          }, 1200);
+        } catch (error) {
+          alert(error instanceof Error ? error.message : 'Erreur inconnue');
+        }
+      }
+
+      async finaliserBloc() {
+        try {
+          const response = await fetch(`${API_URL}/api/ecriture/valider-bloc`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${this.token}`
+            },
+            body: JSON.stringify({
+              answers: this.blocReponses.map((r) => ({
+                exerciceId: r.exerciceId,
+                reponse: r.reponse,
+                tempsReponse: r.tempsReponse
+              }))
+            })
+          });
+
+          const data = await response.json();
+          if (!response.ok) throw new Error(data?.error || 'Erreur validation bloc');
+
+          this.totalBonnes += data.bonnes || 0;
+          this.totalPoints += data.pointsGagnes || 0;
+
+          this.showEnd(false, {
+            bonnes: data.bonnes || 0,
+            total: data.blocQuestions || this.blocReponses.length,
+            points: data.pointsGagnes || 0
+          });
+        } catch (error) {
+          this.showEnd(true, {
+            bonnes: this.blocBonnes,
+            total: this.blocReponses.length,
+            points: this.blocPoints,
+            error: error instanceof Error ? error.message : 'Erreur inconnue'
+          });
+        }
+      }
+
+      showEnd(withError: boolean, bloc: { bonnes: number; total: number; points: number; error?: string }) {
+        document.getElementById('exercise-container')?.classList.add('hidden');
+        document.getElementById('end')?.classList.remove('hidden');
+
+        const endTitle = document.getElementById('end-title');
+        const endText = document.getElementById('end-text');
+        const continueBtn = document.getElementById('continue-btn');
+
+        if (endTitle) {
+          endTitle.textContent = withError ? 'Bloc terminé (non comptabilisé)' : 'Bloc terminé';
+        }
+
+        if (endText) {
+          if (withError) {
+            endText.textContent = `Le bloc n'a pas été comptabilisé: ${bloc.error || 'erreur serveur'}.`;
+          } else {
+            endText.textContent = `Bloc: ${bloc.bonnes}/${bloc.total} bonnes réponses, ${bloc.points} points comptabilisés. Total session comptabilisé: ${this.totalPoints} points.`;
+          }
+        }
+
+        if (continueBtn) {
+          const canContinue = this.hasMore && !withError;
+          continueBtn.classList.toggle('hidden', !canContinue);
+        }
+      }
+
+      async continuer() {
+        await this.loadBlock(this.page + 1);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      (window as any).ecritureApp = new EcritureApp();
+    });
+  </script>
+</Layout>

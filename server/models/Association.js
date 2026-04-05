@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 const associationSchema = new mongoose.Schema({
   rubrique: { type: String, default: 'association' },
+  blocId: { type: String, index: true },
   niveau: { 
     type: String, 
     enum: ['debutant', 'intermediaire', 'avance'],
@@ -9,7 +10,8 @@ const associationSchema = new mongoose.Schema({
   },
   motBandenkop: { type: String, required: true },
   motFrancais: { type: String, required: true },
-  imageUrl: { type: String, required: true },
+  motAnglais: { type: String, default: '' },
+  imageUrl: { type: String, default: '' },
   categorie: { 
     type: String, 
     enum: ['objet', 'animal', 'personne', 'action', 'nature'],

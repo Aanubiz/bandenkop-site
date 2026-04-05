@@ -2,31 +2,31 @@
 // src/components/DecouverteSection.astro
 const lieux = [
   {
-    nom: "Mont Bandenkop",
+    nom: "Loung Beli",
     type: "Relief",
-    description: "Point culminant offrant une vue panoramique sur toute la région",
-    image: "/images/decouverte/mont.jpg",
+    description: "Paysage de rochers granitiques offrant une vue panoramique sur toute la région",
+    image: "/images/decouverte/loung_beli2.jpg",
     coordonnees: "5.1333° N, 10.3833° E"
   },
   {
-    nom: "Chutes de Nkam",
+    nom: "Centre touristique de Bandenkop",
     type: "Tourisme",
-    description: "Cascades spectaculaires au cœur de la forêt sacrée",
-    image: "/images/decouverte/chutes.jpg",
+    description: "Point culminant à 1800m d'altitude offrant une vue panoramique sur toute la région et les villages environnants",
+    image: "/images/decouverte/entree_chefferie.jpg",
     coordonnees: "5.1456° N, 10.3921° E"
   },
   {
-    nom: "Marché Traditionnel",
-    type: "Économie",
-    description: "Le cœur battant du commerce local tous les 8 jours",
-    image: "/images/decouverte/marche.jpg",
+    nom: "Chefferie",
+    type: "Culture",
+    description: "Lieu de résidence de Sa majesté et siège du pouvoir traditionnel.",
+    image: "/images/decouverte/visite_chefferie.jpg",
     coordonnees: "5.1311° N, 10.3817° E"
   },
   {
-    nom: "Forêt Sacrée",
-    type: "Culture",
-    description: "Lieu de culte et d'initiation, protégé par les ancêtres",
-    image: "/images/decouverte/foret.jpg",
+    nom: "Marché",
+    type: "Economie",
+    description: "Le cœur battant du commerce local tous les Liegang.",
+    image: "/images/decouverte/place_marche.jpg",
     coordonnees: "5.1389° N, 10.3785° E"
   }
 ];
@@ -45,7 +45,7 @@ const lieux = [
 
     <!-- Carte interactive -->
     <div class="relative h-96 mb-12 rounded-2xl overflow-hidden shadow-2xl">
-      <img src="/images/decouverte/carte-bandenkop.jpg" alt="Carte de Bandenkop" class="w-full h-full object-cover" />
+      <img src="/images/decouverte/carte.jpg" alt="Carte de Bandenkop" class="w-full h-full object-cover" />
       <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
       <div class="absolute bottom-8 left-8 text-white">
         <h3 class="text-3xl font-bold mb-2">Situation Géographique</h3>
@@ -83,8 +83,8 @@ const lieux = [
         <ul class="space-y-2 text-sm text-gray-600">
           <li>• Altitude : 1400-1800m</li>
           <li>• Climat tropical d'altitude</li>
-          <li>• Saison sèche : Nov-Mars</li>
-          <li>• Saison pluvieuse : Avril-Oct</li>
+          <li>• Saison sèche : Nov-Fev</li>
+          <li>• Saison pluvieuse : Mars-Oct</li>
           <li>• Température moyenne : 22°C</li>
         </ul>
       </div>
@@ -95,9 +95,9 @@ const lieux = [
         <ul class="space-y-2 text-sm text-gray-600">
           <li>• Savane arbustive</li>
           <li>• Forêts galeries</li>
-          <li>• Arbres sacrés (fromagers)</li>
+          <li>• Arbres sacrés (Baobab)</li>
           <li>• Plantes médicinales</li>
-          <li>• Cultures en terrasses</li>
+          <li>• Cultures en sion</li>
         </ul>
       </div>
 
@@ -105,10 +105,10 @@ const lieux = [
         <div class="text-3xl mb-3">💧</div>
         <h3 class="font-bold text-gray-800 mb-2">Hydrographie</h3>
         <ul class="space-y-2 text-sm text-gray-600">
-          <li>• Rivière Nkam</li>
-          <li>• Sources sacrées</li>
-          <li>• Cascades saisonnières</li>
-          <li>• Marigots en saison pluvieuse</li>
+          <li>• Rivière Temmèkouang</li>
+          <li>• Rivière Tchoua Tchoua</li>
+          <li>• Lac Tcha-Tcha</li>
+          <li>• Cascade de Loung Beli</li>
         </ul>
       </div>
 
@@ -116,10 +116,10 @@ const lieux = [
         <div class="text-3xl mb-3">🏥</div>
         <h3 class="font-bold text-gray-800 mb-2">Éducation & Santé</h3>
         <ul class="space-y-2 text-sm text-gray-600">
-          <li>• École primaire publique</li>
-          <li>• Centre de santé intégré</li>
-          <li>• Programme de vaccination</li>
-          <li>• Pharmacie traditionnelle</li>
+          <li>• Écoles primaires publiques</li>
+          <li>• Centres de santé </li>
+          <li>• Lycée et collège</li>
+          <li>• Centre de formation professionnelle</li>
         </ul>
       </div>
 
@@ -127,10 +127,8 @@ const lieux = [
         <div class="text-3xl mb-3">⚽</div>
         <h3 class="font-bold text-gray-800 mb-2">Sport</h3>
         <ul class="space-y-2 text-sm text-gray-600">
-          <li>• Équipe de football locale</li>
-          <li>• Tournois inter-villages</li>
-          <li>• Lutte traditionnelle</li>
-          <li>• Course en montagne</li>
+          <li>• Équipe de football locale (2-0)</li>
+          <li>• Équipe de Boxe Anglaise</li>
         </ul>
       </div>
 
@@ -138,10 +136,9 @@ const lieux = [
         <div class="text-3xl mb-3">🎪</div>
         <h3 class="font-bold text-gray-800 mb-2">Festivals</h3>
         <ul class="space-y-2 text-sm text-gray-600">
-          <li>• Fête des récoltes (Octobre)</li>
-          <li>• Danse du Ngi (Décembre)</li>
-          <li>• Festival culturel (Août)</li>
-          <li>• Cérémonie des masques</li>
+          <li>• Festival Lah Fé Bouagang </li>
+          <li>• Danse initiatique Kang</li>
+          <li>• Congrès de la Jeunesse </li>
         </ul>
       </div>
     </div>
@@ -156,7 +153,7 @@ const lieux = [
         </div>
         <div class="flex items-center space-x-3">
           <span class="text-2xl">🏕️</span>
-          <span>Camping chez l'habitant</span>
+          <span>Camping au centre touristique</span>
         </div>
         <div class="flex items-center space-x-3">
           <span class="text-2xl">🎨</span>

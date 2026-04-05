@@ -148,9 +148,11 @@ const figure: WikiFigure = {
 
   <script>
     import { getToken, getUser } from '../../utils/auth';
+    import { getApiUrl } from '../../config';
     
     const token = getToken();
     const user = getUser();
+    const API_URL = getApiUrl();
     const root = document.getElementById('wiki-root') as HTMLElement | null;
     const figureId = root?.dataset.figureId || '';
     
@@ -166,7 +168,7 @@ const figure: WikiFigure = {
       if (!figureId) return;
       
       try {
-        const response = await fetch(`http://localhost:3001/api/figures/${figureId}/${type}`, {
+        const response = await fetch(`${API_URL}/api/figures/${figureId}/${type}`, {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -195,7 +197,7 @@ const figure: WikiFigure = {
       if (!text) return;
       
       try {
-        const response = await fetch(`http://localhost:3001/api/figures/${figureId}/commentaires`, {
+        const response = await fetch(`${API_URL}/api/figures/${figureId}/commentaires`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -2,6 +2,9 @@
 import Layout from '../layouts/Layout.astro';
 import AuthCheck from '../components/AuthCheck.astro';
 import { getToken, logout as authLogout } from '../utils/auth';
+
+import { getApiUrl } from '../config';
+const API_URL = getApiUrl();
 ---
 
 <Layout title="Mon Profil - Bandenkop">
@@ -170,7 +173,7 @@ import { getToken, logout as authLogout } from '../utils/auth';
     </div>
 
     <!-- Modals (inchangés) -->
-    <div id="delete-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+    <div id="delete-modal" class="fixed inset-0 bg-black/50 items-center justify-center z-50 hidden">
       <!-- ... contenu du modal de suppression ... -->
       <div class="bg-white rounded-2xl p-6 max-w-md mx-4">
         <h3 class="text-xl font-bold text-gray-800 mb-4">Confirmer la suppression</h3>
@@ -195,8 +198,9 @@ import { getToken, logout as authLogout } from '../utils/auth';
 
   <script>
     import { getToken, logout as authLogout } from '../utils/auth';
+    import { getApiUrl } from '../config';
 
-    const API_URL = 'http://localhost:3001';
+    const API_URL = getApiUrl();
     const rubriques = ['quiz', 'prononciation', 'ecriture', 'phonetique', 'association'] as const;
     type Rubrique = (typeof rubriques)[number];
     type MessageType = 'success' | 'error';
@@ -395,10 +399,12 @@ import { getToken, logout as authLogout } from '../utils/auth';
 
     deleteBtn?.addEventListener('click', () => {
       deleteModal?.classList.remove('hidden');
+      deleteModal?.classList.add('flex');
     });
 
     cancelDelete?.addEventListener('click', () => {
       deleteModal?.classList.add('hidden');
+      deleteModal?.classList.remove('flex');
     });
 
     confirmDelete?.addEventListener('click', async () => {
@@ -422,6 +428,7 @@ import { getToken, logout as authLogout } from '../utils/auth';
         console.error('Erreur suppression:', error);
         showMessage('error', 'Erreur lors de la suppression');
         deleteModal?.classList.add('hidden');
+        deleteModal?.classList.remove('flex');
       }
     });
 

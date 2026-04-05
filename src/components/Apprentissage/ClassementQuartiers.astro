@@ -84,13 +84,17 @@ const quartiers = [
 </div>
 
 <script>
+  import { getApiUrl } from '../../config';
+
+  const API_URL = getApiUrl();
+
   // Fonction pour charger les stats des quartiers
   async function chargerClassementQuartiers() {
     try {
       const token = localStorage.getItem('token');
       if (!token) return;
 
-      const response = await fetch('http://localhost:3001/api/classement/quartiers', {
+      const response = await fetch(`${API_URL}/api/classement/quartiers`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -123,7 +127,7 @@ const quartiers = [
         topUsersEl.innerHTML = data.top3.map((user: any, index: number) => {
           // Déterminer la couleur du badge selon le quartier
           let badgeColor = '';
-          if (user.quartier === 'Dnkeng') badgeColor = 'bg-emerald-100 text-emerald-800';
+          if (user.quartier === 'Denkeng') badgeColor = 'bg-emerald-100 text-emerald-800';
           else if (user.quartier === 'Tsèmeuhia') badgeColor = 'bg-orange-100 text-orange-800';
           else if (user.quartier === 'Tsèla') badgeColor = 'bg-blue-100 text-blue-800';
           

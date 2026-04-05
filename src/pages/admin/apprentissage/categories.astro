@@ -7,6 +7,7 @@ import AuthCheck from '../../../components/AuthCheck.astro';
 <Layout title="Admin - Catégories">
   <AuthCheck>
     <div class="p-6 mt-24">
+      <a href="/admin" class="inline-flex items-center gap-1 text-sm text-orange-600 hover:text-orange-800 mb-4 transition-colors">← Panneau admin</a>
       <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold">Gestion des catégories de prononciation</h1>
         <button onclick="openAddModal()" class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700">
@@ -78,8 +79,9 @@ import AuthCheck from '../../../components/AuthCheck.astro';
 
   <script>
     import { getToken } from '../../../utils/auth';
+    import { getApiUrl } from '../../../config';
 
-    const API_URL = 'http://localhost:3001';
+    const API_URL = getApiUrl();
     const token = getToken();
 
     async function loadCategories() {

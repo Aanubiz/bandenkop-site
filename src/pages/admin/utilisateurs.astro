@@ -1,0 +1,637 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import AdminLayout from "../../components/admin/AdminLayout.astro";
+import AuthCheck from "../../components/AuthCheck.astro";
+---
+
+<Layout title="Admin - Utilisateurs">
+  <AuthCheck>
+    <AdminLayout title="Utilisateurs inscrits">
+      <div class="space-y-6">
+
+        <!-- En-tête -->
+        <div class="flex justify-between items-center">
+          <h1 class="text-2xl font-bold text-gray-800">👤 Utilisateurs inscrits</h1>
+          <div class="flex gap-3">
+            <button
+              onclick="exportCSV()"
+              class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition text-sm"
+            >
+              ⬇ Exporter CSV
+            </button>
+          </div>
+        </div>
+
+        <!-- Stats rapides -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="stats-cards">
+          <div class="bg-white rounded-xl shadow p-4 text-center">
+            <div class="text-3xl font-bold text-orange-600" id="stat-total">—</div>
+            <div class="text-sm text-gray-500 mt-1">Total inscrits</div>
+          </div>
+          <div class="bg-white rounded-xl shadow p-4 text-center">
+            <div class="text-3xl font-bold text-blue-600" id="stat-denkeng">—</div>
+            <div class="text-sm text-gray-500 mt-1">Denkeng</div>
+          </div>
+          <div class="bg-white rounded-xl shadow p-4 text-center">
+            <div class="text-3xl font-bold text-green-600" id="stat-tsemeuhia">—</div>
+            <div class="text-sm text-gray-500 mt-1">Tsèmeuhia</div>
+          </div>
+          <div class="bg-white rounded-xl shadow p-4 text-center">
+            <div class="text-3xl font-bold text-purple-600" id="stat-tsela">—</div>
+            <div class="text-sm text-gray-500 mt-1">Tsèla</div>
+          </div>
+        </div>
+
+        <!-- Barre de recherche & filtres -->
+        <div class="bg-white rounded-xl shadow p-4 flex flex-wrap gap-3 items-center">
+          <input
+            type="text"
+            id="search-input"
+            placeholder="Rechercher par nom, prénom, email..."
+            class="flex-1 min-w-[200px] border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-orange-400 focus:border-orange-400"
+          />
+          <select id="filter-quartier" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-orange-400">
+            <option value="">Tous les quartiers</option>
+            <option value="Denkeng">Denkeng</option>
+            <option value="Tsèmeuhia">Tsèmeuhia</option>
+            <option value="Tsèla">Tsèla</option>
+          </select>
+          <select id="filter-role" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-orange-400">
+            <option value="">Tous les rôles</option>
+            <option value="user">Utilisateur</option>
+            <option value="admin">Admin</option>
+          </select>
+          <select id="filter-sexe" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-orange-400">
+            <option value="">Tous</option>
+            <option value="Homme">Homme</option>
+            <option value="Femme">Femme</option>
+          </select>
+          <span class="text-sm text-gray-400" id="result-count"></span>
+        </div>
+
+        <!-- Tableau -->
+        <div class="bg-white rounded-xl shadow-lg overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="bg-orange-50">
+              <tr>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-orange-800 uppercase tracking-wider">#</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-orange-800 uppercase tracking-wider">Utilisateur</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-orange-800 uppercase tracking-wider">Email</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-orange-800 uppercase tracking-wider">Quartier</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-orange-800 uppercase tracking-wider">Sexe</th>
+                <th class="px-4 py-3 text-center text-xs font-semibold text-orange-800 uppercase tracking-wider">Points</th>
+                <th class="px-4 py-3 text-center text-xs font-semibold text-orange-800 uppercase tracking-wider">Jours 🔥</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-orange-800 uppercase tracking-wider">Inscription</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-orange-800 uppercase tracking-wider">Dernière connexion</th>
+                <th class="px-4 py-3 text-center text-xs font-semibold text-orange-800 uppercase tracking-wider">Rôle</th>
+                <th class="px-4 py-3 text-right text-xs font-semibold text-orange-800 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="users-table" class="divide-y divide-gray-100">
+              <tr>
+                <td colspan="11" class="px-6 py-8 text-center text-gray-400">
+                  <div class="flex justify-center"><svg class="animate-spin w-6 h-6 text-orange-400" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg></div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <!-- Modal de confirmation de suppression -->
+      <div id="deleteModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full mx-4">
+          <h3 class="text-lg font-bold text-gray-800 mb-2">⚠️ Supprimer cet utilisateur ?</h3>
+          <p class="text-gray-600 mb-1">Vous allez supprimer :</p>
+          <p class="font-semibold text-orange-700 mb-4" id="delete-user-name">—</p>
+          <p class="text-sm text-red-600 mb-6">Cette action est irréversible. Toutes les progressions associées seront également supprimées.</p>
+          <div class="flex gap-3 justify-end">
+            <button onclick="closeDeleteModal()" class="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition">
+              Annuler
+            </button>
+            <button onclick="confirmDelete()" class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition">
+              Supprimer
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal détail utilisateur -->
+      <div id="detailModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-2xl p-6 max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
+          <div class="flex justify-between items-start mb-4">
+            <h3 class="text-lg font-bold text-gray-800">Détails de l'utilisateur</h3>
+            <button onclick="closeDetailModal()" class="text-gray-400 hover:text-gray-600 text-xl leading-none">&times;</button>
+          </div>
+          <div id="detail-content"></div>
+        </div>
+      </div>
+
+      <!-- Modal permissions admin -->
+      <div id="permissionsModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-2xl p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+          <div class="flex justify-between items-start mb-4">
+            <div>
+              <h3 class="text-lg font-bold text-gray-800">Pouvoirs de l'admin</h3>
+              <p id="permissions-user-name" class="text-sm text-gray-500"></p>
+            </div>
+            <button onclick="closePermissionsModal()" class="text-gray-400 hover:text-gray-600 text-xl leading-none">&times;</button>
+          </div>
+
+          <div class="mb-5 p-4 rounded-lg border border-orange-200 bg-orange-50">
+            <label class="inline-flex items-center gap-2 cursor-pointer">
+              <input id="perm-super-toggle" type="checkbox" class="rounded border-gray-300" />
+              <span class="font-semibold text-orange-700">Super admin (accès complet)</span>
+            </label>
+            <p class="text-xs text-orange-700/80 mt-2">Si activé : accès total (voir + modifier partout).</p>
+          </div>
+
+          <div id="perm-grid" class="space-y-2"></div>
+
+          <div class="mt-6 flex justify-end gap-3">
+            <button onclick="closePermissionsModal()" class="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition">
+              Annuler
+            </button>
+            <button onclick="savePermissions()" class="px-4 py-2 rounded-lg bg-orange-600 text-white hover:bg-orange-700 transition">
+              Enregistrer
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </AdminLayout>
+  </AuthCheck>
+</Layout>
+
+<script>
+  // @ts-nocheck
+  import { getApiUrl } from '../../config';
+  const API_URL = getApiUrl();
+
+  const ADMIN_PERMISSION_MODULES = [
+    { key: 'quiz', label: 'Quiz' },
+    { key: 'prononciation', label: 'Prononciation' },
+    { key: 'association', label: 'Association (FR↔BK + icônes)' },
+    { key: 'ecriture', label: 'Écriture' },
+    { key: 'phonetique', label: 'Phonétique' },
+    { key: 'histoire', label: 'Articles histoire' },
+    { key: 'culture', label: 'Articles culture' },
+    { key: 'articles', label: 'Articles actualités' },
+    { key: 'figures', label: 'Figures wiki' },
+    { key: 'utilisateurs', label: 'Utilisateurs (admin)' }
+  ];
+
+  let allUsers = [];
+  let deleteTargetId = null;
+  let permissionsTargetUser = null;
+  let canEditAdmins = true;
+
+  // ──────────── Chargement ────────────
+  async function loadUsers() {
+    const token = localStorage.getItem('token');
+    const me = readJwtPayload(token);
+    canEditAdmins = me?.role === 'admin' && (!me?.adminScope || me?.adminScope === 'super');
+
+    try {
+      const res = await fetch(`${API_URL}/api/admin/utilisateurs`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error('Accès refusé');
+      allUsers = await res.json();
+      updateStats();
+      renderTable(allUsers);
+    } catch (err) {
+      document.getElementById('users-table').innerHTML =
+        `<tr><td colspan="11" class="px-6 py-8 text-center text-red-500">Erreur : ${err.message}</td></tr>`;
+    }
+  }
+
+  // ──────────── Statistiques ────────────
+  function updateStats() {
+    document.getElementById('stat-total').textContent = allUsers.length;
+    document.getElementById('stat-denkeng').textContent = allUsers.filter(u => u.quartier === 'Denkeng').length;
+    document.getElementById('stat-tsemeuhia').textContent = allUsers.filter(u => u.quartier === 'Tsèmeuhia').length;
+    document.getElementById('stat-tsela').textContent = allUsers.filter(u => u.quartier === 'Tsèla').length;
+  }
+
+  // ──────────── Rendu tableau ────────────
+  function renderTable(users) {
+    const tbody = document.getElementById('users-table');
+    document.getElementById('result-count').textContent =
+      users.length === allUsers.length
+        ? `${users.length} utilisateur(s)`
+        : `${users.length} / ${allUsers.length} utilisateur(s)`;
+
+    if (users.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="11" class="px-6 py-8 text-center text-gray-400">Aucun utilisateur trouvé</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = users.map((u, idx) => {
+      const initials = `${u.prenom?.[0] || ''}${u.nom?.[0] || ''}`.toUpperCase();
+      const avatarColor = quartiersColor(u.quartier);
+      const dateInscr = formatDate(u.dateInscription);
+      const derniereConn = u.derniereConnexion ? formatDate(u.derniereConnexion) : '<span class="text-gray-300">jamais</span>';
+      const points = u.statistiques?.totalPoints ?? 0;
+      const jours = u.statistiques?.joursConsecutifs ?? 0;
+      const roleClass = u.role === 'admin'
+        ? 'bg-orange-100 text-orange-700 border border-orange-300'
+        : 'bg-gray-100 text-gray-600 border border-gray-200';
+      const isSuper = u.adminScope !== 'limited';
+      const adminScopeBadge = u.role === 'admin'
+        ? `<div class="mt-1 text-[10px] font-semibold ${isSuper ? 'text-orange-600' : 'text-blue-600'}">${isSuper ? 'Super admin' : 'Admin limité'}</div>`
+        : '';
+      const disabledAttr = canEditAdmins ? '' : 'disabled';
+      const disabledClass = canEditAdmins ? '' : 'opacity-60 cursor-not-allowed';
+
+      return `
+        <tr class="hover:bg-orange-50/30 transition-colors">
+          <td class="px-4 py-3 text-gray-400 text-sm w-10">${idx + 1}</td>
+          <td class="px-4 py-3">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0 ${avatarColor}">
+                ${u.avatar && u.avatar !== '/images/default-avatar.png'
+                  ? `<img src="${u.avatar}" alt="" class="w-full h-full rounded-full object-cover" />`
+                  : initials}
+              </div>
+              <div>
+                <div class="font-medium text-gray-800">${u.prenom} ${u.nom}</div>
+                ${u.bio ? `<div class="text-xs text-gray-400 truncate max-w-[120px]">${u.bio}</div>` : ''}
+                ${adminScopeBadge}
+              </div>
+            </div>
+          </td>
+          <td class="px-4 py-3 text-gray-600">${u.email}</td>
+          <td class="px-4 py-3">
+            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${quartiersClass(u.quartier)}">
+              ${u.quartier || '—'}
+            </span>
+          </td>
+          <td class="px-4 py-3 text-gray-600">${u.sexe || '—'}</td>
+          <td class="px-4 py-3 text-center font-bold text-orange-600">${points}</td>
+          <td class="px-4 py-3 text-center">${jours > 0 ? `🔥 ${jours}` : '<span class="text-gray-300">0</span>'}</td>
+          <td class="px-4 py-3 text-gray-500 text-xs whitespace-nowrap">${dateInscr}</td>
+          <td class="px-4 py-3 text-gray-500 text-xs whitespace-nowrap">${derniereConn}</td>
+          <td class="px-4 py-3 text-center">
+            <select
+              onchange="changeRole('${u._id}', this.value, this)"
+              ${disabledAttr}
+              class="text-xs px-2 py-1 rounded-full font-semibold border cursor-pointer ${roleClass} ${disabledClass}"
+            >
+              <option value="user" ${u.role === 'user' ? 'selected' : ''}>Utilisateur</option>
+              <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>Admin</option>
+            </select>
+          </td>
+          <td class="px-4 py-3 text-right">
+            <div class="flex items-center justify-end gap-2">
+              <button
+                onclick='openDetail(${JSON.stringify(u)})'
+                class="p-1.5 rounded-lg text-blue-500 hover:bg-blue-50 transition"
+                title="Voir les détails"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                </svg>
+              </button>
+              ${u.role === 'admin' ? `
+                <button
+                  onclick='openPermissionsModal(${JSON.stringify(u)})'
+                  class="p-1.5 rounded-lg text-orange-500 hover:bg-orange-50 transition ${disabledClass}"
+                  title="Gérer les droits"
+                  ${disabledAttr}
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2h-1V9a5 5 0 00-10 0v2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/>
+                  </svg>
+                </button>
+              ` : ''}
+              <button
+                onclick="openDeleteModal('${u._id}', '${u.prenom} ${u.nom}')"
+                class="p-1.5 rounded-lg text-red-400 hover:bg-red-50 transition ${disabledClass}"
+                ${disabledAttr}
+                title="Supprimer"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  // ──────────── Filtres ────────────
+  function applyFilters() {
+    const q = document.getElementById('search-input').value.toLowerCase().trim();
+    const quartier = document.getElementById('filter-quartier').value;
+    const role = document.getElementById('filter-role').value;
+    const sexe = document.getElementById('filter-sexe').value;
+
+    const filtered = allUsers.filter(u => {
+      const matchQ = !q || `${u.prenom} ${u.nom} ${u.email}`.toLowerCase().includes(q);
+      const matchQuartier = !quartier || u.quartier === quartier;
+      const matchRole = !role || u.role === role;
+      const matchSexe = !sexe || u.sexe === sexe;
+      return matchQ && matchQuartier && matchRole && matchSexe;
+    });
+    renderTable(filtered);
+  }
+
+  ['search-input', 'filter-quartier', 'filter-role', 'filter-sexe'].forEach(id => {
+    document.getElementById(id)?.addEventListener('input', applyFilters);
+    document.getElementById(id)?.addEventListener('change', applyFilters);
+  });
+
+  // ──────────── Changement de rôle ────────────
+  async function changeRole(id, newRole, selectEl) {
+    if (!canEditAdmins) {
+      showToast('Seul un super admin peut modifier les rôles', 'error');
+      selectEl.value = newRole === 'admin' ? 'user' : 'admin';
+      return;
+    }
+
+    if (!confirm(`Passer ce compte en "${newRole}" ?`)) {
+      // Annuler le changement visuel
+      selectEl.value = newRole === 'admin' ? 'user' : 'admin';
+      return;
+    }
+    const token = localStorage.getItem('token');
+    try {
+      const res = await fetch(`${API_URL}/api/admin/utilisateurs/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          role: newRole,
+          ...(newRole === 'admin' ? { adminScope: 'limited', adminPermissions: [] } : {})
+        })
+      });
+      if (!res.ok) throw new Error('Erreur lors de la mise à jour');
+      const updated = await res.json();
+      const idx = allUsers.findIndex(u => u._id === id);
+      if (idx !== -1) {
+        allUsers[idx].role = updated.role;
+        allUsers[idx].adminScope = updated.adminScope;
+        allUsers[idx].adminPermissions = updated.adminPermissions || [];
+      }
+      applyFilters();
+      showToast(`Rôle mis à jour : ${updated.prenom} ${updated.nom} → ${updated.role}`, 'success');
+
+      if (updated.role === 'admin') {
+        openPermissionsModal(updated);
+      }
+    } catch (err) {
+      showToast(err.message, 'error');
+      selectEl.value = newRole === 'admin' ? 'user' : 'admin';
+    }
+  }
+  window.changeRole = changeRole;
+
+  // ──────────── Permissions admin ────────────
+  function openPermissionsModal(user) {
+    if (!canEditAdmins) {
+      showToast('Seul un super admin peut gérer les droits', 'error');
+      return;
+    }
+    permissionsTargetUser = user;
+    document.getElementById('permissions-user-name').textContent = `${user.prenom} ${user.nom} (${user.email})`;
+
+    const isSuper = (user.adminScope || 'super') !== 'limited';
+    const superToggle = document.getElementById('perm-super-toggle');
+    superToggle.checked = isSuper;
+
+    const currentPerms = new Set(user.adminPermissions || []);
+    const grid = document.getElementById('perm-grid');
+    grid.innerHTML = ADMIN_PERMISSION_MODULES.map((m) => `
+      <div class="grid grid-cols-12 gap-2 items-center border border-gray-200 rounded-lg p-3">
+        <div class="col-span-6 font-medium text-gray-700">${m.label}</div>
+        <label class="col-span-3 inline-flex items-center gap-2 text-sm text-gray-600">
+          <input type="checkbox" data-perm="${m.key}:view" class="perm-checkbox rounded border-gray-300" ${currentPerms.has(`${m.key}:view`) ? 'checked' : ''} />
+          Voir
+        </label>
+        <label class="col-span-3 inline-flex items-center gap-2 text-sm text-gray-600">
+          <input type="checkbox" data-perm="${m.key}:edit" class="perm-checkbox rounded border-gray-300" ${currentPerms.has(`${m.key}:edit`) ? 'checked' : ''} />
+          Modifier
+        </label>
+      </div>
+    `).join('');
+
+    togglePermissionGridState();
+    document.getElementById('permissionsModal').classList.remove('hidden');
+    document.getElementById('permissionsModal').classList.add('flex');
+  }
+  window.openPermissionsModal = openPermissionsModal;
+
+  function togglePermissionGridState() {
+    const isSuper = document.getElementById('perm-super-toggle').checked;
+    document.querySelectorAll('.perm-checkbox').forEach((el) => {
+      el.disabled = isSuper;
+      el.closest('label')?.classList.toggle('opacity-50', isSuper);
+    });
+  }
+
+  async function savePermissions() {
+    if (!permissionsTargetUser) return;
+    const token = localStorage.getItem('token');
+    const isSuper = document.getElementById('perm-super-toggle').checked;
+    const selected = Array.from(document.querySelectorAll('.perm-checkbox:checked'))
+      .map((el) => el.getAttribute('data-perm'))
+      .filter(Boolean);
+
+    try {
+      const res = await fetch(`${API_URL}/api/admin/utilisateurs/${permissionsTargetUser._id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          role: 'admin',
+          adminScope: isSuper ? 'super' : 'limited',
+          adminPermissions: isSuper ? [] : selected
+        })
+      });
+      if (!res.ok) throw new Error('Erreur lors de la sauvegarde des permissions');
+      const updated = await res.json();
+      const idx = allUsers.findIndex((u) => u._id === updated._id);
+      if (idx !== -1) allUsers[idx] = updated;
+      applyFilters();
+      closePermissionsModal();
+      showToast('Droits administrateur enregistrés', 'success');
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  }
+  window.savePermissions = savePermissions;
+
+  function closePermissionsModal() {
+    permissionsTargetUser = null;
+    document.getElementById('permissionsModal').classList.add('hidden');
+    document.getElementById('permissionsModal').classList.remove('flex');
+  }
+  window.closePermissionsModal = closePermissionsModal;
+
+  // ──────────── Suppression ────────────
+  function openDeleteModal(id, name) {
+    if (!canEditAdmins) {
+      showToast('Seul un super admin peut supprimer un compte', 'error');
+      return;
+    }
+    deleteTargetId = id;
+    document.getElementById('delete-user-name').textContent = name;
+    document.getElementById('deleteModal').classList.remove('hidden');
+    document.getElementById('deleteModal').classList.add('flex');
+  }
+  window.openDeleteModal = openDeleteModal;
+
+  function closeDeleteModal() {
+    deleteTargetId = null;
+    document.getElementById('deleteModal').classList.add('hidden');
+    document.getElementById('deleteModal').classList.remove('flex');
+  }
+  window.closeDeleteModal = closeDeleteModal;
+
+  async function confirmDelete() {
+    if (!deleteTargetId) return;
+    const token = localStorage.getItem('token');
+    try {
+      const res = await fetch(`${API_URL}/api/admin/utilisateurs/${deleteTargetId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error('Erreur lors de la suppression');
+      allUsers = allUsers.filter(u => u._id !== deleteTargetId);
+      updateStats();
+      applyFilters();
+      closeDeleteModal();
+      showToast('Utilisateur supprimé avec succès', 'success');
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  }
+  window.confirmDelete = confirmDelete;
+
+  // ──────────── Détails ────────────
+  function openDetail(u) {
+    const points = u.statistiques?.totalPoints ?? 0;
+    const jours = u.statistiques?.joursConsecutifs ?? 0;
+    document.getElementById('detail-content').innerHTML = `
+      <div class="flex items-center gap-4 mb-4">
+        <div class="w-14 h-14 rounded-full flex items-center justify-center text-white font-bold text-xl ${quartiersColor(u.quartier)}">
+          ${`${u.prenom?.[0] || ''}${u.nom?.[0] || ''}`.toUpperCase()}
+        </div>
+        <div>
+          <div class="text-xl font-bold text-gray-800">${u.prenom} ${u.nom}</div>
+          <div class="text-sm text-gray-500">${u.email}</div>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-3 text-sm">
+        ${detailRow('Quartier', u.quartier || '—')}
+        ${detailRow('Sexe', u.sexe || '—')}
+        ${detailRow('Téléphone', u.telephone || '—')}
+        ${detailRow('Date de naissance', u.dateNaissance ? formatDate(u.dateNaissance) : '—')}
+        ${detailRow('Rôle', `<span class="font-semibold ${u.role === 'admin' ? 'text-orange-600' : 'text-gray-600'}">${u.role}</span>`)}
+        ${detailRow('Date d\'inscription', formatDate(u.dateInscription))}
+        ${detailRow('Dernière connexion', u.derniereConnexion ? formatDate(u.derniereConnexion) : '—')}
+        ${detailRow('Points totaux', `<span class="font-bold text-orange-600">${points}</span>`)}
+        ${detailRow('Jours consécutifs', jours > 0 ? `🔥 ${jours}` : '0')}
+        ${detailRow('Langue', u.preferences?.langue || 'fr')}
+        ${detailRow('Thème', u.preferences?.theme || 'clair')}
+      </div>
+      ${u.bio ? `<div class="mt-3 pt-3 border-t"><p class="text-xs text-gray-400 mb-1 font-semibold uppercase">Bio</p><p class="text-sm text-gray-600">${u.bio}</p></div>` : ''}
+    `;
+    document.getElementById('detailModal').classList.remove('hidden');
+    document.getElementById('detailModal').classList.add('flex');
+  }
+  window.openDetail = openDetail;
+
+  function closeDetailModal() {
+    document.getElementById('detailModal').classList.add('hidden');
+    document.getElementById('detailModal').classList.remove('flex');
+  }
+  window.closeDetailModal = closeDetailModal;
+
+  function detailRow(label, value) {
+    return `
+      <div class="bg-gray-50 rounded-lg p-3">
+        <div class="text-xs text-gray-400 font-semibold uppercase mb-1">${label}</div>
+        <div class="text-gray-800">${value}</div>
+      </div>`;
+  }
+
+  // ──────────── Export CSV ────────────
+  function exportCSV() {
+    const headers = ['Prénom', 'Nom', 'Email', 'Quartier', 'Sexe', 'Rôle', 'Points', 'Jours consécutifs', 'Date inscription', 'Dernière connexion'];
+    const rows = allUsers.map(u => [
+      u.prenom, u.nom, u.email, u.quartier, u.sexe, u.role,
+      u.statistiques?.totalPoints ?? 0,
+      u.statistiques?.joursConsecutifs ?? 0,
+      formatDateCSV(u.dateInscription),
+      u.derniereConnexion ? formatDateCSV(u.derniereConnexion) : ''
+    ]);
+    const csv = [headers, ...rows].map(r => r.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `utilisateurs-bandenkop-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+  window.exportCSV = exportCSV;
+
+  // ──────────── Helpers ────────────
+  function readJwtPayload(token) {
+    if (!token) return null;
+    try {
+      return JSON.parse(atob(token.split('.')[1]));
+    } catch {
+      return null;
+    }
+  }
+
+  function formatDate(d) {
+    if (!d) return '—';
+    return new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  }
+  function formatDateCSV(d) {
+    if (!d) return '';
+    return new Date(d).toLocaleDateString('fr-FR');
+  }
+
+  function quartiersColor(q) {
+    if (q === 'Denkeng')    return 'bg-blue-500';
+    if (q === 'Tsèmeuhia')  return 'bg-green-500';
+    if (q === 'Tsèla')      return 'bg-purple-500';
+    return 'bg-gray-400';
+  }
+
+  function quartiersClass(q) {
+    if (q === 'Denkeng')    return 'bg-blue-100 text-blue-700';
+    if (q === 'Tsèmeuhia')  return 'bg-green-100 text-green-700';
+    if (q === 'Tsèla')      return 'bg-purple-100 text-purple-700';
+    return 'bg-gray-100 text-gray-600';
+  }
+
+  function showToast(msg, type = 'success') {
+    const div = document.createElement('div');
+    div.className = `fixed bottom-6 right-6 z-[999] px-5 py-3 rounded-xl shadow-lg text-white text-sm font-medium transition-all ${type === 'success' ? 'bg-green-600' : 'bg-red-600'}`;
+    div.textContent = msg;
+    document.body.appendChild(div);
+    setTimeout(() => div.remove(), 3500);
+  }
+
+  // Fermer les modals en cliquant dehors
+  document.getElementById('deleteModal')?.addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closeDeleteModal();
+  });
+  document.getElementById('detailModal')?.addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closeDetailModal();
+  });
+  document.getElementById('permissionsModal')?.addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closePermissionsModal();
+  });
+  document.getElementById('perm-super-toggle')?.addEventListener('change', togglePermissionGridState);
+
+  loadUsers();
+</script>

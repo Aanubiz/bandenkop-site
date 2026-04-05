@@ -1,11 +1,14 @@
 ---
+import { getApiUrl } from '../../config';
+
+const API_URL = getApiUrl();
 const { title } = Astro.props as { title?: string };
 ---
 
 <div class="min-h-screen bg-gray-100">
   <!-- Sidebar -->
-  <aside class="fixed left-0 top-0 h-full w-64 bg-white shadow-lg z-40">
-    <div class="p-6">
+  <aside class="fixed left-0 top-0 h-full w-64 bg-white shadow-lg z-40 flex flex-col">
+    <div class="flex-1 overflow-y-auto p-6">
       <div class="flex items-center space-x-3 mb-8">
         <div class="w-10 h-10 bg-gradient-to-br from-orange-600 to-red-600 rounded-xl flex items-center justify-center text-white font-black text-lg">
           B
@@ -27,21 +30,35 @@ const { title } = Astro.props as { title?: string };
           <p class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Apprentissage</p>
         </div>
 
-        <a href="/admin/apprentissage/quiz" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-colors">
+        <a data-admin-resource="quiz" href="/admin/apprentissage/quiz" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-colors">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
           <span>Questions Quiz</span>
         </a>
 
-        <a href="/admin/apprentissage/prononciation" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-colors">
+        <a data-admin-resource="prononciation" href="/admin/apprentissage/prononciation" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-colors">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
           </svg>
           <span>Mots prononciation</span>
         </a>
 
-        <a href="/admin/apprentissage/categories" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-colors">
+        <a data-admin-resource="association" href="/admin/apprentissage/association" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7h16M4 12h16M4 17h10"></path>
+          </svg>
+          <span>Association 6 paires FR↔BK</span>
+        </a>
+
+        <a data-admin-resource="association" href="/admin/apprentissage/association-image" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7h16M4 12h16M4 17h10"></path>
+          </svg>
+          <span>Association icône FR↔BK</span>
+        </a>
+
+        <a data-admin-resource="prononciation" href="/admin/apprentissage/categories" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-colors">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
           </svg>
@@ -53,14 +70,14 @@ const { title } = Astro.props as { title?: string };
           <p class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Contenus</p>
         </div>
 
-        <a href="/admin/histoire" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-colors">
+        <a data-admin-resource="histoire" href="/admin/histoire" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-colors">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
           </svg>
           <span>Articles Histoire</span>
         </a>
 
-        <a href="/admin/culture" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-colors">
+        <a data-admin-resource="culture" href="/admin/culture" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-colors">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
           </svg>
@@ -72,7 +89,7 @@ const { title } = Astro.props as { title?: string };
   <p class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Contenus</p>
 </div>
 
-<a href="/admin/histoire" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-colors">
+<a data-admin-resource="histoire" href="/admin/histoire" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-colors">
   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
   </svg>
@@ -80,14 +97,14 @@ const { title } = Astro.props as { title?: string };
 </a>
 
 <!-- AJOUTE CETTE LIGNE -->
-<a href="/admin/articles" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-colors">
+<a data-admin-resource="articles" href="/admin/articles" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-colors">
   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
   </svg>
   <span>Articles Actualités</span>
 </a>
 
-<a href="/admin/culture" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-colors">
+<a data-admin-resource="culture" href="/admin/culture" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-colors">
   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
   </svg>
@@ -98,7 +115,7 @@ const { title } = Astro.props as { title?: string };
           <p class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Wiki</p>
         </div>
 
-        <a href="/admin/figures" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-colors">
+        <a data-admin-resource="figures" href="/admin/figures" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-colors">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
           </svg>
@@ -110,7 +127,7 @@ const { title } = Astro.props as { title?: string };
           <p class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Communauté</p>
         </div>
 
-        <a href="/admin/utilisateurs" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-colors">
+        <a data-admin-resource="utilisateurs" href="/admin/utilisateurs" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-colors">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
           </svg>
@@ -124,6 +141,13 @@ const { title } = Astro.props as { title?: string };
           <span>Commentaires</span>
         </a>
 
+        <a href="/admin/messages" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+          </svg>
+          <span>Messages contact</span>
+        </a>
+
         <a href="/admin/classement" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-orange-50 hover:text-orange-600 rounded-lg transition-colors">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
@@ -134,7 +158,7 @@ const { title } = Astro.props as { title?: string };
     </div>
 
     <!-- Footer sidebar -->
-    <div class="absolute bottom-0 left-0 right-0 p-6 border-t border-gray-200">
+    <div class="p-6 border-t border-gray-200 shrink-0">
       <a href="/" class="flex items-center space-x-3 text-gray-600 hover:text-orange-600 transition-colors">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
@@ -150,6 +174,10 @@ const { title } = Astro.props as { title?: string };
       <div class="px-8 h-16 flex items-center justify-between">
         <h1 class="text-xl font-semibold text-gray-800">{title || 'Administration'}</h1>
         <div class="flex items-center space-x-4">
+          <a href="/admin" class="inline-flex items-center gap-1 text-sm text-orange-600 hover:text-orange-800 transition-colors font-medium">
+            ← Panneau admin
+          </a>
+          <span class="text-gray-300 select-none">|</span>
           <button id="logout-btn" class="text-red-600 hover:text-red-800 text-sm font-medium">
             Déconnexion
           </button>
@@ -166,5 +194,32 @@ const { title } = Astro.props as { title?: string };
 <script>
   import { logout } from '../../utils/auth';
 
+  const readJwtPayload = () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return null;
+      return JSON.parse(atob(token.split('.')[1]));
+    } catch {
+      return null;
+    }
+  };
+
+  const applyAdminVisibility = () => {
+    const payload = readJwtPayload();
+    const scope = payload?.adminScope || 'super';
+    const perms = Array.isArray(payload?.adminPermissions) ? payload.adminPermissions : [];
+
+    if (scope === 'super') return;
+
+    document.querySelectorAll('[data-admin-resource]').forEach((el) => {
+      const resource = el.getAttribute('data-admin-resource');
+      const canView = perms.includes(`${resource}:view`) || perms.includes(`${resource}:edit`);
+      if (!canView) {
+        el.classList.add('hidden');
+      }
+    });
+  };
+
+  applyAdminVisibility();
   document.getElementById('logout-btn')?.addEventListener('click', logout);
 </script>

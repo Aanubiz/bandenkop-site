@@ -4,6 +4,7 @@ import Layout from '../../../layouts/Layout.astro';
 
 <Layout title="Administration - Apprentissage">
     <div class="p-6">
+      <a href="/admin" class="inline-flex items-center gap-1 text-sm text-orange-600 hover:text-orange-800 mb-4 transition-colors">← Panneau admin</a>
       <h1 class="text-2xl font-bold mb-6">Gestion de l'apprentissage</h1>
       
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -51,13 +52,24 @@ import Layout from '../../../layouts/Layout.astro';
           </div>
         </a>
 
-        <!-- Carte Association -->
+        <!-- Carte Association (6 paires) -->
         <a href="/admin/apprentissage/association" class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all group">
-          <div class="text-4xl mb-4">🎯</div>
-          <h2 class="text-xl font-bold mb-2">Association mot-image</h2>
-          <p class="text-gray-600 mb-4">Paires mot + image</p>
+          <div class="text-4xl mb-4">🧩</div>
+          <h2 class="text-xl font-bold mb-2">Association FR/BK (x6)</h2>
+          <p class="text-gray-600 mb-4">Blocs de 6 paires de mots</p>
           <div class="flex justify-between items-center">
             <span class="text-sm text-gray-500" id="association-count">Chargement...</span>
+            <span class="text-orange-600 group-hover:translate-x-2 transition-transform">→</span>
+          </div>
+        </a>
+
+        <!-- Carte Association icône -->
+        <a href="/admin/apprentissage/association-image" class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all group">
+          <div class="text-4xl mb-4">🎯</div>
+          <h2 class="text-xl font-bold mb-2">Association icône FR/BK</h2>
+          <p class="text-gray-600 mb-4">Mot français + icône + mot Bandenkop</p>
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-gray-500" id="association-image-count">Chargement...</span>
             <span class="text-orange-600 group-hover:translate-x-2 transition-transform">→</span>
           </div>
         </a>
@@ -79,7 +91,8 @@ import Layout from '../../../layouts/Layout.astro';
         { id: 'prononciation-count', url: '/api/admin/prononciation/count' },
         { id: 'ecriture-count', url: '/api/admin/ecriture/count' },
         { id: 'phonetique-count', url: '/api/admin/phonetique/count' },
-        { id: 'association-count', url: '/api/admin/association/count' }
+        { id: 'association-count', url: '/api/admin/association/count' },
+        { id: 'association-image-count', url: '/api/admin/association-image/count' }
       ];
 
       for (const endpoint of endpoints) {

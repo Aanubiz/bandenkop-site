@@ -1,7 +1,8 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import { getApiUrl } from '../../config';
 
-const API_URL = 'http://localhost:3001';
+const API_URL = getApiUrl();
 
 // Les catégories
 const categories = [
@@ -96,6 +97,8 @@ const limit = 4;
   </div>
 
   <script>
+    import { getApiUrl } from '../../config';
+
     type CategoryKey = 'vivants' | 'traces' | 'etoiles';
 
     interface CategoryMeta {
@@ -129,7 +132,7 @@ const limit = 4;
       }
     }
 
-    const API_URL = 'http://localhost:3001';
+    const API_URL = getApiUrl();
     const categories: Record<CategoryKey, CategoryMeta> = {
       vivants: {
         titre: "Ceux qui font briller Bandenkop",

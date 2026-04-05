@@ -9,6 +9,8 @@ export default defineConfig({
   adapter: node({
     mode: 'standalone'
   }),
+  site: 'https://bandenkoponline.com',
+  base: '/',
   server: {
     port: 3000,
     host: true

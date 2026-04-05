@@ -58,16 +58,11 @@ router.get('/user/:rubrique', verifyToken, async (req, res) => {
       });
     }
     
-    // Calculer le pourcentage de progression
-    // Objectif quotidien par défaut : 10 questions
-    const objectif = progression.objectifs?.questions || 10;
+    // Calculer le pourcentage basé sur la qualité (taux de réussite)
     const totalReponses = progression.questionsReussies + progression.questionsRatees;
-    
-    // Pourcentage basé sur l'objectif quotidien (max 100%)
-    let pourcentage = 0;
-    if (totalReponses > 0) {
-      pourcentage = Math.min(100, (totalReponses / objectif) * 100);
-    }
+    const pourcentage = totalReponses > 0
+      ? (progression.questionsReussies / totalReponses) * 100
+      : 0;
     
     // Si l'utilisateur a dépassé l'objectif, on garde 100% mais on compte les points supplémentaires
     const points = progression.points || 0;

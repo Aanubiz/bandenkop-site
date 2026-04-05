@@ -22,7 +22,7 @@ const progressionSchema = new mongoose.Schema({
   },
   rubrique: { 
     type: String, 
-    enum: ['quiz', 'prononciation', 'ecriture', 'phonetique', 'association'],
+    enum: ['quiz', 'prononciation', 'ecriture', 'phonetique', 'association', 'association-image'],
     required: true,
     index: true
   },

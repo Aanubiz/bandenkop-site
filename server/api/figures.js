@@ -59,6 +59,19 @@ router.get('/slug/:slug', async (req, res) => {
 });
 
 // ===== ROUTES ADMIN =====
+// Récupérer toutes les figures pour l'admin (triées par ordre)
+// ⚠️ IMPORTANT: Doit être AVANT /admin/:id pour éviter que :id capture "all"
+router.get('/admin/all', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const figures = await Figure.find()
+      .sort({ ordre: 1, dateAjout: 1 });
+    res.json({ figures });
+  } catch (error) {
+    console.error('Erreur récupération figures admin:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Créer une figure (admin seulement)
 router.post('/admin', verifyToken, verifyAdmin, async (req, res) => {
   try {
@@ -72,6 +85,54 @@ router.post('/admin', verifyToken, verifyAdmin, async (req, res) => {
     res.status(201).json(figure);
   } catch (error) {
     console.error('❌ Erreur création figure:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Déplacer une figure dans la liste admin (haut / bas)
+// ⚠️ IMPORTANT: Doit être AVANT PUT/DELETE /admin/:id sinon :id capture "move"
+router.post('/admin/:id/move', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const { direction } = req.body || {};
+    if (!['up', 'down'].includes(direction)) {
+      return res.status(400).json({ error: 'Direction invalide (up|down)' });
+    }
+
+    // Récupérer toutes les figures triées par ordre, puis par création
+    const figures = await Figure.find()
+      .sort({ ordre: 1, dateAjout: 1, _id: 1 })
+      .select('_id ordre');
+
+    const currentIndex = figures.findIndex((f) => String(f._id) === String(req.params.id));
+    if (currentIndex === -1) {
+      return res.status(404).json({ error: 'Figure introuvable' });
+    }
+
+    const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+    if (targetIndex < 0 || targetIndex >= figures.length) {
+      return res.status(400).json({ error: 'Impossible de déplacer (limite atteinte)' });
+    }
+
+    // Réordonner la liste en mémoire (fonctionne même si tous les ordre sont identiques)
+    const [movedFigure] = figures.splice(currentIndex, 1);
+    figures.splice(targetIndex, 0, movedFigure);
+
+    // Réattribuer des ordre séquentiels à toutes les figures
+    const updates = figures.map((figure, index) => ({
+      updateOne: {
+        filter: { _id: figure._id },
+        update: { $set: { ordre: index } }
+      }
+    }));
+
+    if (updates.length > 0) {
+      await Figure.bulkWrite(updates);
+    }
+
+    console.log('✅ Figure déplacée avec succès');
+    res.json({ success: true, moved: true });
+  } catch (error) {
+    console.error('Erreur déplacement figure:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -114,47 +175,6 @@ router.delete('/admin/:id', verifyToken, verifyAdmin, async (req, res) => {
     res.json({ message: 'Figure supprimée avec succès' });
   } catch (error) {
     console.error('❌ Erreur suppression figure:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// ===== INTERACTIONS UTILISATEURS =====
-// Like
-router.post('/:id/like', verifyToken, async (req, res) => {
-  try {
-    const figure = await Figure.findByIdAndUpdate(
-      req.params.id,
-      { $inc: { likes: 1 } },
-      { new: true }
-    );
-    
-    if (!figure) {
-      return res.status(404).json({ error: 'Figure non trouvée' });
-    }
-    
-    res.json({ likes: figure.likes, dislikes: figure.dislikes });
-  } catch (error) {
-    console.error('Erreur like:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Dislike
-router.post('/:id/dislike', verifyToken, async (req, res) => {
-  try {
-    const figure = await Figure.findByIdAndUpdate(
-      req.params.id,
-      { $inc: { dislikes: 1 } },
-      { new: true }
-    );
-    
-    if (!figure) {
-      return res.status(404).json({ error: 'Figure non trouvée' });
-    }
-    
-    res.json({ likes: figure.likes, dislikes: figure.dislikes });
-  } catch (error) {
-    console.error('Erreur dislike:', error);
     res.status(500).json({ error: error.message });
   }
 });

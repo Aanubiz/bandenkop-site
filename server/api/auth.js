@@ -1,29 +1,112 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
-import Progression from '../models/Progression.js'; // ← AJOUT IMPORTANT
+import PendingRegistration from '../models/PendingRegistration.js';
+import Progression from '../models/Progression.js'; 
 import bcrypt from 'bcryptjs';
 import { Resend } from 'resend';
-
+import crypto from 'crypto';
 
 const router = express.Router();
 
-// Initialiser Resend avec ta clé API
-const resend = new Resend(process.env.RESEND_API_KEY);
+export const ADMIN_ACTIONS = {
+  VIEW: 'view',
+  EDIT: 'edit'
+};
 
-// 1. D'abord, on définit verifyToken (AVANT de l'utiliser)
-export const verifyToken = (req, res, next) => {
-  const token = req.headers.authorization?.split(' ')[1];
-  
-  if (!token) {
-    return res.status(401).json({ error: 'Token manquant' });
+const syncUserTotalPoints = async (userId) => {
+  const totalFromProgressions = await Progression.aggregate([
+    { $match: { userId } },
+    { $group: { _id: '$userId', total: { $sum: '$points' } } }
+  ]);
+
+  const totalPoints = Number(totalFromProgressions?.[0]?.total || 0);
+
+  await User.findByIdAndUpdate(userId, {
+    $set: { 'statistiques.totalPoints': totalPoints }
+  });
+
+  return totalPoints;
+};
+
+// ✅ FONCTION DE SÉCURITÉ POUR RESEND (Évite le crash au démarrage)
+const getResend = () => {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey || apiKey === 're_123' || apiKey.includes('YOUR_API_KEY')) {
+    console.error("❌ Erreur : RESEND_API_KEY est absente ou invalide dans le .env");
+    return null;
   }
+  return new Resend(apiKey);
+};
+
+const hashCode = (value) => crypto.createHash('sha256').update(String(value)).digest('hex');
+
+const sendRegistrationCodeEmail = async ({ email, prenom, code }) => {
+  const resend = getResend();
+  if (!resend) {
+    throw new Error('Service email temporairement indisponible. Réessayez plus tard.');
+  }
+
+  await resend.emails.send({
+    from: process.env.EMAIL_FROM || 'Bandenkop <noreply@bandenkoponline.com>',
+    to: [email],
+    subject: 'Code de vérification - Inscription Bandenkop',
+    html: `
+      <h2>Bonjour ${prenom},</h2>
+      <p>Votre code de vérification est :</p>
+      <p style="font-size: 24px; font-weight: 700; letter-spacing: 2px;">${code}</p>
+      <p>Ce code expire dans 15 minutes.</p>
+      <p>Si vous n'êtes pas à l'origine de cette demande, ignorez ce message.</p>
+    `
+  });
+};
+
+const sendWelcomeEmail = async ({ email, prenom }) => {
+  const resend = getResend();
+  if (!resend) return;
+
+  try {
+    await resend.emails.send({
+      from: process.env.EMAIL_FROM || 'Bandenkop <noreply@bandenkoponline.com>',
+      to: [email],
+      subject: 'Bienvenue sur Bandenkop 🎉',
+      html: `
+        <h2>Bienvenue ${prenom} !</h2>
+        <p>Votre inscription est confirmée. Votre compte Bandenkop est maintenant actif.</p>
+        <p>Vous pouvez supprimer votre compte à tout moment depuis votre profil, section paramètres.</p>
+        <p>Merci de faire vivre la communauté Bandenkop ❤️</p>
+      `
+    });
+  } catch (error) {
+    console.error('Erreur email de bienvenue:', error.message);
+  }
+};
+
+// 1. Middlewares
+export const verifyToken = async (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) return res.status(401).json({ error: 'Token manquant' });
   
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
+    const user = await User.findById(decoded.userId)
+      .select('role quartier adminScope adminPermissions tokenVersion');
+
+    if (!user) {
+      return res.status(401).json({ error: 'Utilisateur introuvable' });
+    }
+
+    const jwtVersion = Number(decoded.tokenVersion ?? 0);
+    const currentVersion = Number(user.tokenVersion ?? 0);
+    if (jwtVersion !== currentVersion) {
+      return res.status(401).json({ error: 'Session expirée. Reconnectez-vous.' });
+    }
+
     req.userId = decoded.userId;
-    req.userRole = decoded.role;
-    req.userQuartier = decoded.quartier;
+    req.userRole = user.role;
+    req.userQuartier = user.quartier;
+    req.userAdminScope = user.adminScope || 'super';
+    req.userAdminPermissions = user.adminPermissions || [];
     next();
   } catch (error) {
     res.status(401).json({ error: 'Token invalide' });
@@ -37,76 +120,204 @@ export const verifyAdmin = (req, res, next) => {
   next();
 };
 
-// 2. Ensuite, les routes (qui utilisent verifyToken)
+const hasAdminPermission = (scope, permissions, resource, action) => {
+  // Compatibilité: tout admin sans scope explicite reste super admin
+  if (!scope || scope === 'super') return true;
+  const perms = Array.isArray(permissions) ? permissions : [];
+  if (perms.includes(`${resource}:edit`)) return true;
+  if (action === ADMIN_ACTIONS.VIEW && perms.includes(`${resource}:view`)) return true;
+  return false;
+};
+
+export const verifyAdminPermission = (resource, action = ADMIN_ACTIONS.VIEW) => {
+  return (req, res, next) => {
+    if (req.userRole !== 'admin') {
+      return res.status(403).json({ error: 'Accès non autorisé' });
+    }
+    if (hasAdminPermission(req.userAdminScope, req.userAdminPermissions, resource, action)) {
+      return next();
+    }
+    return res.status(403).json({ error: 'Permission insuffisante' });
+  };
+};
+
+export const verifyAdminPermissionByMethod = (resource) => {
+  return (req, res, next) => {
+    const readMethods = ['GET', 'HEAD', 'OPTIONS'];
+    const action = readMethods.includes(req.method) ? ADMIN_ACTIONS.VIEW : ADMIN_ACTIONS.EDIT;
+    return verifyAdminPermission(resource, action)(req, res, next);
+  };
+};
+
+export const verifySuperAdmin = (req, res, next) => {
+  if (req.userRole !== 'admin') {
+    return res.status(403).json({ error: 'Accès non autorisé' });
+  }
+  if (!req.userAdminScope || req.userAdminScope === 'super') {
+    return next();
+  }
+  return res.status(403).json({ error: 'Action réservée au super admin' });
+};
+
+// 2. Routes Authentification
 router.post('/register', async (req, res) => {
+  return res.status(400).json({
+    error: 'Inscription en 2 étapes requise',
+    code: 'USE_REGISTER_REQUEST_CONFIRM'
+  });
+});
+
+router.post('/register/request', async (req, res) => {
   try {
     const { prenom, nom, quartier, sexe, email, password } = req.body;
+    if (!prenom || !nom || !quartier || !sexe || !email || !password) {
+      return res.status(400).json({ error: 'Tous les champs sont obligatoires' });
+    }
 
-    // Validation du mot de passe
-    if (password.length < 6) {
-      return res.status(400).json({ error: 'Le mot de passe doit contenir au moins 6 caractères' });
-    }
-    if (/\s/.test(password)) {
-      return res.status(400).json({ error: 'Le mot de passe ne doit pas contenir d\'espaces' });
-    }
-    if (/[àáâãäåçèéêëìíîïñòóôõöùúûüýÿ]/.test(password)) {
-      return res.status(400).json({ error: 'Le mot de passe ne doit pas contenir d\'accents' });
-    }
+    if (password.length < 6) return res.status(400).json({ error: 'Minimum 6 caractères' });
+
+    const emailNormalized = String(email).trim().toLowerCase();
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailNormalized);
+    if (!emailOk) return res.status(400).json({ error: 'Email invalide' });
     
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ email: emailNormalized });
+    if (existingUser) return res.status(400).json({ error: 'Email déjà utilisé' });
+
+    const code = String(Math.floor(100000 + Math.random() * 900000));
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
+
+    await PendingRegistration.findOneAndUpdate(
+      { email: emailNormalized },
+      {
+        prenom: String(prenom).trim(),
+        nom: String(nom).trim(),
+        quartier: String(quartier).trim(),
+        sexe: String(sexe).trim(),
+        email: emailNormalized,
+        password: String(password),
+        codeHash: hashCode(code),
+        attempts: 0,
+        expiresAt
+      },
+      { upsert: true, new: true }
+    );
+
+    await sendRegistrationCodeEmail({
+      email: emailNormalized,
+      prenom: String(prenom).trim(),
+      code
+    });
+
+    return res.json({
+      success: true,
+      message: 'Code envoyé par email. Vérifiez votre boîte de réception.'
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+router.post('/register/confirm', async (req, res) => {
+  try {
+    const { email, code } = req.body || {};
+    const emailNormalized = String(email || '').trim().toLowerCase();
+    const codeValue = String(code || '').trim();
+
+    if (!emailNormalized || !codeValue) {
+      return res.status(400).json({ error: 'Email et code sont obligatoires' });
+    }
+
+    const pending = await PendingRegistration.findOne({ email: emailNormalized });
+    if (!pending) {
+      return res.status(400).json({ error: 'Aucune demande d’inscription en attente pour cet email' });
+    }
+
+    if (pending.expiresAt.getTime() < Date.now()) {
+      await PendingRegistration.deleteOne({ _id: pending._id });
+      return res.status(400).json({ error: 'Code expiré. Veuillez relancer l’inscription.' });
+    }
+
+    if (pending.codeHash !== hashCode(codeValue)) {
+      pending.attempts = Number(pending.attempts || 0) + 1;
+      if (pending.attempts >= 5) {
+        await PendingRegistration.deleteOne({ _id: pending._id });
+        return res.status(400).json({ error: 'Trop de tentatives. Veuillez relancer l’inscription.' });
+      }
+      await pending.save();
+      return res.status(400).json({ error: 'Code invalide' });
+    }
+
+    const existingUser = await User.findOne({ email: emailNormalized });
     if (existingUser) {
-      return res.status(400).json({ error: 'Cet email est déjà utilisé' });
+      await PendingRegistration.deleteOne({ _id: pending._id });
+      return res.status(400).json({ error: 'Email déjà utilisé' });
     }
-    
-    const user = new User({ prenom, nom, quartier, sexe, email, password });
+
+    const user = new User({
+      prenom: pending.prenom,
+      nom: pending.nom,
+      quartier: pending.quartier,
+      sexe: pending.sexe,
+      email: pending.email,
+      password: pending.password
+    });
     await user.save();
+
+    await PendingRegistration.deleteOne({ _id: pending._id });
+
+    await sendWelcomeEmail({ email: user.email, prenom: user.prenom });
     
     const token = jwt.sign(
-      { userId: user._id, role: user.role, quartier: user.quartier },
-      process.env.JWT_SECRET || 'secret',
-      { expiresIn: '7d' }
+      {
+        userId: user._id,
+        role: user.role,
+        quartier: user.quartier,
+        tokenVersion: Number(user.tokenVersion || 0),
+        adminScope: user.adminScope || 'super',
+        adminPermissions: user.adminPermissions || []
+      },
+      process.env.JWT_SECRET || 'secret', { expiresIn: '7d' }
     );
     
-    res.status(201).json({
+    return res.status(201).json({
       token,
       user: {
         id: user._id,
         prenom: user.prenom,
         nom: user.nom,
         email: user.email,
-        quartier: user.quartier,
-        sexe: user.sexe,
         role: user.role,
-        avatar: user.avatar
+        adminScope: user.adminScope || 'super',
+        adminPermissions: user.adminPermissions || []
       }
     });
   } catch (error) {
-    console.error('Erreur inscription:', error);
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 });
 
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-    
     const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
-    }
+    if (!user) return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
     
     const isValid = await user.comparePassword(password);
-    if (!isValid) {
-      return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
-    }
+    if (!isValid) return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
     
     user.derniereConnexion = new Date();
     await user.save();
     
     const token = jwt.sign(
-      { userId: user._id, role: user.role, quartier: user.quartier },
-      process.env.JWT_SECRET || 'secret',
-      { expiresIn: '7d' }
+      {
+        userId: user._id,
+        role: user.role,
+        quartier: user.quartier,
+        tokenVersion: Number(user.tokenVersion || 0),
+        adminScope: user.adminScope || 'super',
+        adminPermissions: user.adminPermissions || []
+      },
+      process.env.JWT_SECRET || 'secret', { expiresIn: '7d' }
     );
     
     res.json({
@@ -116,22 +327,77 @@ router.post('/login', async (req, res) => {
         prenom: user.prenom,
         nom: user.nom,
         email: user.email,
-        quartier: user.quartier,
-        sexe: user.sexe,
         role: user.role,
-        avatar: user.avatar,
-        statistiques: user.statistiques
+        adminScope: user.adminScope || 'super',
+        adminPermissions: user.adminPermissions || []
       }
     });
   } catch (error) {
-    console.error('Erreur login:', error);
     res.status(500).json({ error: error.message });
   }
 });
 
-// 3. La route /profile qui utilise verifyToken
+// 3. Mot de passe oublié (Utilise getResend)
+router.post('/forgot-password', async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) return res.json({ message: 'Si cet email existe, un lien a été envoyé' });
+
+    const resetToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET + user.password, { expiresIn: '1h' });
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpires = Date.now() + 3600000;
+    await user.save();
+
+    const resetLink = `${process.env.CLIENT_URL || 'https://bandenkoponline.com'}/reinitialiser-mot-de-passe?token=${resetToken}`;
+
+    // ✅ APPEL SÉCURISÉ À RESEND
+    const resendInstance = getResend();
+    if (!resendInstance) {
+      console.log("⚠️ Simulation d'envoi (Pas de clé API) :", resetLink);
+      return res.json({ message: 'Email simulé en console (Clé API manquante)' });
+    }
+
+    await resendInstance.emails.send({
+      from: process.env.EMAIL_FROM || 'Bandenkop <noreply@bandenkoponline.com>',
+      to: [user.email],
+      subject: 'Réinitialisation de votre mot de passe - Bandenkop',
+      html: `<h2>Bonjour ${user.prenom},</h2><p>Cliquez ici : <a href="${resetLink}">${resetLink}</a></p>`
+    });
+
+    res.json({ message: 'Email envoyé avec succès' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 4. Réinitialisation
+router.post('/reset-password', async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+    const decoded = jwt.decode(token);
+    if (!decoded) return res.status(400).json({ error: 'Token invalide' });
+
+    const user = await User.findById(decoded.userId);
+    if (!user) return res.status(400).json({ error: 'Utilisateur non trouvé' });
+
+    jwt.verify(token, process.env.JWT_SECRET + user.password);
+
+    user.password = newPassword;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+
+    res.json({ message: 'Mot de passe réinitialisé avec succès' });
+  } catch (error) {
+    res.status(400).json({ error: 'Token invalide ou expiré' });
+  }
+});
+
+// 5. Profil & Suppression
 router.get('/profile', verifyToken, async (req, res) => {
   try {
+    await syncUserTotalPoints(req.userId);
     const user = await User.findById(req.userId).select('-password');
     res.json(user);
   } catch (error) {
@@ -139,346 +405,12 @@ router.get('/profile', verifyToken, async (req, res) => {
   }
 });
 
-// Mettre à jour le profil
-router.put('/profile', verifyToken, async (req, res) => {
-  try {
-    const { prenom, nom, email, quartier, sexe } = req.body;
-    
-    // Vérifier si l'email est déjà utilisé par quelqu'un d'autre
-    if (email) {
-      const existingUser = await User.findOne({ email, _id: { $ne: req.userId } });
-      if (existingUser) {
-        return res.status(400).json({ error: 'Cet email est déjà utilisé' });
-      }
-    }
-    
-    const user = await User.findByIdAndUpdate(
-      req.userId,
-      { prenom, nom, email, quartier, sexe },
-      { new: true }
-    ).select('-password');
-    
-    res.json(user);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Demande de réinitialisation de mot de passe
-router.post('/forgot-password', async (req, res) => {
-  try {
-    const { email } = req.body;
-    
-    const user = await User.findOne({ email });
-    if (!user) {
-      // Pour des raisons de sécurité, on ne dit pas si l'email existe
-      return res.json({ message: 'Si cet email existe, un lien de réinitialisation a été envoyé' });
-    }
-
-    // Générer un token de réinitialisation valide 1 heure
-    const resetToken = jwt.sign(
-      { userId: user._id },
-      process.env.JWT_SECRET + user.password,
-      { expiresIn: '1h' }
-    );
-
-    // Sauvegarder le token
-    user.resetPasswordToken = resetToken;
-    user.resetPasswordExpires = Date.now() + 3600000; // 1 heure
-    await user.save();
-
-    // Créer le lien de réinitialisation
-    const resetLink = `${process.env.CLIENT_URL || 'http://localhost:3000'}/reinitialiser-mot-de-passe?token=${resetToken}`;
-
-    // Envoyer l'email avec Resend
-    const { data, error } = await resend.emails.send({
-      from: process.env.EMAIL_FROM || 'Bandenkop <noreply@bandenkoponline.com>',
-      to: [user.email],
-      subject: 'Réinitialisation de votre mot de passe - Bandenkop',
-      html: `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <meta charset="UTF-8">
-          <title>Réinitialisation du mot de passe</title>
-          <style>
-            body {
-              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-              line-height: 1.6;
-              color: #333;
-              margin: 0;
-              padding: 0;
-            }
-            .container {
-              max-width: 600px;
-              margin: 0 auto;
-              background: #fff;
-            }
-            .header {
-              background: linear-gradient(135deg, #f97316, #dc2626);
-              padding: 30px 20px;
-              text-align: center;
-            }
-            .header h1 {
-              color: white;
-              margin: 0;
-              font-size: 28px;
-              font-weight: bold;
-            }
-            .header p {
-              color: rgba(255,255,255,0.9);
-              margin: 10px 0 0;
-            }
-            .content {
-              padding: 40px 30px;
-              background: #fff;
-            }
-            .button {
-              display: inline-block;
-              background: linear-gradient(135deg, #f97316, #dc2626);
-              color: white;
-              padding: 14px 28px;
-              text-decoration: none;
-              border-radius: 8px;
-              margin: 25px 0;
-              font-weight: 600;
-              transition: transform 0.2s;
-            }
-            .button:hover {
-              transform: scale(1.02);
-            }
-            .footer {
-              background: #f9fafb;
-              padding: 20px;
-              text-align: center;
-              font-size: 12px;
-              color: #6b7280;
-              border-top: 1px solid #e5e7eb;
-            }
-            .warning {
-              background: #fef3c7;
-              padding: 15px;
-              border-radius: 8px;
-              margin: 20px 0;
-              font-size: 13px;
-              color: #92400e;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="header">
-              <h1>🏠 Bandenkop</h1>
-              <p>Village de 2ème degré - Hauts Plateaux</p>
-            </div>
-            <div class="content">
-              <h2>Bonjour ${user.prenom} ${user.nom},</h2>
-              <p>Nous avons reçu une demande de réinitialisation de votre mot de passe pour votre compte Bandenkop.</p>
-              <p>Cliquez sur le bouton ci-dessous pour créer un nouveau mot de passe :</p>
-              <div style="text-align: center;">
-                <a href="${resetLink}" class="button">🔐 Réinitialiser mon mot de passe</a>
-              </div>
-              <div class="warning">
-                <strong>⚠️ Ce lien expirera dans 1 heure.</strong><br>
-                Si vous n'avez pas demandé cette réinitialisation, ignorez cet email. Votre mot de passe restera inchangé.
-              </div>
-              <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
-              <p style="font-size: 14px; color: #6b7280;">
-                <strong>Conseil de sécurité :</strong> Utilisez un mot de passe fort et unique. Ne le partagez jamais avec personne.
-              </p>
-            </div>
-            <div class="footer">
-              <p>© 2026 Bandenkop. Tous droits réservés.</p>
-              <p>Village Bandenkop, Arrondissement de Bangou<br>Département des Hauts Plateaux, Ouest Cameroun</p>
-              <p style="margin-top: 10px;">
-                <a href="${process.env.CLIENT_URL || 'http://localhost:3000'}" style="color: #f97316; text-decoration: none;">Visitez notre site</a>
-              </p>
-            </div>
-          </div>
-        </body>
-        </html>
-      `
-    });
-
-    if (error) {
-      console.error('Erreur Resend:', error);
-      return res.status(500).json({ error: 'Erreur lors de l\'envoi de l\'email' });
-    }
-
-    console.log(`📧 Email de réinitialisation envoyé à ${user.email} (ID: ${data?.id})`);
-    res.json({ message: 'Email envoyé avec succès' });
-  } catch (error) {
-    console.error('Erreur forgot-password:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Réinitialisation du mot de passe
-router.post('/reset-password', async (req, res) => {
-  try {
-    const { token, newPassword } = req.body;
-
-    // Décoder le token sans vérifier la signature d'abord pour récupérer l'userId
-    const decoded = jwt.decode(token);
-    if (!decoded || !decoded.userId) {
-      return res.status(400).json({ error: 'Token invalide' });
-    }
-
-    const user = await User.findById(decoded.userId);
-    if (!user) {
-      return res.status(400).json({ error: 'Utilisateur non trouvé' });
-    }
-
-    // Vérifier le token avec la clé + ancien mot de passe
-    try {
-      jwt.verify(token, process.env.JWT_SECRET + user.password);
-    } catch (error) {
-      return res.status(400).json({ error: 'Token invalide ou expiré' });
-    }
-
-    // Valider le nouveau mot de passe
-    if (newPassword.length < 6) {
-      return res.status(400).json({ error: 'Le mot de passe doit contenir au moins 6 caractères' });
-    }
-    if (/\s/.test(newPassword)) {
-      return res.status(400).json({ error: 'Le mot de passe ne doit pas contenir d\'espaces' });
-    }
-
-    // Changer le mot de passe
-    user.password = newPassword;
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpires = undefined;
-    await user.save();
-
-    // Envoyer un email de confirmation
-    const { data, error } = await resend.emails.send({
-      from: process.env.EMAIL_FROM || 'Bandenkop <noreply@bandenkoponline.com>',
-      to: [user.email],
-      subject: 'Votre mot de passe a été changé - Bandenkop',
-      html: `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <meta charset="UTF-8">
-          <title>Mot de passe changé</title>
-        </head>
-        <body>
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <div style="background: linear-gradient(135deg, #f97316, #dc2626); padding: 20px; text-align: center; border-radius: 10px 10px 0 0;">
-              <h1 style="color: white; margin: 0;">Bandenkop</h1>
-            </div>
-            <div style="background: #fff; padding: 30px; border: 1px solid #e5e7eb; border-radius: 0 0 10px 10px;">
-              <h2>Bonjour ${user.prenom} ${user.nom},</h2>
-              <p>Votre mot de passe a été changé avec succès.</p>
-              <p>Si vous n'êtes pas à l'origine de cette modification, contactez-nous immédiatement.</p>
-              <p style="margin-top: 20px;">
-                <a href="${process.env.CLIENT_URL || 'http://localhost:3000'}/connexion" style="background: #f97316; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Se connecter</a>
-              </p>
-            </div>
-          </div>
-        </body>
-        </html>
-      `
-    });
-
-    console.log(`📧 Email de confirmation envoyé à ${user.email}`);
-
-    res.json({ message: 'Mot de passe réinitialisé avec succès' });
-  } catch (error) {
-    console.error('Erreur reset-password:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Supprimer le compte
 router.delete('/delete-account', verifyToken, async (req, res) => {
   try {
-    // Supprimer les progressions
     await Progression.deleteMany({ userId: req.userId });
-    
-    // Supprimer l'utilisateur
     await User.findByIdAndDelete(req.userId);
-    
-    res.json({ message: 'Compte supprimé avec succès' });
+    res.json({ message: 'Compte supprimé' });
   } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Demande de réinitialisation de mot de passe
-router.post('/forgot-password', async (req, res) => {
-  try {
-    const { email } = req.body;
-    
-    const user = await User.findOne({ email });
-    if (!user) {
-      // Pour des raisons de sécurité, on ne dit pas si l'email existe
-      return res.json({ message: 'Si cet email existe, un lien de réinitialisation a été envoyé' });
-    }
-
-    // Générer un token de réinitialisation valide 1 heure
-    const resetToken = jwt.sign(
-      { userId: user._id },
-      process.env.JWT_SECRET + user.password, // Ajouter le hash du mot de passe pour invalider après changement
-      { expiresIn: '1h' }
-    );
-
-    // Sauvegarder le token (optionnel, pour traçabilité)
-    user.resetPasswordToken = resetToken;
-    user.resetPasswordExpires = Date.now() + 3600000; // 1 heure
-    await user.save();
-
-    // TODO: Envoyer un vrai email avec nodemailer
-    // Pour l'instant, on simule
-    console.log(`📧 Lien de réinitialisation pour ${email}: http://localhost:3000/reinitialiser-mot-de-passe?token=${resetToken}`);
-
-    res.json({ message: 'Email envoyé avec succès' });
-  } catch (error) {
-    console.error('Erreur forgot-password:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Réinitialisation du mot de passe
-router.post('/reset-password', async (req, res) => {
-  try {
-    const { token, newPassword } = req.body;
-
-    // Décoder le token sans vérifier la signature d'abord pour récupérer l'userId
-    const decoded = jwt.decode(token);
-    if (!decoded || !decoded.userId) {
-      return res.status(400).json({ error: 'Token invalide' });
-    }
-
-    const user = await User.findById(decoded.userId);
-    if (!user) {
-      return res.status(400).json({ error: 'Utilisateur non trouvé' });
-    }
-
-    // Vérifier le token avec la clé + ancien mot de passe
-    try {
-      jwt.verify(token, process.env.JWT_SECRET + user.password);
-    } catch (error) {
-      return res.status(400).json({ error: 'Token invalide ou expiré' });
-    }
-
-    // Valider le nouveau mot de passe
-    if (newPassword.length < 6) {
-      return res.status(400).json({ error: 'Le mot de passe doit contenir au moins 6 caractères' });
-    }
-    if (/\s/.test(newPassword)) {
-      return res.status(400).json({ error: 'Le mot de passe ne doit pas contenir d\'espaces' });
-    }
-
-    // Changer le mot de passe
-    user.password = newPassword;
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpires = undefined;
-    await user.save();
-
-    res.json({ message: 'Mot de passe réinitialisé avec succès' });
-  } catch (error) {
-    console.error('Erreur reset-password:', error);
     res.status(500).json({ error: error.message });
   }
 });

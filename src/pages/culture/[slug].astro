@@ -4,7 +4,6 @@ import ScrollToTop from '../../components/ScrollToTop.astro';
 
 interface ArticleCulture {
   titre: string;
-  periode: string;
   auteur: string;
   imageCouverture: string;
   contenu: string;
@@ -14,280 +13,514 @@ interface ArticleCulture {
 const articles: Record<string, ArticleCulture> = {
   danses: {
     titre: "Les Danses Traditionnelles",
-    periode: "Transmission orale",
-    auteur: "Comité culturel de Bandenkop",
+    auteur: "Tiré des récits oraux",
     imageCouverture: "/images/culture/danses.jpg",
     contenu: `
-      <p>Les danses traditionnelles de Bandenkop sont bien plus que de simples divertissements. Elles racontent notre histoire, transmettent nos valeurs et célèbrent notre identité. Chaque danse a une signification profonde et est exécutée lors de moments précis de la vie communautaire.</p>
+      <h2>Bandenkop et ses danses traditionnelles — quand le corps devient mémoire</h2>
       
-      <img src="/images/culture/danse-nkah.jpg" alt="Danse Nkah" class="rounded-xl shadow-lg my-6 w-full" onerror="this.style.display='none'" />
+      <p>Chez les Bandenkop, la danse n'est pas un simple divertissement. Elle est langage, identité, rite et puissance. 
+      Elle raconte l'histoire d'un peuple, marque le passage du temps, célèbre les vivants et honore les ancêtres. 
+      Comme partout en pays Bamiléké, elle est au cœur de la vie collective — omniprésente dans les célébrations, 
+      indissociable des grands moments de l'existence.
+      </p>
       
-      <h2>Le Nkah - Danse des notables</h2>
-      <p>Le Nkah est la danse réservée aux notables et aux chefs. Elle symbolise la sagesse, l'autorité et la responsabilité. Les danseurs, parés de leurs plus beaux atours, exécutent des mouvements lents et majestueux, rappelant la dignité des anciens.</p>
+      <h3>Un art vivant, transmis de génération en génération</h3>
+      <p>Les danses traditionnelles de Bandenkop existent depuis des générations. Elles se transmettent, se perpétuent, 
+      se réinventent parfois — car n'importe qui peut en créer une. Mais dans la pratique, la création d'une nouvelle 
+      danse reste le plus souvent l'apanage des dignitaires et des notables, de ceux qui ont le rang, l'autorité et 
+      [image:droite:/images/culture/nzeuh.jpg:Danse Nzeuh à Bandenkop (2020)]
       
-      <div class="float-right ml-6 mb-4 w-64">
-        <img src="/images/culture/danse-mfeh.jpg" alt="Danse Mfeh" class="rounded-lg shadow-md" onerror="this.style.display='none'" />
-        <p class="text-xs text-gray-500 mt-1 italic text-center">Les femmes dansant le Mfeh</p>
-      </div>
+      le poids spirituel nécessaires pour donner naissance à une expression collective durable.
+      Ces danses ne forment pas un ensemble homogène. Elles se déclinent en plusieurs catégories bien distinctes, 
+      chacune avec ses règles, ses participants autorisés, ses occasions d'expression et sa charge symbolique propre. 
+      Certaines sont ouvertes à tous. D'autres sont réservées à quelques-uns. Et d'autres encore ne s'exécutent qu'une 
+      seule fois dans une vie — ou dans un règne.
+      </p>
       
+      <h3>Les danses simples : la fête pour tous</h3>
+      <p>La première catégorie est celle des danses simples — celles qui ouvrent leurs bras à quiconque souhaite les 
+      rejoindre. Parmi les plus connues, on trouve le Dimassa, le Kouodjang, le Hryeup, le Sansankou, le Djonka, 
+      le Samali et le Mèdjouong. Chacune a ses rythmes, ses pas, ses codes internes — mais toutes partagent cette 
+      qualité précieuse d'être accessibles. Il suffit de s'inscrire, de se conformer aux règles du groupe 
+      et de s'y investir avec sincérité pour en faire partie.
+      Ces danses sont le pouls de la vie sociale à Bandenkop. Elles animent les fêtes, les cérémonies, les retrouvailles. 
+      Elles sont le sourire du village.
+      </p>
+      
+      <h3>Les danses des dignitaires </h3>
+      <p>Au-dessus de ces danses populaires se trouvent celles qui appartiennent à un autre monde — celui des puissants et 
+      des riches. Le Kena, le Dadi et le Nzeuh sont des danses de dignitaires, reconnaissables entre toutes par la tenue 
+      immaculément blanche que leurs participants arborent avec une fierté tranquille. Ces danses ne s'improvisent pas. 
+      Elles se méritent, par le rang, par la réussite, par la reconnaissance sociale.
+      [image:droite:/images/culture/kena.jpg:Exécution de la danse Kena durant un deuil]
+
+      Mais parmi toutes les danses des dignitaires, l'une se dresse au-dessus de toutes les autres par son caractère 
+      absolument exceptionnel. Le Zeuh est une danse qui ne s'exécute qu'une seule fois durant le règne d'un roi. Une fois. 
+      Pas deux. C'est la danse de la majesté absolue — celle où le souverain lui-même descend sur la place publique pour 
+      incarner, dans chaque mouvement, la puissance et la grandeur de son règne. À ses côtés dansent quelques dignitaires 
+      choisis, ainsi que des rois d'autres villages ayant reçu l'insigne honneur d'une invitation. Voir le Zeuh, c'est 
+      assister à un moment que l'on ne reverra peut-être jamais.
+      </p>
+
+      <h3>Le Kang : le rite de passage des jeunes hommes</h3>
+      <p>Dans une catégorie qui lui est entièrement propre se trouve le Kang — et cette solitude dans sa catégorie dit 
+      déjà tout de son importance.
+      Le Kang est une danse initiatique, réservée aux jeunes garçons du village. C'est leur rite de passage — le moment 
+      solennel et codifié où l'adolescence s'efface pour laisser place à l'âge adulte. Pour tout jeune Bandenkop, danser 
+      le Kang n'est pas une option : c'est presque une obligation, une étape incontournable du chemin vers la maturité.
+      [image:droite:/images/culture/kang.jpg:Exécution de la danse Kang par des jeunes]
+
+      Les femmes n'y ont aucune place — ni comme participantes, ni même comme présences proches. Car l'un des interdits 
+      les plus stricts et les plus solennels liés au Kang stipule qu'aucun garçon ayant dansé ne peut toucher ni même 
+      s'approcher d'une femme le jour même de la danse. Cet interdit n'est pas une règle parmi d'autres — c'est l'une 
+      des lois les plus sévères de toute la tradition Bandenkop. Le franchir, c'est s'exposer à des conséquences que 
+      personne ne prend à la légère.
+      </p>
+
+      <h3>Le Mètchè : la danse de ceux qui ont tout accompli</h3>
+      <p>À l'autre bout du voyage de la vie se trouve le Mètchè — la danse de la retraite. Elle est réservée aux personnes 
+      âgées, hommes et femmes confondus, qui ont "tout accompli". Ce n'est pas une danse de tristesse ni de bilan amer — 
+      c'est une danse d'accomplissement, de plénitude, de reconnaissance. Elle dit : j'ai vécu, j'ai traversé, je suis là.
+      Le Mètchè se joue avec un seul tam-tam — sobriété sonore qui contraste avec l'intensité de ce qu'elle représente. 
+      Et sa rareté fait partie de son essence même : autrefois, une génération entière pouvait disparaître sans jamais 
+      avoir eu l'occasion d'assister à cette danse, tant elle était réservée aux très vieilles personnes. La voir, 
+      c'était un privilège que le temps seul accordait.
+      </p>
+
+      <h3>Le Kougang et le Gnie : les plus puissantes</h3>
+      <p>Enfin, au sommet — ou peut-être aux racines les plus profondes — de cet univers de la danse se trouvent deux 
+      entités qui dépassent largement le cadre de la simple expression artistique. Le Kougnag et le Gnie ne sont pas des 
+      danses à proprement parler. Ce sont des confréries familiales, des héritages de sang, des puissances ancestrales qui 
+      s'expriment parfois par la danse — mais qui sont avant tout des forces.
+      [image:droite:/images/culture/indien.jpg:Un des puissant Tah Kougang de Bandenkop]
+
+      On ne les rejoint pas par choix. On en est. Il faut être de la lignée.
+      Le Kougnag est présent dans toute la région de l'Ouest Cameroun et se reconnaît sans peine : ses masques 
+      impressionnants, ses pas virulents, ses démonstrations mystiques qui glacent et fascinent à la fois. C'est une 
+      puissance visible, affirmée, qui s'impose dans l'espace.
+      Le Gnie, lui, est d'une toute autre nature. Plus sobre, moins extravagant dans ses manifestations extérieures — 
+      mais en certaines circonstances, plus puissant encore que le Kougnag. Ce que le Gnie ne montre pas, il le tient 
+      dans l'ombre, et c'est précisément là que réside sa redoutable efficacité.
+      Ces deux forces sont si puissantes, si absolues dans leur nature, qu'elles ne peuvent coexister au sein d'une même 
+      famille. Une maison choisit l'une ou l'autre — jamais les deux.
+      </p>
+
       <blockquote>
-        "Danser le Nkah, c'est porter le poids de nos ancêtres. Chaque pas est une prière, chaque geste un hommage."
-        <cite>— Notable Tchomgou</cite>
+        "Des rires du Dimassa à la solennité du Zeuh, de l'initiation du Kang à la sérénité accomplie du Mètchè, 
+        des masques du Kougnag au silence puissant du Gnie — les danses de Bandenkop sont un monde à elles seules. 
+        Un monde vivant, stratifié, chargé de sens, où chaque pas raconte quelque chose de ce peuple et de sa relation 
+        au temps, au pouvoir, à la vie et à l'invisible.
+        Ce texte n'est qu'une introduction. Chaque danse mériterait, à elle seule, un chapitre entier."
+        <cite>— Mémoire de Bandenkop</cite>
       </blockquote>
-      
-      <h2>Le Mfeh - Danse des femmes</h2>
-      <p>Le Mfeh est la danse des femmes. Elle célèbre la fécondité, la joie et la solidarité féminine. Lors des grandes cérémonies, les femmes se rassemblent pour danser en cercle, leurs mouvements ondulants rappelant les vagues du fleuve Nkam.</p>
-      
-      <p>Cette danse est aussi un moment de transmission : les mères enseignent à leurs filles les pas et les chants qui accompagnent le Mfeh. C'est ainsi que la tradition se perpétue, de génération en génération.</p>
-      
-      <h2>Le Khe - Danse guerrière</h2>
-      <p>Le Khe est la danse des guerriers. Elle évoque la bravoure, la force et la protection du village. Les hommes y exécutent des mouvements vigoureux, simulant des combats et brandissant des lances et des boucliers.</p>
-      
-      <blockquote>
-        "Le Khe nous rappelle que nous sommes les gardiens de notre terre. Il nous donne la force de défendre nos valeurs."
-        <cite>— Ancien guerrier</cite>
-      </blockquote>
-      
-      <h2>Le Mengo - Danse d'initiation</h2>
-      <p>Le Mengo est une danse sacrée, réservée aux initiés. Elle marque le passage de l'enfance à l'âge adulte et transmet les secrets de la tradition. Les mouvements, codifiés et précis, racontent le voyage initiatique du jeune homme ou de la jeune fille.</p>
     `
   },
   notabilite: {
     titre: "La Notabilité à Bandenkop",
-    periode: "Structure traditionnelle",
     auteur: "Comité culturel de Bandenkop",
     imageCouverture: "/images/culture/notabilite.jpg",
     contenu: `
-      <p>Le système de notabilité est au cœur de l'organisation sociale de Bandenkop. Il repose sur un équilibre subtil entre pouvoir, sagesse et responsabilité envers la communauté.</p>
+      <h2>La notabilité à Bandenkop — Une structure complexe</h2>
       
-      <img src="/images/culture/chef-conseil.jpg" alt="Chef et notables en conseil" class="rounded-xl shadow-lg my-6 w-full" onerror="this.style.display='none'" />
+      <p>Dans la société Bandenkop, tout le monde n'occupe pas la même place. Ce n'est pas une question d'injustice — c'est 
+      une question d'ordre. Un ordre ancien, réfléchi, qui reconnaît à chacun sa valeur, son rang, sa contribution. 
+      Et au cœur de cet ordre se trouve la notabilité — ce système de titres qui transforme la reconnaissance en identité.
+      </p>
       
-      <h2>Le Chef (Fo'o)</h2>
-      <p>Le Fo'o est le chef suprême du village. Il est le garant des traditions, l'arbitre des conflits et le représentant de Bandenkop auprès des autres communautés. Sa parole fait loi, mais elle est toujours éclairée par l'avis des notables.</p>
+      <h3>Pas seulement un titre</h3>
+      <p>Devenir notable à Bandenkop, ce n'est pas simplement recevoir un honneur. C'est entrer dans un autre monde. 
+      On reçoit un nom nouveau — celui qui vous définira désormais aux yeux de la communauté. On reçoit des attributs : 
+      un chapeau particulier, le droit de porter le Ndop, ce tissu royal chargé de sens. Et surtout, on intègre l'une des 
+      sociétés secrètes de la cour royale — ces cercles invisibles qui font tourner les rouages du village dans l'ombre du pouvoir.
+      Les titres sont classés par échelons. On peut en gravir plusieurs au cours d'une vie, à condition d'en avoir le mérite 
+      — ou la lignée. Car à Bandenkop, les chemins vers la notabilité sont multiples, et tous ne partent pas du même point. 
+      [image:droite:/images/culture/tayouguem.jpg:Bah Mekem Tayouguem - Notable Bandenkop]
       
+      </p>
+      
+      <h3>Les titres de lignée : naître avec le rang</h3>
+      <p>Certains titres ne se gagnent pas. Ils se reçoivent, presque naturellement, parce qu'on est né au bon endroit dans 
+      la bonne famille. Ce sont les titres de lignée.
+      Le Sop est le titre des princes. Être de sang royal ouvre cette porte — mais elle n'est jamais automatiquement 
+      franchie, car le chef garde toujours le dernier mot. Il peut tout à fait accorder ce titre à quelqu'un qui lui est 
+      cher, même sans lien de sang royal. C'est là toute la subtilité du système : les règles existent, mais le chef les 
+      transcende toujours.
+      Le titre de Mèfé — littéralement "reine mère" — est celui que portent l'épouse, la mère ou la sœur du chef. Ni plus, 
+      ni moins. La proximité avec le souverain fait le titre. Là aussi, la discrétion du chef reste souveraine.
+      Le Nwafé ou Tafé est le titre du tuteur du chef — "père du chef" en langue locale. C'est un titre profondément humain, 
+      qui dit la confiance absolue placée en un homme pour veiller sur celui qui veillera sur tous.
+      Enfin, les Tin sont les pères de jumeaux. La naissance de jumeaux est un événement chargé de puissance spirituelle en 
+      pays Bamiléké, et à Bandenkop, cela peut ouvrir la porte d'un titre — même si, une fois encore, rien n'est automatique.
+      </p>
+      
+      <h3>Les titres généraux : le mérite récompensé</h3>
+      <p>À côté des titres de lignée, il y a ceux qu'on mérite. Ceux qu'on gagne par ce qu'on a fait, ce qu'on a construit, 
+      ce qu'on a défendu.
+      Les Dze sont parmi les plus respectés — ce sont les pères fondateurs, les piliers historiques du village. Les Tah, 
+      les Sah, les Nwabe, les Mekui et les Dzèfé complètent ce tableau de la notabilité méritée, chacun avec son histoire propre.
+      Les Mekui sont des guerriers d'un genre particulier. Ce ne sont pas seulement des combattants — ce sont des hommes 
+      dont les exploits en médecine traditionnelle et en potions leur ont valu leur réputation et leur titre. La force 
+      physique compte, mais la maîtrise de l'invisible compte tout autant.
+      Les Dzèfé, eux, sont les serviteurs du chef. Leur chemin vers la notabilité est long et patient : il faut d'abord 
+      servir à la chefferie, donner de sa personne, de son temps, de sa loyauté — et c'est seulement au terme de ce service 
+      que le roi, s'il le juge bon, récompense l'homme en l'anoblissant. Pas de raccourci. Pas de faveur. Juste le travail 
+      et l'attente.
+      </p>
+
+      <h3>Les Mekem : le sommet inatteignable</h3>
+      <p>Et puis il y a les Mekem.
+      Dans toute l'histoire de Bandenkop, depuis la fondation du village jusqu'au dixième chef, seulement quatre hommes 
+      ont reçu ce titre. Quatre. En plusieurs siècles d'histoire. Aujourd'hui, ils ne sont que huit en tout — un chiffre 
+      qui dit mieux que n'importe quel discours à quel point ce titre est rare, précieux, presque sacré.
+      Le Mekem n'est pas un échelon dans une hiérarchie. C'est une catégorie à part entière — hors hiérarchie, hors 
+      comparaison. On n'y accède pas en gravissant des échelons. On y accède parce qu'on a accompli quelque chose 
+      d'exceptionnel, quelque chose qui marque durablement l'histoire du village. C'est l'accomplissement ultime. 
+      Le point où le mérite rencontre la légende.
+      </p>
+
+      <h3>Une hiérarchie qui échappe aux hiérarchies</h3>
+      <p>Il serait tentant de vouloir dresser un organigramme propre et logique de la notabilité Bandenkop. Tentant — mais vain.
+      Car la réalité est plus complexe, plus humaine et finalement plus intéressante que n'importe quel tableau. 
+      Officiellement, un Nwabe se situe au-dessus d'un Sah. Mais dans les faits, certains Sah sont bien plus puissants, 
+      bien plus influents et bien plus respectés que des Nwabe. Le titre indique une place. Il ne la garantit pas.
+      Ce que l'on sait avec certitude, c'est que le chef trône au sommet de tout, suivi du conseil des neuf notables, 
+      puis du conseil des sept notables, et enfin de l'ensemble des autres notables. Pour le reste, chacun connaît sa 
+      vraie place — avec ou sans titre.
+      C'est peut-être là la plus grande sagesse de ce système : les titres organisent la société, mais ce sont les hommes 
+      qui, en définitive, décident de ce qu'ils valent.
+      </p>
+
       <blockquote>
-        "Le chef ne gouverne pas seul. Il est le tronc, les notables sont les branches. Ensemble, ils forment l'arbre de notre communauté."
-        <cite>— Proverbe Bandenkop</cite>
+        "La notabilité à Bandenkop n'est pas un simple système honorifique. C'est une philosophie de la reconnaissance — 
+        une façon pour un peuple de dire à ceux qui le méritent : nous vous avons vus, nous savons ce que vous avez fait, 
+        et nous ne l'oublierons pas et le notable se mets ainsi au service du peuple et du village."
+        <cite>— Mémoire de Bandenkop</cite>
       </blockquote>
-      
-      <div class="float-left mr-6 mb-4 w-64">
-        <img src="/images/culture/notables.jpg" alt="Les neuf notables" class="rounded-lg shadow-md" onerror="this.style.display='none'" />
-        <p class="text-xs text-gray-500 mt-1 italic text-center">Les neuf notables en conseil</p>
-      </div>
-      
-      <h2>Les neuf notables</h2>
-      <p>Les neuf notables représentent les grandes familles fondatrices. Ils assistent le chef dans ses décisions et veillent à ce que les intérêts de tous soient pris en compte. Chaque notable a une fonction spécifique :</p>
-      
-      <ul>
-        <li>Le notable de la justice</li>
-        <li>Le notable de la guerre</li>
-        <li>Le notable des terres</li>
-        <li>Le notable des rites</li>
-        <li>Le notable des alliances</li>
-        <li>Le notable des jeunes</li>
-        <li>Le notable des femmes</li>
-        <li>Le notable des étrangers</li>
-        <li>Le notable de la parole</li>
-      </ul>
-      
-      <h2>Les chefs de quartier</h2>
-      <p>Chaque quartier de Bandenkop est dirigé par un chef de quartier, nommé par le chef en concertation avec les notables. Il est le lien direct entre les habitants et le conseil du village.</p>
-      
-      <h2>Les dignitaires religieux</h2>
-      <p>Les dignitaires religieux, souvent issus des grandes familles, sont les gardiens des lieux sacrés et des rites. Ils président aux cérémonies et veillent à l'équilibre entre le monde visible et invisible.</p>
     `
   },
   chapeaux: {
     titre: "Les Chapeaux Traditionnels",
-    periode: "Symboles de pouvoir",
     auteur: "Comité culturel de Bandenkop",
     imageCouverture: "/images/culture/chapeaux.jpg",
     contenu: `
-      <p>Les chapeaux traditionnels de Bandenkop ne sont pas de simples accessoires. Ils racontent le statut, la fonction et l'histoire de celui qui les porte.</p>
+      <h2>Le chapeau à Bandenkop — bien plus qu'un couvre-chef</h2>
       
-      <img src="/images/culture/tchagha.jpg" alt="Tchagha - chapeau royal" class="rounded-xl shadow-lg my-6 w-full" onerror="this.style.display='none'" />
+      <p>À Bandenkop, regarder la tête d'un homme, c'est lire son histoire. Le chapeau qu'il porte — ou qu'il ne porte pas 
+      — dit qui il est, d'où il vient, jusqu'où il est arrivé. Dans une société où chaque détail a un sens, le chapeau est 
+      peut-être l'un des symboles les plus parlants qui soit.
+      </p>
       
-      <h2>Le Tchagha - Chapeau royal</h2>
-      <p>Le Tchagha est le chapeau du chef. Orné de perles et de plumes, il est le symbole suprême de l'autorité. Seul le Fo'o peut le porter, lors des cérémonies officielles.</p>
+      <h3>Un langage silencieux</h3>
+      <p>Chez les Bandenkop, le chapeau n'a jamais été une simple question de style. C'est un outil de communication, un 
+      signe d'identification et une déclaration de rang. En un seul coup d'œil, celui qui sait lire ces codes comprend à 
+      qui il a affaire — son rang, sa puissance, sa place dans la hiérarchie du village.
+      Le chef, en tant que souverain suprême, peut arborer n'importe quel chapeau. C'est son privilège absolu. Mais pour 
+      les notables, les choses sont plus nuancées. Certains couvre-chefs nécessitent une autorisation explicite, ou 
+      l'atteinte d'un certain niveau spirituel ou hiérarchique avant de pouvoir être portés. Ce n'est pas une formalité — 
+      c'est une règle gravée dans la tradition. Porter un chapeau auquel on n'a pas encore droit, c'est s'exposer à des 
+      conséquences qui peuvent aller de la sanction sociale à quelque chose de bien plus grave — une malédiction dont les 
+      anciens parlent avec un sérieux qui ne laisse place à aucun doute. 
+      [image:droite:/images/culture/chapeaux.jpg:Quelques chapeaux traditionnels]
       
+      </p>
+      
+      <h3>Les règles du chapeau</h3>
+      <p>Autour du chapeau gravitent plusieurs règles fondamentales que tout Bandenkop connaît et respecte.
+      La première est absolue : on ne porte pas son chapeau devant le chef. Peu importe son rang, peu importe ses titres — 
+      en présence du souverain, tout le monde se décoiffe. C'est un acte de soumission et de respect qui rappelle que quelle 
+      que soit la hauteur à laquelle on s'est élevé, il existe une autorité au-dessus de tout.
+      La deuxième règle touche au sacré. On retire toujours son chapeau en entrant dans un lieu sacré ou en passant devant 
+      lui. Le chapeau, symbole de puissance humaine, s'incline devant ce qui dépasse l'humain.
+      Et puis il y a cette règle qui dit peut-être le plus sur les valeurs profondes de la société Bandenkop : on enlève 
+      toujours son chapeau devant son père — même si l'on est un grand notable et que ce père n'a aucun titre, aucun rang, 
+      aucune fonction officielle. Le sang prime sur le titre. La famille prime sur la hiérarchie. Un homme peut avoir gravi 
+      tous les échelons de la notabilité — devant celui qui lui a donné la vie, il se décoiffe. Sans exception.
+      </p>
+      
+      <h3>Un sujet encore ouvert</h3>
+      <p>Le monde des chapeaux à Bandenkop est vaste et complexe. Chaque type de couvre-chef a son nom, son histoire, ses 
+      détenteurs légitimes et ses règles d'usage — un univers à lui seul que ces quelques lignes ne font qu'effleurer.
+      Cet article est une introduction. Il sera complété, enrichi, approfondi au fil des contributions et des témoignages. 
+      Si vous êtes porteur de connaissances sur ce sujet, si vous avez des informations, des précisions ou des anecdotes à 
+      partager sur les chapeaux traditionnels de Bandenkop, nous vous invitons chaleureusement à nous contacter. 
+      Chaque détail compte. Chaque mémoire est précieuse.
+      </p>
+
       <blockquote>
-        "Le Tchagha n'est pas un simple couvre-chef. C'est la couronne de nos ancêtres, le lien entre les vivants et ceux qui nous ont précédés."
-        <cite>— Sa Majesté le Roi</cite>
+        "Le chapeau à Bandenkop parle. Il suffit de savoir l'écouter."
+        <cite>— Mémoire de Bandenkop</cite>
       </blockquote>
-      
-      <div class="float-right ml-6 mb-4 w-64">
-        <img src="/images/culture/mfo.jpg" alt="Mfo - chapeau des notables" class="rounded-lg shadow-md" onerror="this.style.display='none'" />
-        <p class="text-xs text-gray-500 mt-1 italic text-center">Un notable paré du Mfo</p>
-      </div>
-      
-      <h2>Le Mfo - Chapeau des notables</h2>
-      <p>Le Mfo est porté par les notables. Sa forme et ses motifs varient selon la fonction et le rang du notable. Il est toujours fabriqué par des artisans spécialisés, qui connaissent les secrets de sa confection.</p>
-      
-      <h2>Le Nkap - Chapeau des guerriers</h2>
-      <p>Le Nkap est le chapeau des guerriers. Plus robuste et moins orné que les chapeaux des notables, il est conçu pour la protection et l'action. Les plumes qui le décorent sont celles des oiseaux chassés par le guerrier lui-même.</p>
-      
-      <h2>Le Ndeng - Chapeau des sages</h2>
-      <p>Le Ndeng est porté par les sages et les anciens. Sa forme arrondie évoque la sagesse qui enveloppe la communauté. Les motifs tissés racontent souvent les proverbes et les enseignements transmis par celui qui le porte.</p>
     `
   },
   chaises: {
     titre: "Les Chaises et Trônes",
-    periode: "Sièges du pouvoir",
     auteur: "Comité culturel de Bandenkop",
     imageCouverture: "/images/culture/chaises.jpg",
     contenu: `
-      <p>Les sièges traditionnels de Bandenkop sont bien plus que des meubles. Chacun raconte l'histoire de celui qui l'occupe et la place qu'il occupe dans la société.</p>
+      <h2>Les chaises à Bandenkop — s'asseoir est une déclaration</h2>
       
-      <img src="/images/culture/kpu.jpg" alt="Kpu - Trône royal" class="rounded-xl shadow-lg my-6 w-full" onerror="this.style.display='none'" />
+      <p>À Bandenkop, avant de s'asseoir, on regarde. On regarde qui est là, on regarde ce qui est disponible, et surtout 
+      on sait ce qu'on a le droit de faire. Car ici, une chaise n'est jamais simplement une chaise.
+      </p>
       
-      <h2>Le Kpu - Trône royal</h2>
-      <p>Le Kpu est le trône du chef. Taillé dans un arbre sacré, il est transmis de règne en règne. Personne d'autre que le Fo'o ne peut s'y asseoir, sous peine de s'attirer la colère des ancêtres.</p>
+      <h3>Plus qu'un simple siège</h3>
+      <p>Dans la société Bandenkop, les chaises traditionnelles ne sont pas des objets de confort. Ce sont des marqueurs de 
+      rang, des déclarations silencieuses qui disent à l'assemblée qui vous êtes, jusqu'où vous êtes arrivé et ce que vous 
+      avez accompli. S'asseoir sur la mauvaise chaise, devant les mauvaises personnes, sans avoir accompli les rites 
+      nécessaires — ce n'est pas une maladresse. C'est une faute. Et les fautes de ce genre ont des conséquences.
+      [image:droite:/images/culture/leng.jpg:Un Leng fraichement fabriqué, prêt à être utilisé]
       
-      <div class="float-left mr-6 mb-4 w-64">
-        <img src="/images/culture/tchop.jpg" alt="Tchop - Chaise à porteur" class="rounded-lg shadow-md" onerror="this.style.display='none'" />
-        <p class="text-xs text-gray-500 mt-1 italic text-center">Le Tchop, symbole de prestige</p>
-      </div>
+      </p>
       
-      <h2>Le Tchop - Chaise à porteur</h2>
-      <p>Le Tchop est la chaise utilisée lors des cérémonies pour transporter le chef ou un notable de marque. Elle est portée par des hommes forts, et son utilisation est réservée aux plus hauts dignitaires.</p>
+      <h3>Le Leng : la chaise du dignitaire</h3>
+      <p>Le Leng est la première grande étape dans l'univers des chaises traditionnelles. Fabriqué en raphia, il se décline 
+      sous plusieurs formes — du plus simple au plus élaboré — et c'est la chaise des dignitaires par excellence.
+      Mais on ne s'assoit pas sur un Leng simplement parce qu'on en a envie ou parce qu'on pense en avoir le rang. 
+      Il faut d'abord passer par un rituel, organisé du côté de la famille maternelle. Et même après ce rituel, on n'accède 
+      qu'au Leng simple. Les formes plus complexes, plus chargées de sens, demandent d'autres étapes, d'autres accomplissements.
+      Ce qui rend ce rituel particulièrement touchant, c'est le rôle qu'y joue le père. C'est lui — et personne d'autre — 
+      qui fait asseoir son fils sur la chaise pour la première fois, lui donnant ainsi publiquement et solennellement 
+      l'autorisation de s'y asseoir désormais en sa présence et devant la communauté. Ce geste dit tout de la philosophie 
+      Bandenkop : peu importe ta fortune, peu importe tes titres, peu importe ta puissance — ton père reste au-dessus de toi. 
+      Toujours. Et c'est lui qui ouvre les portes, même celles que tu as les moyens de t'offrir seul.
+      Le rituel du Leng est l'un des plus courants à Bandenkop. Car un notable digne de ce nom ne peut pas se permettre de 
+      s'asseoir devant ses pairs sur une simple chaise en plastique. Le Leng, c'est le minimum. C'est la base. C'est la preuve 
+      que l'on a au moins fait ce premier pas.
+      </p>
       
-      <h2>Le Ngong - Tabouret des notables</h2>
-      <p>Le Ngong est le tabouret sur lequel s'assoient les notables lors des conseils. Sa hauteur est légèrement inférieure à celle du trône royal, rappelant la hiérarchie traditionnelle.</p>
-      
-      <h2>Le Foh - Chaise des anciens</h2>
-      <p>Le Foh est la chaise des sages et des anciens. Elle est souvent offerte par le chef en reconnaissance des services rendus à la communauté. La recevoir est un grand honneur.</p>
+      <h3>Le Kouoh Kouè : la chaise des puissants</h3>
+      <p>Au-dessus du Leng, dans un monde nettement plus rare et plus exigeant, se trouve le Kouoh Kouè. C'est une chaise 
+      sculptée dans du bois massif — un objet d'artisanat autant que de pouvoir — et tout le monde n'y a pas accès. Seuls 
+      le chef, certains prophètes et marabouts, et quelques notables d'une puissance exceptionnelle peuvent légitimement s'y asseoir.
+      Dans sa forme la plus simple, le Kouoh Kouè se reconnaît à son assise ronde et légèrement creuse, portée par un corps 
+      unique qui descend sur trois pieds reposant sur le sol. Sobre, solide, imposant dans sa simplicité.
+      [image:droite:/images/culture/chaise_trois_pieds.jpg:Un Kouoh Kouè dans sa forme la plus simple]
+
+      Mais pour ceux qui ont atteint les sommets — à commencer par le roi lui-même — le Kouoh Kouè devient une œuvre. 
+      Le corps de la chaise est alors sculpté en forme d'animal : un lion, une panthère, ou d'autres créatures chargées de 
+      symbolisme. Certaines sont ornées de cauris ou d'autres objets aux significations précises. Chaque détail, 
+      chaque ajout, chaque différence de forme ou de décoration est un code — une façon silencieuse de dire au monde entier 
+      le niveau de puissance de celui qui s'y asseoit.
+      </p>
+      [image:droite:/images/culture/chaise_chef.jpg:Un Kouoh Kouè dans sa forme élaborée]
+
+      <h3>Un sujet qui mérite plus</h3>
+      <p>Comme pour les chapeaux, l'univers des chaises traditionnelles à Bandenkop est bien plus vaste que ce que ces quelques 
+      lignes peuvent contenir. Chaque type, chaque variante, chaque règle d'usage mériterait un développement à part entière.
+      Nous y reviendrons. Et si vous êtes porteur de connaissances, de souvenirs ou de précisions sur ce sujet, votre 
+      contribution est la bienvenue.
+      </p>
+
+      <blockquote>
+        "À Bandenkop, s'asseoir est un acte qui se mérite. Et la chaise sur laquelle on pose ses fesses en dit parfois 
+        plus long sur un homme que tous les discours du monde."
+        <cite>— Mémoire de Bandenkop</cite>
+      </blockquote>
     `
   },
   ceremonies: {
     titre: "Les Cérémonies Traditionnelles",
-    periode: "Rythme de la vie",
     auteur: "Comité culturel de Bandenkop",
     imageCouverture: "/images/culture/ceremonies.jpg",
     contenu: `
-      <p>Les cérémonies rythment la vie de Bandenkop. Elles marquent les étapes importantes de la vie individuelle et collective, et renforcent les liens qui unissent la communauté.</p>
+      <h2>Les cérémonies à Bandenkop — quand le village s'arrête pour ce qui compte vraiment</h2>
       
-      <h2>L'intronisation du chef</h2>
-      <p>L'intronisation d'un nouveau chef est l'événement le plus important de la vie du village. Elle dure plusieurs jours et réunit toutes les familles. Le nouveau Fo'o reçoit les insignes du pouvoir : le Tchagha, le Kpu et la lance sacrée.</p>
+      <p>À Bandenkop, certains moments de la vie ne se vivent pas à moitié. Ils se célèbrent, se ritualisent, se partagent 
+      avec toute la communauté. Les cérémonies ne sont pas des traditions figées qu'on perpétue par habitude — ce sont des 
+      actes vivants, nécessaires, parfois urgents. Des moments où le visible et l'invisible se parlent.
+      </p>
       
+      <h3>Les jumeaux : des êtres à part, une cérémonie obligatoire</h3>
+      <p>Naître jumeau à Bandenkop, ce n'est pas naître comme tout le monde. Les jumeaux — les Soufé, littéralement "amis 
+      du chef" — sont des êtres spirituels. Leur venue au monde est un événement qui dépasse la simple naissance. 
+      Elle interpelle le village entier.
+      Leurs parents portent eux aussi des noms particuliers : le père devient Tagne, la mère Magne. Ces appellations ne sont 
+      pas anodines — elles les placent, de fait, un cran au-dessus dans la considération sociale. Avoir mis au monde des Soufé, 
+      c'est avoir été choisi par quelque chose qui nous dépasse.
+      Mais cette distinction s'accompagne d'une responsabilité. Car les jumeaux doivent être présentés publiquement au village 
+      — peu importe leur âge au moment où cette présentation a lieu. C'est lors d'une cérémonie organisée par le chef lui-même, 
+      à laquelle sont conviés tous les Tagne et Magne du village, que ce moment solennel se déroule. Les jumeaux défilent devant 
+      l'assemblée, vêtus de leurs attributs traditionnels et arborant la canne des jumeaux — cette plante qui les identifie et les protège.
+      Ce n'est pas une cérémonie facultative. C'est une nécessité. Des jumeaux non présentés tombent malades, créent des 
+      perturbations autour d'eux, font souffrir leurs parents sans que personne ne comprende vraiment pourquoi. Dans les cas 
+      les plus graves, ils "s'en vont" — ils meurent. Parce qu'un être spirituel qui n'est pas reconnu pour ce qu'il est ne 
+      peut pas s'épanouir dans ce monde. Il appartient à un autre registre de l'existence, et c'est la cérémonie qui fait le 
+      lien entre les deux.
+      
+      </p>
+      
+      <h3>Le Leng : quand le père donne sa bénédiction publique</h3>
+      <p>La cérémonie du Leng est l'une des plus courantes dans la vie sociale de Bandenkop — et l'une des plus chargées de 
+      sens sur le plan des relations humaines.
+      Tout notable digne de ce nom se doit de passer par ce rituel. Car s'asseoir sur un Leng en public sans avoir reçu 
+      l'autorisation de le faire, c'est s'exposer — et pas seulement au regard des autres. Le rituel se déroule du côté de 
+      la famille maternelle, et son moment le plus fort est celui où le père fait asseoir son fils sur la chaise pour la 
+      première fois, devant tout le monde, lui donnant ainsi solennellement le droit de le faire désormais en public et en sa présence.
+      Ce geste simple dit tout. Il rappelle que chez les Bandenkop, la puissance et l'argent ne donnent pas tous les droits. Certaines portes ne s'ouvrent que par la bénédiction de celui qui vous a précédé.
+      </p>
+      
+      <h3>Le Ntang Pfock : traverser le deuil par le rituel</h3>
+      <p>La mort d'un époux ou d'une épouse ne laisse pas le survivant simplement seul face à sa douleur. À Bandenkop, 
+      le veuvage est une épreuve qui se traverse avec l'aide de la communauté et des initiés — à travers le Ntang Pfock.
+      C'est un rituel de veuvage encadré par un initié appelé Ngan Khang, qui accompagne la veuve ou le veuf à travers 
+      plusieurs étapes de purification et de libération. Le processus complet est consigné dans le code coutumier du rituel 
+      de veuvage — un ensemble de règles précises qui témoignent du sérieux avec lequel Bandenkop traite ce passage 
+      douloureux de l'existence.
+      Car ici, le deuil n'est pas seulement une affaire personnelle. C'est une transition qui, si elle n'est pas 
+      correctement accompagnée, peut laisser des séquelles invisibles mais bien réelles sur celui ou celle qui la traverse.
+      </p>
+
+      <h3>La purification : quand tout le village se lave</h3>
+      <p>Il existe des moments dans la vie d'une communauté où les choses se dégradent de façon inexpliquée. Les malheurs 
+      s'accumulent, les maladies se multiplient, les conflits s'enveniment, une sorte de malaise sourd s'installe sans que 
+      personne ne puisse vraiment en identifier la source. C'est dans ces moments-là que le chef convoque la cérémonie de 
+      purification.
+      Ce n'est pas une petite affaire. Les plus grands dignitaires du village sont réunis, les prophètes sont appelés, et 
+      ensemble ils organisent la cérémonie dans le lieu sacré le plus important du village. Et ce jour-là, personne n'est 
+      excusé. Tous les Bandenkop — du village comme de l'extérieur — sont tenus d'être présents. C'est une convocation 
+      collective, un appel à l'unité face à ce qui menace.
+      Durant la cérémonie, chacun expie ses fautes, se libère des malédictions qui auraient pu s'accrocher à lui au fil du 
+      temps, se dépouille de ce qu'il porte en trop. L'objectif final est de purifier le village dans son ensemble — 
+      chasser les mauvais esprits, dissoudre les fléaux, rétablir l'harmonie entre les vivants et les forces invisibles qui 
+      veillent sur Bandenkop.
+      Et ça marche. Après une cérémonie de purification, le village connaît invariablement une longue période de 
+      tranquillité et de prospérité. Puis, avec le temps, les choses recommencent doucement à se dégrader — et le cycle 
+      reprend. Une nouvelle purification s'impose. Ainsi va la vie à Bandenkop, entre équilibre et déséquilibre, entre le 
+      visible et l'invisible, dans un dialogue permanent avec des forces que le village a appris, depuis des générations, 
+      à ne jamais ignorer.
+      </p>
+
       <blockquote>
-        "Introniser un chef, c'est renouveler le pacte entre le peuple et les ancêtres. C'est affirmer que Bandenkop continuera."
-        <cite>— Rituel d'intronisation</cite>
+        "Ces cérémonies ne sont qu'un aperçu de la richesse rituelle de Bandenkop. Chacune mériterait un développement bien 
+        plus profond, et nous y reviendrons progressivement. Car chez les Bandenkop, chaque cérémonie est une page d'histoire — une page qui se vit autant qu'elle se raconte."
+        <cite>— Mémoire de Bandenkop</cite>
       </blockquote>
-      
-      <div class="float-right ml-6 mb-4 w-64">
-        <img src="/images/culture/funerailles.jpg" alt="Funérailles d'un notable" class="rounded-lg shadow-md" onerror="this.style.display='none'" />
-        <p class="text-xs text-gray-500 mt-1 italic text-center">Cérémonie funéraire</p>
-      </div>
-      
-      <h2>Les funérailles des notables</h2>
-      <p>Les funérailles d'un notable sont une cérémonie solennelle. Elles durent plusieurs jours, durant lesquels la communauté rend hommage au défunt et célèbre son passage vers le monde des ancêtres.</p>
-      
-      <h2>Les cérémonies de récolte</h2>
-      <p>À la fin de la saison des pluies, la communauté se réunit pour célébrer les récoltes. C'est un moment de joie et de partage, où l'on remercie la terre et les ancêtres pour leur générosité.</p>
-      
-      <h2>Les rituels de purification</h2>
-      <p>Les rituels de purification sont célébrés pour écarter les mauvais esprits et restaurer l'harmonie. Ils sont présidés par les dignitaires religieux et impliquent souvent des offrandes et des danses sacrées.</p>
-    `
-  },
-  initiation: {
-    titre: "Les Initiations",
-    periode: "Passage vers la connaissance",
-    auteur: "Comité culturel de Bandenkop",
-    imageCouverture: "/images/culture/initiation.jpg",
-    contenu: `
-      <p>L'initiation est un moment crucial dans la vie de tout Bandenkop. Elle marque le passage de l'enfance à l'âge adulte et transmet les connaissances essentielles pour devenir un membre à part entière de la communauté.</p>
-      
-      <img src="/images/culture/initiation-khe.jpg" alt="Initiation du Khe" class="rounded-xl shadow-lg my-6 w-full" onerror="this.style.display='none'" />
-      
-      <h2>L'initiation du Khe</h2>
-      <p>Le Khe est l'initiation la plus sacrée. Elle est réservée à ceux qui aspirent à devenir notables ou à accéder aux plus hautes fonctions. Les secrets du Khe ne sont révélés qu'aux initiés et ne peuvent être divulgués sous peine de mort.</p>
-      
-      <blockquote>
-        "Le Khe n'est pas une simple initiation. C'est un voyage au cœur de nous-mêmes, une renaissance."
-        <cite>— Ancien initié</cite>
-      </blockquote>
-      
-      <div class="float-left mr-6 mb-4 w-64">
-        <img src="/images/culture/societe-ngi.jpg" alt="Société secrète du Ngi" class="rounded-lg shadow-md" onerror="this.style.display='none'" />
-        <p class="text-xs text-gray-500 mt-1 italic text-center">Membres de la société du Ngi</p>
-      </div>
-      
-      <h2>La société secrète du Ngi</h2>
-      <p>Le Ngi est une société secrète chargée de maintenir l'ordre et la justice. Ses membres sont reconnaissables à leurs masques et à leurs costumes, qu'ils portent lors des cérémonies. Leur identité est connue des initiés mais reste secrète pour les non-initiés.</p>
-      
-      <h2>L'initiation des femmes</h2>
-      <p>L'initiation des femmes, présidée par les matriarches, transmet les savoirs liés à la féminité, à la maternité et à la vie domestique. Elle se déroule dans des lieux secrets, à l'écart du village.</p>
-      
-      <h2>L'apprentissage des traditions</h2>
-      <p>Au-delà des initiations formelles, l'apprentissage des traditions est un processus continu. Il se fait par l'observation, l'écoute des anciens et la participation aux cérémonies.</p>
     `
   },
   khe: {
     titre: "Le Khé - La Vérité",
-    periode: "Justice ancestrale",
     auteur: "Comité culturel de Bandenkop",
     imageCouverture: "/images/culture/khe.jpg",
     contenu: `
-      <p>Le Khé est l'épreuve de vérité, un jugement par lequel on prouve son innocence ou sa culpabilité. Cette pratique ancestrale, encadrée par des rituels stricts, est considérée comme infaillible car elle fait appel à la justice divine.</p>
+      <h2>Le Khé — l'âme de Bandenkop</h2>
       
-      <img src="/images/culture/ordalie.jpg" alt="Ordalie traditionnelle" class="rounded-xl shadow-lg my-6 w-full" onerror="this.style.display='none'" />
+      <p>Il y a des mots qui ne se traduisent pas vraiment. Des mots qui portent en eux tout un peuple, toute une façon 
+      d'être au monde. Pour les Bandenkop, ce mot c'est le Khé.
+      </p>
       
-      <h2>Les ordalies</h2>
-      <p>Les ordalies sont des épreuves par lesquelles un accusé prouve son innocence. Elles peuvent consister à plonger la main dans l'eau bouillante, à ingérer un poison, ou à affronter un animal sacré. Seul l'innocent survit.</p>
+      <h3>Plus qu'un mot, une façon de vivre</h3>
+      <p>Le Khé, c'est la vérité. Pas la vérité telle qu'on la comprend dans le sens ordinaire du terme — pas simplement 
+      l'opposé du mensonge. C'est quelque chose de bien plus profond, de bien plus total. C'est la droiture absolue, 
+      le pacte fondateur, la loi qui précède toutes les lois et à laquelle toutes les autres se réfèrent.
+      Depuis des siècles, le village de Bandenkop fonctionne sur ce principe. Le Khé n'est pas un code écrit sur du papier, 
+      ce n'est pas un règlement qu'on consulte en cas de doute. C'est une manière d'être. Marcher selon le Khé, 
+      c'est marcher selon les valeurs ancestrales qui ont fondé ce village — celles que les premiers hommes ont posées 
+      comme socle, et que chaque génération a la responsabilité de transmettre intactes à la suivante.
       
+      </p>
+      
+      <h3>Une loi sans tribunal, mais pas sans justice</h3>
+      <p>Ce qui rend le Khé particulièrement puissant, c'est que sa sanction ne dépend d'aucun homme. Quiconque viole les 
+      règles de droiture qu'il incarne s'expose à des sanctions divines — pas à un jugement humain, pas à une punition que 
+      l'on peut négocier ou esquiver. La justice du Khé est patiente, implacable et inévitable. Elle peut prendre du temps. 
+      Mais elle arrive toujours.
+      C'est précisément cette dimension qui lui confère une autorité que nulle institution humaine ne pourrait égaler. 
+      On peut tromper un chef, contourner une règle, se soustraire à un regard. On ne trompe pas le Khé.
+      </p>
+      
+      <h3>Le chef, gardien du Khé</h3>
+      <p>Dans cette architecture de valeurs, le chef occupe une place centrale. Il est le garant de la sauvegarde du Khé — 
+      celui qui veille à ce que ces principes ne soient pas oubliés, dilués ou trahis. Cette responsabilité dépasse de loin 
+      la simple gestion des affaires du village. C'est une mission spirituelle, presque sacrée. Être chef à Bandenkop, 
+      c'est être le dernier rempart entre les valeurs fondatrices et l'oubli.
+      </p>
+
+      <h3>Le Khé, c'est Bandenkop</h3>
+      <p>Il serait difficile de parler de Bandenkop sans parler du Khé, parce que les deux sont indissociables. Retirez 
+      le Khé, et quelque chose d'essentiel s'effondre — pas seulement les règles, pas seulement l'ordre social, mais 
+      l'identité même du village. Ce qui fait que Bandenkop est Bandenkop.
+      Et c'est peut-être là la plus belle caractéristique du Khé : tout ce qui est construit sur lui, tout ce qui s'y 
+      adosse sincèrement — peu importe le temps que ça prendra, peu importe les tempêtes traversées — restera fort, 
+      pérenne et éternel.
+      Dans un monde qui change vite, qui oublie facilement, qui sacrifie volontiers le fond pour la forme, le Khé est un 
+      rappel silencieux mais constant : certaines vérités ne vieillissent pas.
+      </p>
+
       <blockquote>
-        "Le Khé ne ment jamais. Ce que les hommes cachent, les esprits le révèlent."
-        <cite>— Dignitaire religieux</cite>
+        "Le Khé n'est pas une relique du passé. C'est le souffle qui anime Bandenkop aujourd'hui encore — dans chaque 
+        décision, chaque parole donnée, chaque engagement tenu. C'est la promesse que ce village a faite à lui-même, 
+        et qu'il renouvelle à chaque génération."
+        <cite>— Mémoire de Bandenkop</cite>
       </blockquote>
-      
-      <div class="float-right ml-6 mb-4 w-64">
-        <img src="/images/culture/serments.jpg" alt="Serment traditionnel" class="rounded-lg shadow-md" onerror="this.style.display='none'" />
-        <p class="text-xs text-gray-500 mt-1 italic text-center">Un serment scellé devant les ancêtres</p>
-      </div>
-      
-      <h2>Les serments</h2>
-      <p>Les serments sont une forme atténuée du Khé. Prononcés devant les ancêtres, ils engagent celui qui les fait. Trahir un serment, c'est s'exposer à la colère des esprits et au rejet de la communauté.</p>
-      
-      <h2>La divination</h2>
-      <p>La divination permet de connaître la vérité sans avoir recours à l'ordalie. Le devin interroge les esprits et interprète les signes pour révéler ce qui est caché.</p>
-      
-      <p>Aujourd'hui, le Khé est rarement pratiqué dans sa forme la plus extrême, mais il reste un symbole puissant de la justice traditionnelle. Son esprit continue d'inspirer la manière dont les conflits sont résolus à Bandenkop.</p>
     `
   },
   prophetes: {
     titre: "Prophètes et Marabouts",
-    periode: "Hommes de Dieu",
     auteur: "Comité culturel de Bandenkop",
     imageCouverture: "/images/culture/prophetes.jpg",
     contenu: `
-      <p>Les prophètes et marabouts occupent une place importante dans la spiritualité de Bandenkop. Ils sont les intermédiaires entre le monde visible et invisible, les guérisseurs et les conseillers.</p>
+      <h2>Les prophètes de Bandenkop — les hommes entre deux mondes</h2>
       
-      <img src="/images/culture/devins.jpg" alt="Devin en transe" class="rounded-xl shadow-lg my-6 w-full" onerror="this.style.display='none'" />
+      <p>Dans chaque société, il existe des hommes et des femmes que le commun des mortels ne peut pas tout à fait saisir. 
+      Des êtres qui semblent avoir un pied dans ce monde et l'autre ailleurs. À Bandenkop, on les appelle les prophètes. 
+      Et leur place dans la vie du village est absolument centrale.
+      </p>
       
-      <h2>Les marabouts traditionnels</h2>
-      <p>Les marabouts traditionnels sont les gardiens des connaissances ancestrales. Ils connaissent les plantes médicinales, les rites de protection et les formules qui apaisent les esprits.</p>
+      <h3>Des élus, pas des volontaires</h3>
+      <p>On ne décide pas de devenir prophète à Bandenkop. On l'est — ou on ne l'est pas. Ce sont des êtres choisis, des 
+      enfants de Dieu au sens le plus littéral que cette expression puisse porter. Leur pouvoir ne s'acquiert pas par 
+      l'étude, ne se transmet pas par l'apprentissage, ne s'achète à aucun prix. Il est là dès la naissance, inscrit dans 
+      leur être comme une signature divine. Il peut se manifester tôt dans la vie ou plus tard — mais il finit toujours par 
+      se révéler, parce qu'un don de cette nature ne reste jamais silencieux indéfiniment.
+      Communément appelés marabouts, les prophètes de Bandenkop sont avant tout des intercesseurs — des ponts vivants entre 
+      le royaume des esprits et le monde physique. Là où la plupart des hommes ne voient qu'une réalité, eux en perçoivent 
+      plusieurs. Là où les autres s'arrêtent, eux continuent.
       
+      </p>
+      
+      <h3>Le pont entre deux mondes</h3>
+      <p>Leur rôle fondamental est celui de médiateur entre l'invisible et le visible. Quand les forces spirituelles 
+      s'agitent, quand les signes s'accumulent, quand des situations résistent à toute explication rationnelle — 
+      c'est vers eux qu'on se tourne. Ils sont consultés pour des problèmes de tout ordre : la santé, la famille, 
+      les conflits, les décisions importantes, les menaces invisibles qui pèsent sur un individu ou sur une communauté entière.
+      Leurs dons sont multiples et variés. La voyance leur permet de voir ce que les autres ne peuvent pas voir — 
+      le passé caché, le présent obscur, parfois le futur. Leur capacité de traitement leur permet d'intervenir sur des 
+      maux que la médecine ordinaire ne saurait atteindre. Chaque prophète a ses dons propres, son domaine de puissance 
+      particulier — car parmi eux aussi, tous ne sont pas pareils.
+      </p>
+      
+      <h3>Au-dessus des affaires humaines, mais au cœur d'elles</h3>
+      <p>Ce qui dit le mieux la place des prophètes dans la société Bandenkop, c'est peut-être ceci : le chef lui-même ne 
+      prend pas certaines décisions sans les consulter. L'homme qui détient tous les pouvoirs, le garant du Khé, 
+      le commandant suprême du Liedjè — cet homme-là s'en remet aux prophètes pour les choses qui dépassent le cadre du 
+      pouvoir humain. Ce n'est pas une faiblesse. C'est une sagesse profonde — la reconnaissance que certaines réalités 
+      exigent d'autres compétences que celles que l'on peut acquérir.
+      C'est aussi pour cette raison que les prophètes sont les plus habilités à conduire les travaux dans les hauts lieux 
+      sacrés du village. Ces espaces ne sont pas des endroits ordinaires. Ils vibrent d'une énergie que seuls les initiés 
+      peuvent manier sans danger. Les cérémonies de purification, les rituels fondateurs, les interventions sur les forces 
+      invisibles qui régissent la vie du village — tout cela passe par eux.
+      </p>
+
+      <h3>Une puissance qui ne se voit pas venir</h3>
+      <p>Il y a quelque chose de particulièrement fascinant dans la nature des prophètes Bandenkop : leur pouvoir ne 
+      prévient pas. Il naît avec eux, certes — mais il peut rester dormant des années, des décennies parfois, avant de 
+      se manifester pleinement. Un homme ordinaire peut traverser une grande partie de sa vie sans savoir ce qu'il porte 
+      en lui. Et puis un jour, quelque chose se réveille. Un don émerge. Une capacité se révèle. Et la vie bascule.
+      C'est peut-être ce qui rend les prophètes à la fois si proches et si différents des autres membres de la communauté. 
+      Ils ont grandi parmi les leurs, partagé les mêmes repas, les mêmes fêtes, les mêmes deuils. Mais quelque part en eux, 
+      depuis toujours, quelque chose d'autre attendait.
+      </p>
+
       <blockquote>
-        "Le marabout ne guérit pas seulement le corps. Il guérit l'âme et rétablit l'équilibre entre l'homme et les esprits."
-        <cite>— Sage de Bandenkop</cite>
+        "À Bandenkop, on ne moque pas ce qu'on ne comprend pas. On respecte ce qu'on ne peut pas expliquer. Les prophètes 
+        sont là depuis que le village existe — silencieux gardiens de l'équilibre entre ce monde et l'autre, consultés dans 
+        les moments les plus décisifs, présents dans les cérémonies les plus sacrées. Leur existence rappelle à chaque 
+        Bandenkop que la réalité est bien plus vaste que ce que les yeux peuvent voir."
+        <cite>— Mémoire de Bandenkop</cite>
       </blockquote>
-      
-      <div class="float-left mr-6 mb-4 w-64">
-        <img src="/images/culture/devins-guérisseurs.jpg" alt="Guérisseur traditionnel" class="rounded-lg shadow-md" onerror="this.style.display='none'" />
-        <p class="text-xs text-gray-500 mt-1 italic text-center">Un guérisseur en consultation</p>
-      </div>
-      
-      <h2>Les devins-guérisseurs</h2>
-      <p>Les devins-guérisseurs combinent l'art de la divination et celui de la guérison. Ils diagnostiquent les maux en interprétant les signes et proposent des remèdes parfois accompagnés de rituels.</p>
-      
-      <h2>Les prophètes modernes</h2>
-      <p>Aujourd'hui, de nouveaux prophètes émergent, mêlant traditions ancestrales et influences modernes. Ils prêchent dans des églises indépendantes et attirent des fidèles de toute la région.</p>
-      
-      <h2>Les interprètes des signes</h2>
-      <p>Certains sont capables de lire dans les rêves, dans les mouvements des animaux ou dans les phénomènes naturels pour prédire l'avenir. Leur parole est respectée et souvent redoutée.</p>
     `
   },
-  rites: {
+  /*rites: {
     titre: "Les Rites",
     periode: "Lien avec les ancêtres",
     auteur: "Comité culturel de Bandenkop",
@@ -350,70 +583,184 @@ const articles: Record<string, ArticleCulture> = {
       <h2>Respect des jours sacrés sans travail agricole</h2>
       <p>Certains jours de la semaine sont consacrés aux ancêtres. Il est interdit d'y travailler la terre, sous peine de compromettre les récoltes.</p>
     `
-  },
+  },*/
   semaines: {
     titre: "Les Jours de la Semaine",
-    periode: "Rythme sacré",
     auteur: "Comité culturel de Bandenkop",
     imageCouverture: "/images/culture/semaines.jpg",
     contenu: `
-      <p>Chaque jour de la semaine a sa signification et ses règles à Bandenkop. Ce rythme sacré structure la vie de la communauté.</p>
+      <h2>Les jours de la semaine à Bandenkop — quand le temps a huit visages</h2>
       
-      <h2>Nkwe' - Jour du marché</h2>
-      <p>Le Nkwe' est le jour du marché. C'est le moment où les habitants se retrouvent pour échanger, discuter et célébrer. C'est aussi un jour de paix, où les conflits sont suspendus.</p>
+      <p>Chez les Bandenkop, le temps ne se compte pas comme ailleurs. Pendant que le reste du monde s'organise autour 
+      d'une semaine de sept jours, Bandenkop — comme tout le pays Bamiléké — vit au rythme d'une semaine de huit jours. 
+      Huit jours, huit noms, huit significations. Un calendrier ancestral qui structure la vie du village depuis des 
+      générations.
+      </p>
       
-      <div class="float-right ml-6 mb-4 w-64">
-        <img src="/images/culture/marche.jpg" alt="Jour du marché" class="rounded-lg shadow-md" onerror="this.style.display='none'" />
-        <p class="text-xs text-gray-500 mt-1 italic text-center">L'animation du jour du marché</p>
-      </div>
+      <h3>Une semaine de huit jours</h3>
+      <p>Les huit jours de la semaine Bandenkop sont : Liegang, Liekouong, Temgou, Kouogouèh, Dzèsseu, Djeudjeu, Liedjou 
+      et Chepteh. Chacun a sa couleur, son énergie, ses règles. Certains invitent à la fête, d'autres au repos, d'autres 
+      encore imposent une prudence particulière. Le calendrier Bandenkop n'est pas une simple succession de jours — 
+      c'est un guide de vie.
       
-      <h2>Mfou' - Jour de repos</h2>
-      <p>Le Mfou' est le jour du repos. On ne travaille pas la terre, on ne se lance pas dans de nouvelles entreprises. C'est un temps pour la famille et la réflexion.</p>
+      </p>
       
-      <h2>Nka' - Jour sacré</h2>
-      <p>Le Nka' est consacré aux ancêtres. On y célèbre les rites, on visite les tombes et on se recueille. C'est un jour de silence et de méditation.</p>
+      <h3>Liegang : le jour où le village s'anime</h3>
+      <p>Liegang est le jour du marché. C'est le jour où la vie collective éclate au grand jour — où les habitants sortent 
+      leurs marchandises, exposent leurs objets d'art, leurs tissus, leurs produits de culture. Les voisins des villages 
+      alentour font le déplacement, qui pour acheter, qui pour vendre. Le marché de Liegang est un moment de brassage, 
+      d'échanges, de rencontres. C'est le pouls économique et social du village qui bat à son rythme le plus fort.
+      </p>
       
-      <h2>Tchou' - Jour des ancêtres</h2>
-      <p>Le Tchou' est le jour le plus sacré de la semaine. On y honore les ancêtres par des offrandes et des prières. Aucune activité profane ne doit venir troubler ce jour.</p>
+      <h3>Liekouong : le jour de l'amour et de la fête</h3>
+      <p>Liekouong est un jour béni pour les cœurs. C'est le jour de l'amour, le jour favorable par excellence pour les 
+      cérémonies de mariage et toutes les célébrations festives. Si l'on veut que l'union commence sous les meilleurs 
+      auspices, si l'on veut que la fête soit heureuse et mémorable, on choisit Liekouong. Ce jour porte en lui une douceur 
+      particulière que les Bandenkop reconnaissent et honorent depuis toujours.
+      </p>
+
+      <h3>Chepteh et Djeudjeu : les jours interdits</h3>
+      <p>Chepteh et Djeudjeu sont d'une toute autre nature. Ce sont des jours interdits — des jours de repos imposé par la 
+      tradition, où certaines activités sont formellement proscrites. On n'entre pas dans les lieux sacrés ces jours-là. 
+      On ne travaille pas aux champs. Le village observe une forme de pause collective, un souffle dans le rythme 
+      hebdomadaire. Mais ce qui rend ces deux jours encore plus particuliers, c'est leur lien avec les naissances. 
+      Les enfants qui viennent au monde un Chepteh ou un Djeudjeu portent des noms bien précis : Homsi pour l'un, Djuidje 
+      pour l'autre. On dit d'eux qu'ils "sont venus avec leur nom" — comme si le jour lui-même avait décidé de leur 
+      identité avant même que les parents n'aient eu le temps d'y réfléchir. Ces enfants portent en eux quelque chose du 
+      caractère de ces jours — leur singularité, leur intensité particulière.
+      </p>
+
+      <h3>Et les autres jours ?</h3>
+      <p>Temgou, Kouogouèh, Dzèsseu et Liedjou ont eux aussi leurs significations propres, leurs règles, leurs énergies. 
+      Cette semaine de huit jours est un système complet, cohérent, réfléchi — un héritage que les anciens ont transmis et 
+      que les générations actuelles continuent de vivre. Leurs secrets seront dévoilés au fil de nos recherches, 
+      progressivement, avec le soin qu'ils méritent.
+      </p>
+
+      <blockquote>
+        "Huit jours pour une semaine. Cela peut sembler anodin. Mais dans ce simple écart avec le calendrier grégorien se 
+        loge toute une philosophie — celle d'un peuple qui a toujours mesuré le temps à sa propre façon, selon ses propres 
+        valeurs, selon le rythme que ses ancêtres lui ont légué. À Bandenkop, même le temps est une tradition."
+        <cite>— Mémoire de Bandenkop</cite>
+      </blockquote>
     `
   },
   divinite: {
     titre: "La Divinité - Si",
-    periode: "Force suprême",
     auteur: "Comité culturel de Bandenkop",
     imageCouverture: "/images/culture/divinite.jpg",
     contenu: `
-      <p>Le Si est la force suprême, le créateur de toutes choses. Présent partout et en chacun, il est honoré à travers les ancêtres qui servent d'intermédiaires entre le monde visible et l'invisible.</p>
+      <h2>La divinité à Bandenkop — un peuple qui a toujours su où regarder</h2>
       
-      <img src="/images/culture/si.jpg" alt="Représentation du Si" class="rounded-xl shadow-lg my-6 w-full" onerror="this.style.display='none'" />
+      <p>Bien avant que les premiers missionnaires ne posent le pied sur la terre de Bandenkop, bien avant que la croix et 
+      le livre saint ne franchissent les collines de l'Ouest Cameroun, les Bandenkop priaient déjà. Ils avaient leur propre 
+      façon de parler à Dieu, leurs propres espaces pour le faire, leurs propres offrandes pour l'honorer. Une spiritualité 
+      ancienne, cohérente, vivante — qui n'avait besoin de personne pour exister.
+      </p>
       
-      <h2>L'unité de toutes choses</h2>
-      <p>Le Si est à la fois la cause première et la fin ultime de toute existence. Il ne se manifeste pas directement, mais sa présence est partout : dans le vent qui souffle, dans l'eau qui coule, dans le cœur de chaque être.</p>
+      <h3>Avant l'évangélisation, il y avait déjà une foi</h3>
+      <p>L'arrivée du colon missionnaire a souvent été racontée comme une lumière apportée à des peuples qui vivaient dans 
+      l'obscurité. Mais à Bandenkop, cette version de l'histoire ne tient pas. Quand les premiers évangélisateurs sont 
+      arrivés, ils ont trouvé un peuple qui connaissait déjà l'Éternel — pas avec leurs mots, pas avec leurs rites, 
+      pas avec leurs livres — mais avec les siens propres, forgés au fil des siècles dans le creuset d'une tradition 
+      spirituelle profonde et structurée.
+      Les Bandenkop n'ont pas attendu qu'on leur apprenne à prier. Ils priaient depuis la nuit des temps.
       
+      </p>
+      
+      <h3>Les lieux sacrés : là où le ciel touche la terre</h3>
+      <p>Au cœur de cette spiritualité se trouvent les lieux sacrés — ces espaces particuliers où le monde physique et le 
+      monde spirituel se rejoignent, où la distance entre l'homme et le divin devient suffisamment mince pour qu'une 
+      conversation soit possible.
+      Il en existe de deux types à Bandenkop.
+      [image:droite:/images/culture/nettoyage_riviere.jpg:Les jeunes nettoyent la rivière de Temmekouang qui abrite l'un des lieux sacrés les plus puissant du village]
+
+      Les grands lieux sacrés appartiennent au village entier. Ce sont des sanctuaires collectifs, ouverts à quiconque 
+      vient y faire des rites et des sacrifices pour adorer l'Éternel. Leur rayonnement dépasse parfois les frontières 
+      du village — certains de ces lieux attirent des visiteurs venus d'autres villages, appelés par une force que l'on 
+      ne s'explique pas toujours, mais que l'on ressent profondément. Ces lieux ont une puissance propre, une présence 
+      que même ceux qui n'y croient pas encore finissent par percevoir.
+      Et puis il y a les lieux sacrés de concession — plus intimes, plus personnels, nichés au cœur de chaque famille. 
+      Ces petits sanctuaires familiaux sont sous l'autorité exclusive du chef de concession. C'est lui qui y fait les 
+      sacrifices, c'est lui qui sert de pont entre les enfants de la concession et les forces divines qui la protègent. 
+      Un rôle à la fois humble et immense — celui de gardien spirituel de sa propre lignée.
+      </p>
+      
+      <h3>Le jujube : l'offrande de tous les instants</h3>
+      <p>Dans toute cette spiritualité, un élément revient toujours. Un fruit simple, discret, que l'on trouverait presque 
+      banal si l'on ne savait pas ce qu'il représente. Le jujube.
+      Chez les Bandenkop, le jujube est l'offrande par excellence. Quand on cherche une bénédiction, on "lance" le jujube — 
+      sur le lieu sacré, sur le crâne des ancêtres, dans ces espaces où la frontière entre les vivants et les morts 
+      s'amincit jusqu'à disparaître. C'est un geste simple, répété depuis des générations, chargé d'une intention pure et 
+      d'une confiance absolue.
+      Il n'existe pas de démarche spirituelle à Bandenkop sans jujube. Pas de rite, pas de sacrifice, pas de demande 
+      adressée à l'Éternel ou aux ancêtres. Le jujube est là — toujours. Petit fruit, immense signification.
+      </p>
+
+      <h3>Une foi qui n'a pas eu besoin qu'on la lui enseigne</h3>
+      <p>Ce qui frappe dans la spiritualité Bandenkop, c'est son caractère organique, naturel, profondément ancré dans le 
+      quotidien. Elle ne se pratique pas seulement dans les grands moments — les crises, les cérémonies, les deuils. 
+      Elle irrigue chaque aspect de la vie, du grand lieu sacré du village au petit autel familial dans la concession.
+      Les religions importées ont certes trouvé leur place à Bandenkop au fil du temps. Beaucoup de Bandenkop sont 
+      aujourd'hui chrétiens. Mais sous cette couche nouvelle, la spiritualité ancestrale continue de vivre, de respirer, 
+      de guider. Elle n'a pas disparu. Elle s'est adaptée — comme elle l'a toujours fait, depuis que Bouagang a posé le 
+      premier pied sur la terre de Djimgou.
+      </p>
+
       <blockquote>
-        "Le Si n'a ni commencement ni fin. Il est ce qui était, ce qui est et ce qui sera."
-        <cite>— Sagesse des anciens</cite>
+        "À Bandenkop, Dieu n'est pas une nouveauté. Il a toujours été là — dans les lieux sacrés, dans les concessions, 
+        dans le geste simple d'un homme qui lance un jujube vers le ciel en murmurant ce qu'il porte dans le cœur."
+        <cite>— Mémoire de Bandenkop</cite>
       </blockquote>
-      
-      <div class="float-left mr-6 mb-4 w-64">
-        <img src="/images/culture/ancetres.jpg" alt="Ancêtres médiateurs" class="rounded-lg shadow-md" onerror="this.style.display='none'" />
-        <p class="text-xs text-gray-500 mt-1 italic text-center">Les ancêtres, médiateurs entre le Si et les hommes</p>
-      </div>
-      
-      <h2>Les ancêtres, intermédiaires</h2>
-      <p>Les ancêtres sont les médiateurs entre le Si et les hommes. Après leur mort, ils rejoignent le monde invisible et peuvent intercéder en faveur des vivants. Les rites et les offrandes leur sont adressés pour maintenir l'harmonie.</p>
-      
-      <h2>L'harmonie cosmique</h2>
-      <p>Le Si a créé le monde en ordre et en harmonie. L'homme a pour devoir de préserver cet équilibre en respectant les traditions, en honorant les ancêtres et en vivant en paix avec la nature.</p>
-      
-      <h2>Le culte aujourd'hui</h2>
-      <p>Bien que de nombreux Bandenkop aient adopté d'autres religions, la croyance en Si et le respect des ancêtres restent profonds. Les rites traditionnels sont encore pratiqués, souvent en parallèle des cultes modernes.</p>
     `
   }
 };
 
 const { slug } = Astro.params;
 const article = slug ? articles[slug] : undefined;
+
+function formaterContenu(contenu: string): string {
+  if (!contenu) return '';
+
+  let formatted = contenu;
+
+  // Support du format custom: [image:droite|gauche|centre:/path/image.jpg:Légende]
+  formatted = formatted.replace(/\[image:(gauche|droite|centre):([^:\]]+):([^\]]+)\]/gi, (_m, position: string, src: string, caption: string) => {
+    const pos = String(position || '').toLowerCase();
+    const floatClass = pos === 'gauche' ? 'float-left' : pos === 'droite' ? 'float-right' : 'float-center';
+    const imageSrc = String(src || '').trim();
+    const imageCaption = String(caption || '').trim();
+
+    return `
+      <span class="float-image ${floatClass}">
+        <img src="${imageSrc}" alt="${imageCaption}" class="article-img cursor-pointer" loading="lazy" onerror="this.style.display='none'" />
+        <span class="img-caption">${imageCaption}</span>
+      </span>
+    `;
+  });
+
+  // Normaliser les images pour le clic/lightbox
+  formatted = formatted.replace(/<img([^>]*)>/gi, (match, attrs) => {
+    let newAttrs = attrs;
+
+    if (/class=["'][^"']*["']/i.test(newAttrs)) {
+      newAttrs = newAttrs.replace(/class=["']([^"']*)["']/i, (m: string, cls: string) => {
+        const classes = cls.includes('article-img') ? cls : `${cls} article-img cursor-pointer`;
+        return `class="${classes}"`;
+      });
+    } else {
+      newAttrs += ' class="article-img cursor-pointer"';
+    }
+
+    if (!/loading=/i.test(newAttrs)) {
+      newAttrs += ' loading="lazy"';
+    }
+
+    return `<img${newAttrs}>`;
+  });
+
+  return formatted;
+}
 
 if (!article) {
   return new Response(null, {
@@ -433,8 +780,25 @@ if (!article) {
           <h1 class="font-['Playfair_Display'] text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
             {article.titre}
           </h1>
-          <p class="text-xl text-orange-200">Période : {article.periode}</p>
           <p class="text-sm text-orange-300 mt-2">Par {article.auteur}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Barre de recherche -->
+    <div class="sticky top-20 z-20 bg-white/95 backdrop-blur-sm shadow-sm py-3">
+      <div class="max-w-4xl mx-auto px-4">
+        <div class="relative">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="🔍 Rechercher dans l'article..."
+            class="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+          />
+          <svg class="absolute left-3 top-2.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+          <div id="searchResults" class="hidden absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-xl border border-gray-200 max-h-60 overflow-y-auto z-30"></div>
         </div>
       </div>
     </div>
@@ -469,7 +833,7 @@ if (!article) {
 
       <!-- Article avec rendu HTML correct -->
       <article class="bg-white rounded-2xl shadow-xl p-8 md:p-12 prose prose-lg max-w-none">
-        <div class="article-content" set:html={article.contenu} />
+        <div class="article-content text-justify" set:html={formaterContenu(article.contenu)} />
         
         <!-- Tags -->
         <div class="mt-8 pt-4 border-t border-gray-100">
@@ -493,11 +857,221 @@ if (!article) {
     </div>
   </div>
 
+  <div id="lightbox" class="fixed inset-0 bg-black/90 z-50 hidden items-center justify-center" onclick="closeLightbox()">
+    <div class="relative max-w-5xl max-h-[90vh] p-4" onclick="event.stopPropagation()">
+      <button onclick="closeLightbox()" class="absolute -top-12 right-0 text-white text-4xl hover:text-orange-500 transition-colors">&times;</button>
+      <img id="lightbox-img" src="" alt="" class="max-w-full max-h-[85vh] mx-auto object-contain rounded-lg shadow-2xl" />
+      <p id="lightbox-caption" class="text-center text-white mt-4 text-sm"></p>
+      <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+        <button onclick="zoomIn()" class="bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded-full text-sm transition">🔍 +</button>
+        <button onclick="zoomOut()" class="bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded-full text-sm transition">🔍 -</button>
+      </div>
+    </div>
+  </div>
+
   <ScrollToTop />
 
   <script>
     let liked = false;
     let likeCount = 0;
+    let currentZoom = 1;
+    let currentImage: HTMLImageElement | null = null;
+
+    function openLightbox(url: string, caption: string) {
+      const lightbox = document.getElementById('lightbox');
+      const img = document.getElementById('lightbox-img') as HTMLImageElement | null;
+      const captionEl = document.getElementById('lightbox-caption');
+      if (!lightbox || !img || !captionEl) return;
+
+      img.src = url;
+      img.style.transform = 'scale(1)';
+      currentZoom = 1;
+      captionEl.textContent = caption || '';
+      lightbox.classList.remove('hidden');
+      lightbox.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+      currentImage = img;
+    }
+
+    function closeLightbox() {
+      const lightbox = document.getElementById('lightbox');
+      if (!lightbox) return;
+      lightbox.classList.add('hidden');
+      lightbox.classList.remove('flex');
+      document.body.style.overflow = '';
+      if (currentImage) {
+        currentImage.style.transform = 'scale(1)';
+        currentZoom = 1;
+      }
+    }
+
+    function zoomIn() {
+      if (currentImage && currentZoom < 3) {
+        currentZoom += 0.25;
+        currentImage.style.transform = `scale(${currentZoom})`;
+      }
+    }
+
+    function zoomOut() {
+      if (currentImage && currentZoom > 0.5) {
+        currentZoom -= 0.25;
+        currentImage.style.transform = `scale(${currentZoom})`;
+      }
+    }
+
+    const windowWithLightbox = window as typeof window & {
+      openLightbox: typeof openLightbox;
+      closeLightbox: typeof closeLightbox;
+      zoomIn: typeof zoomIn;
+      zoomOut: typeof zoomOut;
+    };
+    windowWithLightbox.openLightbox = openLightbox;
+    windowWithLightbox.closeLightbox = closeLightbox;
+    windowWithLightbox.zoomIn = zoomIn;
+    windowWithLightbox.zoomOut = zoomOut;
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeLightbox();
+    });
+
+    // Clic image -> lightbox
+    const articleContent = document.querySelector('.article-content') as HTMLElement | null;
+    articleContent?.querySelectorAll('img').forEach((img) => {
+      img.addEventListener('click', () => {
+        const image = img as HTMLImageElement;
+        openLightbox(image.src, image.alt || '');
+      });
+    });
+
+    // Recherche dans l'article
+    const searchInput = document.getElementById('searchInput') as HTMLInputElement | null;
+    const searchResults = document.getElementById('searchResults') as HTMLElement | null;
+
+    interface SearchResult {
+      node: Text;
+      start: number;
+      end: number;
+      text: string;
+    }
+
+    function getTextNodes(node: Node): Text[] {
+      const textNodes: Text[] = [];
+      function getNodes(n: Node) {
+        if (n.nodeType === Node.TEXT_NODE && (n.textContent || '').trim().length > 0) {
+          textNodes.push(n as Text);
+        } else if (n.nodeType === Node.ELEMENT_NODE) {
+          const el = n as Element;
+          if (el.tagName !== 'SCRIPT' && el.tagName !== 'STYLE') {
+            n.childNodes.forEach((child) => getNodes(child));
+          }
+        }
+      }
+      getNodes(node);
+      return textNodes;
+    }
+
+    function clearHighlights() {
+      if (!articleContent) return;
+      const marks = articleContent.querySelectorAll('mark');
+      marks.forEach((mark) => {
+        const parent = mark.parentNode;
+        if (!parent) return;
+        parent.replaceChild(document.createTextNode(mark.textContent || ''), mark);
+        parent.normalize?.();
+      });
+    }
+
+    function highlightText(searchTerm: string) {
+      if (!articleContent) return;
+      clearHighlights();
+      const walker = document.createTreeWalker(articleContent, NodeFilter.SHOW_TEXT, {
+        acceptNode: (node: Node) => {
+          if ((node as Text).parentElement?.tagName === 'MARK') return NodeFilter.FILTER_REJECT;
+          if ((node.textContent || '').trim().length === 0) return NodeFilter.FILTER_REJECT;
+          return NodeFilter.FILTER_ACCEPT;
+        }
+      });
+
+      const textNodes: Text[] = [];
+      while (walker.nextNode()) textNodes.push(walker.currentNode as Text);
+
+      textNodes.forEach((node) => {
+        const text = node.textContent || '';
+        const regex = new RegExp(`(${searchTerm})`, 'gi');
+        if (regex.test(text)) {
+          const span = document.createElement('span');
+          span.innerHTML = text.replace(regex, '<mark class="bg-yellow-200">$1</mark>');
+          node.parentNode?.replaceChild(span, node);
+        }
+      });
+    }
+
+    function searchInArticle() {
+      if (!searchInput || !searchResults || !articleContent) return;
+      const searchTerm = searchInput.value.trim().toLowerCase();
+      if (!searchTerm || searchTerm.length < 2) {
+        searchResults.classList.add('hidden');
+        clearHighlights();
+        return;
+      }
+
+      const textNodes = getTextNodes(articleContent);
+      const results: SearchResult[] = [];
+
+      textNodes.forEach((node) => {
+        const raw = node.textContent || '';
+        const text = raw.toLowerCase();
+        let index = text.indexOf(searchTerm);
+        while (index !== -1) {
+          results.push({
+            node,
+            start: index,
+            end: index + searchTerm.length,
+            text: raw.substring(Math.max(0, index - 50), Math.min(raw.length, index + searchTerm.length + 50))
+          });
+          index = text.indexOf(searchTerm, index + 1);
+        }
+      });
+
+      if (results.length > 0) {
+        searchResults.innerHTML = results.slice(0, 10).map((result, i) => `
+          <div class="p-3 hover:bg-orange-50 cursor-pointer border-b border-gray-100 last:border-0 search-result-item" data-index="${i}">
+            <p class="text-sm text-gray-600">...${result.text.replace(new RegExp(searchTerm, 'gi'), (m) => `<mark class="bg-yellow-200">${m}</mark>`)}...</p>
+          </div>
+        `).join('');
+        searchResults.classList.remove('hidden');
+
+        document.querySelectorAll('.search-result-item').forEach((item, idx) => {
+          item.addEventListener('click', () => {
+            const result = results[idx];
+            if (!result) return;
+            const range = document.createRange();
+            range.setStart(result.node, result.start);
+            range.setEnd(result.node, result.end);
+            const span = document.createElement('span');
+            span.appendChild(range.extractContents());
+            range.insertNode(span);
+            span.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            span.classList.add('bg-yellow-200');
+            setTimeout(() => span.classList.remove('bg-yellow-200'), 3000);
+          });
+        });
+
+        highlightText(searchTerm);
+      } else {
+        searchResults.innerHTML = '<div class="p-3 text-sm text-gray-500">Aucun résultat trouvé</div>';
+        searchResults.classList.remove('hidden');
+        clearHighlights();
+      }
+    }
+
+    searchInput?.addEventListener('input', () => setTimeout(searchInArticle, 100));
+    document.addEventListener('click', (e) => {
+      const target = e.target as Node | null;
+      if (!searchInput?.contains(target) && !searchResults?.contains(target)) {
+        searchResults?.classList.add('hidden');
+      }
+    });
 
     document.getElementById('likeBtn')?.addEventListener('click', () => {
       const likeIcon = document.getElementById('likeIcon') as SVGElement | null;
@@ -542,8 +1116,22 @@ if (!article) {
 
   <style is:global>
     /* Styles pour l'article */
+    .article-content {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      line-height: 1.8;
+      color: #374151;
+    }
+
+    .article-content::after {
+      content: '';
+      display: block;
+      clear: both;
+    }
+
     .article-content p {
       margin-bottom: 1.5rem;
+      font-size: 1.125rem;
+      text-align: justify;
       line-height: 1.8;
       color: #374151;
     }
@@ -557,6 +1145,17 @@ if (!article) {
       border-bottom: 2px solid #f97316;
       padding-bottom: 0.5rem;
       display: inline-block;
+    }
+
+    /* Mise en valeur des H3 comme dans la rubrique histoire */
+    .article-content h3 {
+      font-family: "Playfair Display", serif;
+      font-size: 1.5rem;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      color: #1f2937;
+      border-left: 4px solid #f97316;
+      padding-left: 1rem;
     }
     
     /* Style pour les citations */
@@ -633,6 +1232,7 @@ if (!article) {
       box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
       margin: 1.5rem 0;
       max-width: 100%;
+      cursor: pointer;
     }
     
     .article-content .float-left {
@@ -646,14 +1246,60 @@ if (!article) {
       margin-left: 1.5rem;
       margin-bottom: 1rem;
     }
+
+    .article-content .float-center {
+      display: block;
+      margin: 1.5rem auto;
+      max-width: 420px;
+      text-align: center;
+    }
+
+    .article-content .float-image {
+      width: min(320px, 100%);
+    }
+
+    .article-content .img-caption {
+      display: block;
+      margin-top: 0.35rem;
+      font-size: 0.75rem;
+      font-style: italic;
+      color: #6b7280;
+      text-align: center;
+    }
     
     @media (max-width: 640px) {
-      .article-content .float-left,
+      .article-content p {
+        font-size: 1rem;
+      }
+
+      /* Comme histoire: image flottante plus petite et texte qui l'enveloppe */
+      .article-content .float-left {
+        float: left !important;
+        width: 32% !important;
+        min-width: 88px;
+        margin: 0.35rem 0.75rem 0.45rem 0 !important;
+      }
+
       .article-content .float-right {
-        float: none;
-        margin: 1rem auto;
-        display: block;
-        width: 100%;
+        float: right !important;
+        width: 32% !important;
+        min-width: 88px;
+        margin: 0.35rem 0 0.45rem 0.75rem !important;
+      }
+
+      .article-content .float-image {
+        width: 32% !important;
+        min-width: 88px;
+        max-width: 130px;
+      }
+
+      .article-content .img-caption {
+        font-size: 0.65rem;
+        line-height: 1.1;
+      }
+
+      .article-content h3 {
+        font-size: 1.25rem;
       }
       
       .article-content blockquote {
@@ -665,6 +1311,10 @@ if (!article) {
         font-size: 2.5rem;
       }
     }
+
+    #lightbox { backdrop-filter: blur(5px); transition: all 0.3s ease; animation: fadeIn 0.2s ease-out; }
+    #lightbox-img { transition: transform 0.2s ease; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     
     @media print {
       header, footer, .sticky, #likeBtn, #shareBtn, #printBtn {

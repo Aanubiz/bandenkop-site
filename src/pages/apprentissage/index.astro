@@ -1,6 +1,9 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import ClassementQuartiers from '../../components/Apprentissage/ClassementQuartiers.astro';
+import { getApiUrl } from '../../config';
+
+const API_URL = getApiUrl();
 
 const rubriques = [
   {
@@ -37,10 +40,19 @@ const rubriques = [
   },
   {
     id: 'association',
-    titre: 'Association mot-image',
-    description: 'Relie les mots aux images',
-    icone: '🎯',
+    titre: 'Association FR↔BK (x6)',
+    description: 'Relie 6 mots français à 6 mots Bandenkop',
+    icone: '🧩',
     couleur: 'from-yellow-500 to-amber-500',
+    statistiques: { paires: 40, utilisateurs: 123 }
+  },
+  {
+    id: 'association-image',
+    href: '/apprentissage/association-image',
+    titre: 'Association icône FR↔BK',
+    description: 'Compare un mot français, une icône et un mot Bandenkop',
+    icone: '🎯',
+    couleur: 'from-amber-500 to-orange-500',
     statistiques: { paires: 40, utilisateurs: 123 }
   }
 ];
@@ -81,7 +93,7 @@ const rubriques = [
           <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
             {rubriques.map((rubrique) => (
               <a 
-                href={`/apprentissage/${rubrique.id}`}
+                href={rubrique.href || `/apprentissage/${rubrique.id}`}
                 class="group relative bg-white rounded-xl sm:rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
               >
                 <div class={`absolute inset-0 bg-gradient-to-br ${rubrique.couleur} opacity-0 group-hover:opacity-10 transition-opacity`}></div>
@@ -122,13 +134,13 @@ const rubriques = [
                     <div class="flex items-center justify-between text-[8px] sm:text-[10px] mb-1">
                       <div class="flex items-center space-x-1">
                         <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                        <span class="text-gray-500">Dnkeng</span>
+                        <span class="text-gray-500">Denkeng</span>
                       </div>
                       <div class="flex items-center space-x-1">
                         <div class="w-12 sm:w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                          <div class="h-full bg-emerald-500 rounded-full" id={`mini-${rubrique.id}-dnkeng`} style="width: 0%"></div>
+                          <div class="h-full bg-emerald-500 rounded-full" id={`mini-${rubrique.id}-denkeng`} style="width: 0%"></div>
                         </div>
-                        <span class="text-gray-600 font-medium" id={`mini-pts-${rubrique.id}-dnkeng`}>0</span>
+                        <span class="text-gray-600 font-medium" id={`mini-pts-${rubrique.id}-denkeng`}>0</span>
                       </div>
                     </div>
                     
@@ -201,16 +213,21 @@ const rubriques = [
 </Layout>
 
 <script>
+  import { getApiUrl } from '../../config';
+
+  const API_URL = getApiUrl();
+
   // Fonction pour charger la progression personnelle
   async function chargerProgressionPersonnelle() {
     const token = localStorage.getItem('token');
     if (!token) return;
     
-    const rubriques = ['quiz', 'prononciation', 'ecriture', 'phonetique', 'association'];
+    const rubriques = ['quiz', 'prononciation', 'ecriture', 'phonetique', 'association', 'association-image'];
     
     for (const rubrique of rubriques) {
       try {
-        const response = await fetch(`http://localhost:3001/api/progression/user/${rubrique}`, {
+        const rubriqueApi = rubrique === 'association-image' ? 'association' : rubrique;
+        const response = await fetch(`${API_URL}/api/progression/user/${rubriqueApi}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         
@@ -248,11 +265,12 @@ const rubriques = [
     const token = localStorage.getItem('token');
     if (!token) return;
     
-    const rubriques = ['quiz', 'prononciation', 'ecriture', 'phonetique', 'association'];
+    const rubriques = ['quiz', 'prononciation', 'ecriture', 'phonetique', 'association', 'association-image'];
     
     for (const rubrique of rubriques) {
       try {
-        const response = await fetch(`http://localhost:3001/api/classement/rubrique/${rubrique}`, {
+        const rubriqueApi = rubrique === 'association-image' ? 'association' : rubrique;
+        const response = await fetch(`${API_URL}/api/classement/rubrique/${rubriqueApi}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         
@@ -267,7 +285,7 @@ const rubriques = [
           // Mettre à jour pour chaque quartier
           data.classement.forEach((quartier: any) => {
             let quartierId = '';
-            if (quartier.quartier === 'Dnkeng') quartierId = 'dnkeng';
+            if (quartier.quartier === 'Denkeng') quartierId = 'denkeng';
             else if (quartier.quartier === 'Tsèmeuhia') quartierId = 'tsemeuhia';
             else if (quartier.quartier === 'Tsèla') quartierId = 'tsela';
             

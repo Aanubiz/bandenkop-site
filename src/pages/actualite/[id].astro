@@ -1,11 +1,11 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import ScrollToTop from '../../components/ScrollToTop.astro';
+import { getApiUrl } from '../../config';
 
+const API_URL = getApiUrl();
 const { id } = Astro.params;
 
-// Récupérer l'article depuis l'API
-const API_URL = 'http://localhost:3001';
 let article = null;
 let error = null;
 
@@ -61,6 +61,8 @@ function formaterContenu(contenu: string): string {
 }
 
 try {
+  console.log("📡 Chargement de l'article depuis:", `${API_URL}/api/articles/${id}`);
+  
   const response = await fetch(`${API_URL}/api/articles/${id}`);
   if (response.ok) {
     article = await response.json();
@@ -82,7 +84,7 @@ if (!article || error) {
 
 <Layout title={`${article.titre} - Actualités Bandenkop`}>
   <div class="min-h-screen bg-gray-50">
-    <!-- Header avec image de couverture - AJOUT D'UN PADDING TOP -->
+    <!-- Header avec image de couverture -->
     <div class="relative h-96 bg-gradient-to-br from-orange-900 to-red-900 overflow-hidden mt-16 sm:mt-20">
       <div class="absolute inset-0 bg-black/40"></div>
       <div class="absolute inset-0 flex items-center justify-center">

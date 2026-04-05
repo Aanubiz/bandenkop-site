@@ -15,7 +15,7 @@ const questionSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['qcm', 'texte', 'audio', 'image', 'dragdrop'],
+    enum: ['qcm', 'vrai-faux', 'texte', 'audio', 'image', 'dragdrop'],
     required: true
   },
   question: {

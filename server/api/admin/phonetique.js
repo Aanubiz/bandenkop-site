@@ -1,8 +1,9 @@
 import express from 'express';
 import Phonetique from '../../models/Phonetique.js';
-import { verifyToken, verifyAdmin } from '../auth.js';
+import { verifyToken, verifyAdmin, verifyAdminPermissionByMethod } from '../auth.js';
 
 const router = express.Router();
+router.use(verifyToken, verifyAdmin, verifyAdminPermissionByMethod('phonetique'));
 
 router.get('/', verifyToken, verifyAdmin, async (req, res) => {
   try {

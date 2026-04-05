@@ -6,7 +6,6 @@ interface ArticleDecouverte {
   titre: string;
   sousTitre: string;
   periode: string;
-  auteur: string;
   imageCouverture: string;
   videoAerienne?: string;
   video360?: string;
@@ -14,54 +13,57 @@ interface ArticleDecouverte {
   contenu: string;
   activites: string[];
   saisonIdeale: string;
-  tempsEstime: string;
 }
 
 // Les contenus des lieux de découverte
 const articles: Record<string, ArticleDecouverte> = {
-  mont: {
-    titre: "Le Mont Bandenkop",
-    sousTitre: "Le toit de notre village",
-    periode: "Altitude : 1800m",
-    auteur: "Guide touristique de Bandenkop",
-    imageCouverture: "/images/decouverte/mont-hero.jpg",
-    videoAerienne: "/videos/decouverte/mont-aerienne.mp4",
-    video360: "/videos/decouverte/mont-360.mp4",
+  rocher: {
+    titre: "Loung Beli",
+    sousTitre: "Des falaises majestueuses et une vue à couper le souffle",
+    periode: "Altitude : 1500m",
+    imageCouverture: "/images/decouverte/loung-beli2.jpg",
+    //videoAerienne: "/videos/decouverte/mont-aerienne.mp4",
+    //video360: "/videos/decouverte/mont-360.mp4",
     coordinates: { lat: 5.1333, lng: 10.3833 },
     contenu: `
-      <p>Le Mont Bandenkop est le point culminant de notre région. À 1800 mètres d'altitude, il offre une vue panoramique exceptionnelle sur l'ensemble du village et les Hauts Plateaux de l'Ouest Cameroun. Ce lieu sacré est aussi un site de pèlerinage pour les anciens qui viennent s'y recueillir.</p>
+      <p>Loung Beli est sans conteste le plus beau site touristique du Village. Lorsqu'on y est, on ne souhaite plus repartir.
+      Il offre un espace agréable pour la détente et l'observation de la nature, loin de tout bruit. Chaque Bandenkop devrait 
+      l'avoir visité au moins une fois dans sa vie.</p>
       
-      <p>La montagne est couverte d'une végétation dense où se mêlent arbres centenaires et plantes médicinales. Les sentiers de randonnée, entretenus par la communauté, permettent d'accéder au sommet après environ deux heures de marche.</p>
+      <p>C'est a cet endroit ques les Bandenkop fuyaient pour se refugier au pied des falaises lorsqu'ils ont été attaques par
+      surprise par le Bali. San l'existense de Loung Beli, on peu dire que l'existense même du peuple Bandenkop etait fortement menacé</p>
       
       <h2>Un lieu sacré</h2>
-      <p>Selon la tradition, le mont Bandenkop est habité par les esprits protecteurs du village. Les anciens y montent pour prier lors des grandes cérémonies. Certaines grottes abritent encore des autels où sont déposées des offrandes.</p>
+      <p>Loung Beli est aussi un lieu hautement chargé d'énergie spirituelle. on y retrouve des lieux sacrés où des 
+      cérémonie rituelle sy déroule de fois </p>
       
       <blockquote>
-        "Du haut de cette montagne, nos ancêtres veillaient sur le village. Ils y voyaient les dangers arriver de loin et pouvaient prévenir la communauté."
+        "Ces falaises tapis de grottes ont sauvé le peuple Bandenkop d'une possible extemination et ont forgé l'art de la stratégie
+        de guerre de nos anciens."
         <cite>— Parole des anciens</cite>
       </blockquote>
       
-      <h2>La faune et la flore</h2>
-      <p>Le mont abrite une biodiversité remarquable. On y trouve des singes, des antilopes et de nombreuses espèces d'oiseaux. Les botanistes y ont recensé plus de 200 espèces de plantes, dont plusieurs sont endémiques à la région.</p>
-      
-      <h2>La randonnée</h2>
-      <p>Plusieurs circuits de randonnée sont balisés. Le sentier principal, accessible aux débutants, serpente à travers la forêt et offre des points de vue magnifiques. Des guides locaux peuvent accompagner les visiteurs et leur raconter les légendes associées à chaque lieu.</p>
+      <h2>L'observation</h2>
+      <p>Loug Beli offre des points de vue exceptionnels pour l'observation de de l'horizon. On peut y voir a vu dégagée
+      le paysage environnant, incluant les vallées et les montagnes lointaines et même d'autre villages tel quel Banbouantou.</p>
     `,
-    activites: ["Randonnée", "Observation", "Méditation", "Photographie panoramique"],
+    activites: ["Camping", "Observation", "Méditation", "Photographie panoramique"],
     saisonIdeale: "Toute l'année (préférer saison sèche)",
-    tempsEstime: "2-3 heures"
   },
-  chutes: {
-    titre: "Les Chutes de Nkam",
-    sousTitre: "Le joyau caché de nos montagnes",
-    periode: "Cascades sacrées",
-    auteur: "Guide touristique de Bandenkop",
+  centre: {
+    titre: "Centre Touristique de Bandenkop",
+    sousTitre: "Les vestiges d'une ancienne fierté du village",
+    periode: "A son prime",
     imageCouverture: "/images/decouverte/chutes-hero.jpg",
-    videoAerienne: "/videos/decouverte/chutes-aerienne.mp4",
     contenu: `
-      <p>Les chutes de Nkam sont un spectacle naturel impressionnant. D'une hauteur de 40 mètres, elles déversent leurs eaux tumultueuses dans un bassin naturel au cœur de la forêt sacrée. Les anciens racontent que les eaux de la cascade possèdent des vertus purificatrices.</p>
+      <p>Bandenkop a autre fois brillé dans les Haut Plateaux grace a ses infrastuctures futuristes qui offrait un cadre
+      unique a cette époque. Baptisé le centre touristique et climatique de Bandenkop, il a été construit par l'un des fils
+      du village et attirrait de nombreux visiteurs. C'était un complexe offrant des chambre de séjours, des salles de fêtes
+      et des lieux d'observaton panoramique. sur le village.</p>
       
-      <p>L'accès aux chutes se fait par un sentier ombragé qui traverse la forêt. Le bruit de l'eau s'intensifie à mesure que l'on s'approche, jusqu'à devenir assourdissant. Au pied de la cascade, une brume fraîche rafraîchit les visiteurs.</p>
+      <p>Aujourd'hui, le centre touristique est en grande partie abandonné, mais il reste un témoignage précieux de 
+      l'histoire et de l'architecture du village. bien qu'on ne puisse plus y loger, on peu néanmoins continuer a observer
+      le village depuis les points de vue panoramiques.</p>
       
       <div class="relative w-full aspect-video my-8 rounded-xl overflow-hidden shadow-xl">
         <video class="w-full h-full object-cover" controls poster="/images/decouverte/chutes-poster.jpg">
@@ -70,32 +72,59 @@ const articles: Record<string, ArticleDecouverte> = {
         </video>
       </div>
       
-      <h2>Un lieu de purification</h2>
-      <p>Traditionnellement, les futurs initiés viennent se purifier sous la cascade avant les cérémonies. L'eau glacée symbolise le lavage des souillures et la renaissance. Aujourd'hui encore, certains rites s'y déroulent.</p>
-      
       <blockquote>
-        "L'eau de Nkam lave le corps et l'esprit. Celui qui s'y baigne en ressort purifié, comme renaissant."
-        <cite>— Dignitaire religieux</cite>
+        "Bandenkop fut pionier dans le département des ahut plateaux en matière de tourisme. Le centre touristique était un 
+        joyau qui attirait des visiteurs de partout. C'était un lieu de fierté pour nous."
+        <cite>— Fils Bandenkop</cite>
       </blockquote>
       
-      <h2>La légende</h2>
-      <p>Une légende raconte que les chutes sont habitées par un esprit protecteur, Nyamé, qui apparaît parfois sous la forme d'un arc-en-ciel. Ceux qui ont la chance de l'apercevoir reçoivent une bénédiction particulière.</p>
-      
-      <h2>Activités</h2>
-      <p>Les visiteurs peuvent se baigner dans le bassin naturel (avec respect du lieu sacré), pique-niquer sur les berges aménagées, ou simplement profiter de la vue exceptionnelle. Des guides peuvent raconter les légendes associées à la cascade.</p>
+      <h2>Anectode</h2>
+      <p>Ce centre touristique était le lieu de repos préféré de l'ancienne maire de la commune d'arrondissement de Bangou
+      et belle fille du village, Mmme BOUTCHOUANG Rosette qui répondait au nom de notabilité de Mèfé Siligap</p>
     `,
-    activites: ["Baignade", "Pique-nique", "Photographie", "Méditation"],
-    saisonIdeale: "Saison des pluies (cascade plus impressionnante)",
-    tempsEstime: "1-2 heures"
+    activites: ["Observation", "Pique-nique", "Photographie", "Détente"],
+    saisonIdeale: "Saison sèche",
+  },
+  chefferie: {
+    titre: "La Chefferie",
+    sousTitre: "Le siège du pouvoir traditionnel",
+    periode: "Toute l'année",
+    imageCouverture: "/images/decouverte/visite_chefferie.jpg",
+    contenu: `
+      <p>La chefferie Bandenkop est aujourd'hui un des lieux touristiques les plus emblématiques du village. Elle représente 
+      le cœur du pouvoir traditionnel et offre un aperçu unique de l'histoire et de la culture locale. </p>
+      
+      <h2>Residence de la famille royale</h2>
+      <p>La chefferie est à volet publique mais relève aussi un caractère privé car y réside le chef et sa famille.
+      le chef reçois parfois certains invité dans son salon privé. cette partie de la chefferie c'est pas ouvert aux visites
+      a moins d'y être personnellement invité par la chef.</p>
+
+      <h2>Symbole de pouvoir</h2>
+      <p>La chefferie Bandenkop en son siège actuel existe depuis au moins 2 siècle, elle a évolué au fil du temps et a même
+      été incendiée durant la guerre dite du maquis. Aujourd'hui, elle raconte sa propre histoire. a travers ses fresques, 
+      ses sculptures et son musé, elle témoigne de la richesse culturelle et historique du village.</p>
+      
+      <blockquote>
+        "La chefferie est aussi le siège du tribunal coutumier où les affaires du village sont jugées selon les traditions. 
+        C'est un lieu de justice et de réconciliation."
+         <cite>— Un ancien du village</cite>
+      </blockquote>
+      
+      <h2>Les entrées</h2>
+      <p>Elle est ouverte sur deux entrées principales, l'une donnant sur la place du village et l'autre sur le marché.
+      son entrée est majestueuse et représente les caractéristiques de l'architecture traditionnelle.</p>
+    `,
+    activites: ["Shopping", "Dégustation", "Rencontres", "Photographie"],
+    saisonIdeale: "Toute l'année",
   },
   marche: {
-    titre: "Le Marché Traditionnel",
-    sousTitre: "Le cœur battant de Bandenkop",
-    periode: "Tous les 8 jours",
-    auteur: "Guide touristique de Bandenkop",
-    imageCouverture: "/images/decouverte/marche-hero.jpg",
+    titre: "Le Marché",
+    sousTitre: "Le cœur de la vie communautaire",
+    periode: "Toute l'année",
+    imageCouverture: "/images/decouverte/place_marche.jpg",
     contenu: `
-      <p>Le marché traditionnel de Bandenkop est l'un des plus animés de la région. Il se tient tous les huit jours, selon le calendrier traditionnel. C'est un lieu d'échange, de rencontres et de partage où se mêlent producteurs, artisans et visiteurs.</p>
+      <p>Le marché de Bandenkop est un des lieux touristiques les plus emblématiques du village. Il représente 
+      le cœur de la vie communautaire et offre un aperçu unique de l'histoire de la production locale. </p>
       
       <div class="relative w-full my-8 rounded-xl overflow-hidden shadow-xl bg-orange-100 p-8 text-center">
         <svg viewBox="0 0 800 300" class="w-full">
@@ -103,14 +132,18 @@ const articles: Record<string, ArticleDecouverte> = {
           <circle cx="400" cy="150" r="30" fill="#F97316" opacity="0.5"/>
           <text x="400" y="160" text-anchor="middle" fill="#F97316" font-size="24">🛍️</text>
         </svg>
-        <p class="mt-4 text-gray-600">Le marché est le lieu de rassemblement par excellence, où se nouent les amitiés et se font les affaires.</p>
+        <p class="mt-4 text-gray-600">Le marché est le lieu de rassemblement par excellence, où se nouent les amitiés et se 
+        font les affaires.</p>
       </div>
       
       <h2>L'organisation du marché</h2>
-      <p>Le marché s'installe dès l'aube. Les produits frais, les épices, les tissus et l'artisanat attirent des visiteurs de toute la région. Chaque famille y a sa place, et les commerçants les plus expérimentés connaissent leurs clients sur plusieurs générations.</p>
+      <p>Le marché s'installe dès l'aube chaque liegang. Les produits frais, les épices, les tissus et l'artisanat attirent 
+      des visiteurs de toute la région. Chaque famille y a sa place, et les commerçants les plus expérimentés connaissent 
+      leurs clients sur plusieurs générations.</p>
       
       <blockquote>
-        "Au marché, nous ne vendons pas seulement des produits. Nous partageons des nouvelles, nous échangeons des conseils, nous maintenons vivants les liens de la communauté."
+        "Au marché, nous ne vendons pas seulement des produits. Nous partageons des nouvelles, nous échangeons des conseils, 
+        nous maintenons vivants les liens de la communauté."
         <cite>— Une commerçante</cite>
       </blockquote>
       
@@ -125,121 +158,58 @@ const articles: Record<string, ArticleDecouverte> = {
       </ul>
       
       <h2>L'ambiance</h2>
-      <p>Les couleurs, les odeurs et les bruits du marché en font une expérience sensorielle unique. Les marchandages sont une institution, et les conversations s'étirent entre les étals. C'est aussi le lieu où se transmettent les nouvelles du village et des environs.</p>
-    `,
-    activites: ["Shopping", "Dégustation", "Rencontres", "Photographie"],
-    saisonIdeale: "Toute l'année",
-    tempsEstime: "2-3 heures"
-  },
-  foret: {
-    titre: "La Forêt Sacrée",
-    sousTitre: "Le domaine des ancêtres",
-    periode: "Lieu de culte",
-    auteur: "Guide touristique de Bandenkop",
-    imageCouverture: "/images/decouverte/foret-hero.jpg",
-    contenu: `
-      <p>La forêt sacrée est le poumon spirituel de Bandenkop. Accessible uniquement sur autorisation, elle abrite les lieux de culte ancestraux, les arbres centenaires et une biodiversité exceptionnelle. C'est un sanctuaire où le temps semble s'être arrêté.</p>
-      
-      <div class="relative w-full my-8 rounded-xl overflow-hidden shadow-xl bg-green-900 p-8 text-center">
-        <svg viewBox="0 0 800 300" class="w-full">
-          <rect width="800" height="300" fill="#14532D" opacity="0.3"/>
-          <circle cx="150" cy="150" r="40" fill="#2E7D32" opacity="0.6"/>
-          <circle cx="300" cy="100" r="35" fill="#2E7D32" opacity="0.6"/>
-          <circle cx="450" cy="180" r="45" fill="#2E7D32" opacity="0.6"/>
-          <circle cx="600" cy="120" r="30" fill="#2E7D32" opacity="0.6"/>
-          <text x="400" y="260" text-anchor="middle" fill="#FEF3C7" font-size="18">🌿 Lieu sacré - Accès réglementé 🌿</text>
-        </svg>
-      </div>
-      
-      <h2>Un sanctuaire protégé</h2>
-      <p>La forêt sacrée est protégée par les ancêtres et les esprits. Y pénétrer sans autorisation, c'est s'exposer à leur colère. Seuls les initiés et les visiteurs accompagnés d'un guide peuvent y accéder lors des périodes autorisées.</p>
-      
-      <blockquote>
-        "Chaque arbre de cette forêt a une histoire. Chaque pierre est un autel. Ici, les ancêtres sont toujours présents."
-        <cite>— Gardien de la forêt sacrée</cite>
-      </blockquote>
-      
-      <h2>Les arbres sacrés</h2>
-      <p>Certains arbres, vieux de plusieurs siècles, sont considérés comme des lieux de culte. On y suspend des offrandes et on y célèbre des rites. Le plus vénéré est le fromager, dont les racines plongeantes évoquent le lien entre le monde visible et invisible.</p>
-      
-      <h2>La faune</h2>
-      <p>La forêt abrite une faune riche : singes, caméléons, oiseaux rares, et selon la légende, des créatures invisibles aux yeux des non-initiés.</p>
+      <p>Les couleurs, les odeurs et les bruits du marché en font une expérience sensorielle unique. Les marchandages sont 
+      une institution, et les conversations s'étirent entre les étals. C'est aussi le lieu où se transmettent les nouvelles 
+      du village et des environs.</p>
     `,
     activites: ["Visite guidée", "Cérémonies", "Méditation"],
-    saisonIdeale: "Sur autorisation uniquement",
-    tempsEstime: "1-2 heures (visite guidée)"
+    saisonIdeale: "Chaque Liegang",
   },
-  grottes: {
-    titre: "Les Grottes de Nkogam",
-    sousTitre: "Refuges de nos ancêtres",
-    periode: "Lieu historique",
-    auteur: "Guide touristique de Bandenkop",
-    imageCouverture: "/images/decouverte/grottes-hero.jpg",
+  chutes: {
+    titre: "Les Chuttes de Zazalieu",
+    sousTitre: "Haut lieu de spiritualité et de mystère",
+    periode: "Visite interdite ou guidé uniquement",
+    imageCouverture: "/images/decouverte/zazalieu.jpg",
     contenu: `
-      <p>Les grottes de Nkogam ont servi de refuge pendant la période coloniale et les guerres. Nichées dans la falaise, elles offrent un aperçu saisissant de la vie souterraine qu'ont menée nos ancêtres pour échapper à l'oppresseur.</p>
+      <p>Zazalieu est l'un des lieux ls plus sacrée du village Bandenkop. Meme si ses chuttes sont magnifiques, il est
+      strictement interdit d'y aller nimporte quel jour. En effet, il existe des jours speciiques ou il est interdit d'y
+      aller, c'est la raison pour laquelle il est important de consulter le calendrier ou un proophète avant d'y aller.</p>
       
-      <div class="relative w-full my-8 rounded-xl overflow-hidden shadow-xl">
-        <img src="/images/decouverte/grottes-interieur.jpg" alt="Intérieur des grottes" class="w-full rounded-xl">
-      </div>
-      
-      <h2>Un refuge historique</h2>
-      <p>Pendant les conflits, les grottes ont accueilli des familles entières. On y trouve encore des vestiges : foyers, poteries, et parfois des graffitis gravés dans la pierre par les exilés.</p>
+      <h2>Un lieu de mystère</h2>
+      <p>Zazalieu est un lieu interdit d'accès aux étranger et même pour certains Bandenkop. Lorsqu'on y vas, il est strictement 
+      interdit de faire des photos et si on en fait sous l'autorisationdu guide généralement désigné par la chefferie, 
+      il est interdit de les publier. C'est la raison pour laquelle vous ne verrez pas d'image de ce lieu sur ce site.</p>
       
       <blockquote>
-        "Ces grottes nous ont sauvés. Nos ancêtres y ont survécu pendant des mois, protégés par l'obscurité et les esprits de la montagne."
+        "Zaealieu est un lieu chargé d'histoire et de mystère. Qui conque viole ce sanctuaire ou y fait pénétré des choses impures
+        s'expose a des conséquences qui pourra suivre même sa lignée."
         <cite>— Récit transmis</cite>
       </blockquote>
-      
-      <h2>La spéléologie</h2>
-      <p>Le réseau de grottes s'étend sur plusieurs centaines de mètres. Certaines salles sont ornées de concrétions spectaculaires. Des visites guidées permettent d'explorer les parties accessibles.</p>
-      
-      <h2>La mémoire collective</h2>
-      <p>Chaque année, une cérémonie est organisée pour commémorer ceux qui se sont réfugiés dans les grottes. C'est un moment de recueillement et de transmission de l'histoire aux jeunes générations.</p>
     `,
-    activites: ["Visite historique", "Spéléologie", "Mémoire collective"],
-    saisonIdeale: "Saison sèche",
-    tempsEstime: "2 heures"
+    activites: ["Site interdit", "Chute d'eau sacrée"],
+    saisonIdeale: "Seulementsur autorisation"
   },
-  plantations: {
-    titre: "Les Plantations en Terrasses",
-    sousTitre: "L'agriculture traditionnelle",
-    periode: "Patrimoine vivant",
-    auteur: "Guide touristique de Bandenkop",
-    imageCouverture: "/images/decouverte/plantations-hero.jpg",
+  lac: {
+    titre: "Lac Tcha-Tcha",
+    sousTitre: "Un havre de paix et de ressources",
+    periode: "Toute l'année",
+    imageCouverture: "/images/decouverte/tcha_tcha.jpg",
     contenu: `
-      <p>Les terrasses de culture de Bandenkop sont un chef-d'œuvre d'ingénierie agricole traditionnelle. Taillées dans la pente des montagnes, elles permettent de cultiver sur des terrains escarpés tout en prévenant l'érosion.</p>
+      <p>Tcha-Tcha est un lac naturel qui regorge de poissons et dont les eaux irriguent les cultures environnantes.
+      c'est le lieu idéale pour la pêche lorsqu'elle est autorisé car l'activité est réglémenté.</p>
       
-      <div class="relative w-full aspect-video my-8 rounded-xl overflow-hidden shadow-xl">
-        <video class="w-full h-full object-cover" controls poster="/images/decouverte/plantations-poster.jpg">
-          <source src="/videos/decouverte/plantations-dron.mp4" type="video/mp4">
-          Votre navigateur ne supporte pas la lecture vidéo.
-        </video>
-      </div>
-      
-      <h2>Un système ancestral</h2>
-      <p>Les terrasses sont entretenues depuis des générations. Chaque famille cultive sa parcelle selon des méthodes transmises par les aînés. La rotation des cultures et l'utilisation de compost naturel assurent la fertilité des sols.</p>
+      <h2>Un lieu de détente</h2>
+      <p>Les rives du lac offrent des espaces ombragés et tranquilles, parfaits pour se détendre et profiter de la nature 
+      environnante. Les familles viennent y pique-niquer, se reposer ou simplement admirer le paysage.</p>
       
       <blockquote>
-        "Nos terrasses sont comme les marches d'un escalier vers le ciel. Chaque culture y trouve sa place, chaque famille y fait fructifier son travail."
-        <cite>— Agriculteur</cite>
+        "On ne saurai parler de Bandenkop sans parler de Tcha-Tcha. C'est un lieu de vie, de travail et de détente pour 
+        notre communauté."
+        <cite>— Un résident</cite>
       </blockquote>
-      
-      <h2>Les cultures principales</h2>
-      <p>On cultive sur les terrasses :</p>
-      <ul>
-        <li>Le maïs</li>
-        <li>Les haricots</li>
-        <li>Les arachides</li>
-        <li>Les tubercules (igname, manioc)</li>
-        <li>Les légumes traditionnels</li>
-      </ul>
-      
-      <h2>L'agroécologie</h2>
-      <p>Ce système de culture est un exemple remarquable d'agroécologie. Il préserve les sols, maintient la biodiversité et assure la sécurité alimentaire du village depuis des siècles.</p>
     `,
     activites: ["Découverte agricole", "Dégustation", "Participation aux récoltes"],
-    saisonIdeale: "Saison des pluies (cultures en croissance)",
-    tempsEstime: "1-2 heures"
+    saisonIdeale: "Saison des pluies (cultures en croissance)"
   }
 };
 
@@ -295,11 +265,6 @@ if (!article) {
             </svg>
             <span class="text-gray-700">Imprimer</span>
           </button>
-        </div>
-        
-        <!-- Infos pratiques -->
-        <div class="bg-white rounded-full shadow-lg px-4 py-2 text-sm text-gray-600">
-          ⏱️ {article.tempsEstime} • {article.saisonIdeale}
         </div>
       </div>
 

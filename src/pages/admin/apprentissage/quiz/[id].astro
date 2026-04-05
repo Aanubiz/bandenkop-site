@@ -31,8 +31,9 @@ const { id } = Astro.params;
 
   <script>
     import { getToken } from '../../../../utils/auth';
+    import { getApiUrl } from '../../../../config';
 
-    const API_URL = 'http://localhost:3001';
+    const API_URL = getApiUrl();
     const token = getToken(); // ✅ Ici c'est côté client, ça fonctionne
     const questionId = window.location.pathname.split('/').pop();
 
@@ -87,6 +88,7 @@ const { id } = Astro.params;
               <select name="type" disabled class="w-full px-3 py-2 border rounded-lg bg-gray-100">
                 <option value="qcm" ${question.type === 'qcm' ? 'selected' : ''}>QCM</option>
                 <option value="vrai-faux" ${question.type === 'vrai-faux' ? 'selected' : ''}>Vrai/Faux</option>
+                <option value="texte" ${question.type === 'texte' ? 'selected' : ''}>Texte</option>
               </select>
             </div>
 
@@ -111,6 +113,13 @@ const { id } = Astro.params;
                     <input type="radio" name="vfCorrect" value="false" ${question.reponse === 'Faux' ? 'checked' : ''} class="mr-2"> Faux
                   </label>
                 </div>
+              </div>
+            ` : ''}
+
+            ${question.type === 'texte' ? `
+              <div>
+                <label class="block text-sm font-medium mb-1">Réponse attendue</label>
+                <input type="text" name="reponseTexte" value="${question.reponse || ''}" class="w-full px-3 py-2 border rounded-lg" />
               </div>
             ` : ''}
 
@@ -198,6 +207,9 @@ const { id } = Astro.params;
             const vfCorrect = formData.get('vfCorrect');
             updatedQuestion.options = ['Vrai', 'Faux'];
             updatedQuestion.reponse = vfCorrect === 'true' ? 'Vrai' : 'Faux';
+          } else if (question.type === 'texte') {
+            updatedQuestion.options = [];
+            updatedQuestion.reponse = (formData.get('reponseTexte') as string || '').trim();
           }
 
           try {

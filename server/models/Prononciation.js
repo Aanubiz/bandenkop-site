@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 const prononciationSchema = new mongoose.Schema({
   motFrancais: { type: String, required: true },
+  motAnglais: { type: String, default: '' },
   motBandenkop: { type: String, required: true },
   audioUrl: { type: String, required: true },
   categorie: { type: mongoose.Schema.Types.ObjectId, ref: 'CategoriePrononciation', required: true },

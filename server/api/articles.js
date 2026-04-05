@@ -2,6 +2,7 @@ import express from 'express';
 import Article from '../models/Article.js';
 import multer from 'multer';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { verifyToken, verifyAdmin } from './auth.js';
 
@@ -12,7 +13,9 @@ const __dirname = path.dirname(__filename);
 // Configuration de multer
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '../../public/uploads/articles'));
+    const dest = path.join(__dirname, '../../public/uploads/articles');
+    if (!fs.existsSync(dest)) fs.mkdirSync(dest, { recursive: true });
+    cb(null, dest);
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -20,7 +23,7 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ storage, limits: { fileSize: 2 * 1024 * 1024 } });
+const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
 
 // Route d'upload
 router.post('/upload', verifyToken, verifyAdmin, upload.single('image'), (req, res) => {
@@ -28,8 +31,8 @@ router.post('/upload', verifyToken, verifyAdmin, upload.single('image'), (req, r
     return res.status(400).json({ error: 'Aucun fichier uploadé' });
   }
   
-  const imageUrl = `/uploads/articles/${req.file.filename}`;
-  res.json({ imageUrl });
+  const imageUrl = `/api/uploads/articles/${req.file.filename}`;
+  res.json({ url: imageUrl });
 });
 
 // ===== ROUTE DE TEST =====
@@ -154,6 +157,63 @@ router.put('/admin/articles/:id', verifyToken, verifyAdmin, async (req, res) => 
   } catch (error) {
     console.error('❌ Erreur modification article:', error);
     res.status(500).json({ error: error.message });
+  }
+});
+
+// Déplacer un article en haut ou en bas dans l'ordre d'affichage
+router.post('/admin/articles/:id/move', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const { direction } = req.body || {};
+    if (!['up', 'down'].includes(direction)) {
+      return res.status(400).json({ error: 'Direction invalide (up|down)' });
+    }
+
+    const articles = await Article.find()
+      .sort({ datePublication: -1, _id: 1 })
+      .select('_id datePublication createdAt');
+
+    const currentIndex = articles.findIndex((a) => String(a._id) === String(req.params.id));
+    if (currentIndex === -1) {
+      return res.status(404).json({ error: 'Article introuvable' });
+    }
+
+    const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+    if (targetIndex < 0 || targetIndex >= articles.length) {
+      return res.json({ success: true, moved: false });
+    }
+
+    const current = articles[currentIndex];
+    const target = articles[targetIndex];
+
+    const currentDate = new Date(current.datePublication || current.createdAt || Date.now());
+    const targetDate = new Date(target.datePublication || target.createdAt || Date.now());
+
+    const newCurrentDate = direction === 'up'
+      ? new Date(targetDate.getTime() + 1)
+      : new Date(targetDate.getTime() - 1);
+
+    const newTargetDate = direction === 'up'
+      ? new Date(currentDate.getTime() - 1)
+      : new Date(currentDate.getTime() + 1);
+
+    await Article.bulkWrite([
+      {
+        updateOne: {
+          filter: { _id: current._id },
+          update: { $set: { datePublication: newCurrentDate } }
+        }
+      },
+      {
+        updateOne: {
+          filter: { _id: target._id },
+          update: { $set: { datePublication: newTargetDate } }
+        }
+      }
+    ]);
+
+    return res.json({ success: true, moved: true });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
   }
 });
 

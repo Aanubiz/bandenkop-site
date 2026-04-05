@@ -7,7 +7,7 @@ const articleSchema = new mongoose.Schema({
   image: { type: String, default: '/images/default-article.jpg' },
   categorie: { 
     type: String, 
-    enum: ['Événement', 'Tradition', 'Développement', 'Diaspora', 'Politique', 'Culture', 'Autre'],
+    enum: ['Événement', 'Tradition', 'Développement', 'Diaspora', 'Politique', 'Culture', 'Santé', 'Sport', 'Éducation', 'Autre'],
     default: 'Autre'
   },
   auteur: { type: String, required: true },

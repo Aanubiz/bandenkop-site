@@ -3,6 +3,7 @@ import ArticleHistoire from '../models/ArticleHistoire.js';
 import { verifyToken, verifyAdmin } from './auth.js';
 import multer from 'multer';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 
 const router = express.Router();
@@ -12,7 +13,9 @@ const __dirname = path.dirname(__filename);
 // ===== CONFIGURATION MULTER POUR L'UPLOAD D'IMAGES =====
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '../../public/uploads/histoire'));
+    const dest = path.join(__dirname, '../../public/uploads/histoire');
+    if (!fs.existsSync(dest)) fs.mkdirSync(dest, { recursive: true });
+    cb(null, dest);
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -22,7 +25,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ 
   storage, 
-  limits: { fileSize: 2 * 1024 * 1024 } // 2MB max
+  limits: { fileSize: 10 * 1024 * 1024 } // 10MB max
 });
 
 // ===== ROUTES PUBLIQUES =====
@@ -76,7 +79,7 @@ router.post('/upload', verifyToken, verifyAdmin, upload.single('image'), (req, r
     if (!req.file) {
       return res.status(400).json({ error: 'Aucun fichier uploadé' });
     }
-    const imageUrl = `/uploads/histoire/${req.file.filename}`;
+    const imageUrl = `/api/uploads/histoire/${req.file.filename}`;
     res.json({ imageUrl });
   } catch (error) {
     res.status(500).json({ error: error.message });

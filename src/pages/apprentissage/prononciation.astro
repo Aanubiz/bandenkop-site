@@ -75,12 +75,12 @@ import { getToken } from '../../utils/auth';
           </div>
 
           <!-- Grille des mots -->
-          <div id="words-grid" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div id="words-grid" class="hidden grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <!-- Rempli par JS -->
           </div>
 
           <!-- Pagination -->
-          <div id="pagination" class="hidden flex justify-center mt-8 space-x-2">
+          <div id="pagination" class="hidden justify-center mt-8 space-x-2">
             <!-- Rempli par JS -->
           </div>
 
@@ -95,10 +95,12 @@ import { getToken } from '../../utils/auth';
 
   <script>
     import { getToken } from '../../utils/auth';
+    import { getApiUrl } from '../../config';
 
-    const API_URL = 'http://localhost:3001';
+    const API_URL = getApiUrl();
     let currentAudio: HTMLAudioElement | null = null;
     let currentButtonId: string | null = null;
+    const motsComptabilises = new Set<string>();
     let currentPage = 1;
     let totalPages = 1;
     let currentFilters = {
@@ -167,7 +169,32 @@ import { getToken } from '../../utils/auth';
       `;
     }
 
-    async function playAudio(url: string, buttonId: string) {
+    async function enregistrerPratique(motId: string) {
+      const token = getToken();
+      if (!token || !motId || motsComptabilises.has(motId)) return;
+
+      try {
+        const response = await fetch(`${API_URL}/api/prononciation/pratiquer`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ motId })
+        });
+
+        if (!response.ok) return;
+
+        const data = await response.json();
+        if (data?.success) {
+          motsComptabilises.add(motId);
+        }
+      } catch (error) {
+        console.error('Erreur comptabilisation prononciation:', error);
+      }
+    }
+
+    async function playAudio(url: string, buttonId: string, motId: string) {
       if (currentButtonId === buttonId && currentAudio) {
         if (!currentAudio.paused) {
           currentAudio.pause();
@@ -192,6 +219,7 @@ import { getToken } from '../../utils/auth';
         });
 
         await audio.play();
+        void enregistrerPratique(motId);
       } catch (err) {
         console.error('Erreur lecture audio:', err);
         stopCurrentAudio();
@@ -274,6 +302,7 @@ import { getToken } from '../../utils/auth';
 
         if (wordsGrid) {
           wordsGrid.classList.remove('hidden');
+          wordsGrid.classList.add('grid');
           wordsGrid.innerHTML = data.mots.map((word: PrononciationWord) => {
             const buttonId = `audio-btn-${word._id}`;
             return `
@@ -305,7 +334,7 @@ import { getToken } from '../../utils/auth';
 
                 <button 
                   id="${buttonId}"
-                  onclick="playAudio('${word.audioUrl}', '${buttonId}')" 
+                  onclick="playAudio('${word.audioUrl}', '${buttonId}', '${word._id}')" 
                   class="w-full bg-gradient-to-r from-orange-600 to-red-600 text-white py-2 rounded-lg font-semibold hover:shadow-lg transition-all flex items-center justify-center space-x-2"
                 >
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -332,6 +361,7 @@ import { getToken } from '../../utils/auth';
         // Pagination
         if (pagination && data.totalPages > 1) {
           pagination.classList.remove('hidden');
+          pagination.classList.add('flex');
           currentPage = data.page;
           totalPages = data.totalPages;
           

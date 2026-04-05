@@ -1,6 +1,7 @@
 import express from 'express';
 import multer from 'multer';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { verifyToken } from './auth.js';
 
@@ -12,7 +13,9 @@ const router = express.Router();
 // Configuration multer pour l'upload d'images
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '../../public/uploads/figures/'));
+    const dest = path.join(__dirname, '../../public/uploads/figures/');
+    if (!fs.existsSync(dest)) fs.mkdirSync(dest, { recursive: true });
+    cb(null, dest);
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -23,7 +26,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ 
   storage,
-  limits: { fileSize: 2 * 1024 * 1024 }, // 2MB max
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB max
   fileFilter: (req, file, cb) => {
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
     if (allowedTypes.includes(file.mimetype)) {
@@ -35,18 +38,27 @@ const upload = multer({
 });
 
 // Upload d'image
-router.post('/', verifyToken, upload.single('image'), (req, res) => {
+router.post('/', verifyToken, (req, res, next) => {
+  upload.single('image')(req, res, (err) => {
+    if (err) {
+      console.error('❌ Upload.js multer error:', err.message);
+      return res.status(400).json({ error: err.message });
+    }
+    next();
+  });
+}, (req, res) => {
   try {
     if (!req.file) {
+      console.error('❌ Upload.js: Aucun fichier uploadé');
       return res.status(400).json({ error: 'Aucun fichier uploadé' });
     }
     
-    const imageUrl = `/uploads/figures/${req.file.filename}`;
-    console.log('✅ Image uploadée:', imageUrl);
+    const imageUrl = `/api/uploads/figures/${req.file.filename}`;
+    console.log('✅ Upload.js: Image uploadée:', imageUrl);
     
     res.json({ url: imageUrl });
   } catch (error) {
-    console.error('❌ Erreur upload:', error);
+    console.error('❌ Upload.js erreur:', error);
     res.status(500).json({ error: error.message });
   }
 });

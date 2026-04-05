@@ -3,57 +3,57 @@ import Layout from '../../layouts/Layout.astro';
 
 const lieux = [
   {
-    nom: "Mont Bandenkop",
-    slug: "mont",
+    nom: "Loung Beli",
+    slug: "rocher",
     type: "Relief",
-    description: "Point culminant à 1800m offrant une vue panoramique sur tous les villages environnants.",
-    image: "/images/decouverte/mont.jpg",
+    description: "Paysage de rochers granitiques offrant une vue panoramique sur toute la région",
+    image: "/images/decouverte/loung_beli2.jpg",
     activites: ["Randonnée", "Observation", "Méditation"],
     saison: "Toute l'année"
   },
   {
-    nom: "Chutes de Nkam",
-    slug: "chutes",
+    nom: "Centre touristique de Bandenkop",
+    slug: "centre",
     type: "Tourisme",
-    description: "Cascades spectaculaires de 40m de haut au cœur de la forêt sacrée.",
-    image: "/images/decouverte/chutes.jpg",
-    activites: ["Baignade", "Pique-nique", "Photographie"],
+    description: "Point culminant à 1800m d'altitude offrant une vue panoramique sur toute la région et les villages environnants",
+    image: "/images/decouverte/entree_chefferie.jpg",
+    activites: ["Méditation", "Pique-nique", "Photographie"],
     saison: "Saison pluvieuse"
   },
   {
-    nom: "Marché Traditionnel",
-    slug: "marche",
-    type: "Économie",
-    description: "Le cœur battant du commerce local tous les 8 jours, selon le calendrier traditionnel.",
-    image: "/images/decouverte/marche.jpg",
-    activites: ["Shopping", "Rencontres", "Dégustation"],
-    saison: "Tous les 8 jours"
+    nom: "Chefferie",
+    slug: "chefferie",
+    type: "Culture",
+    description: "Lieu de residence de Sa majesté et siège du pouvoir traditionnel.",
+    image: "/images/decouverte/visite_chefferie.jpg",
+    activites: ["Visite guidée", "Rencontres", "Cérémonies"],
+    saison: "Toute l'année"
   },
   {
-    nom: "Forêt Sacrée",
-    slug: "foret",
-    type: "Culture",
-    description: "Lieu de culte et d'initiation, protégé par les ancêtres. Accès réglementé.",
-    image: "/images/decouverte/foret.jpg",
-    activites: ["Visite guidée", "Cérémonies", "Méditation"],
+    nom: "Marché",
+    slug: "marche",
+    type: "Economie",
+    description: "Le cœur battant du commerce local tous les Liegang.",
+    image: "/images/decouverte/place_marche.jpg",
+    activites: ["Commerce", "Cérémonies", "Dégustation"],
     saison: "Sur autorisation"
   },
   {
-    nom: "Grottes de Nkogam",
-    slug: "grottes",
-    type: "Historique",
-    description: "Grottes ayant servi de refuge pendant la période coloniale et les guerres.",
-    image: "/images/decouverte/grottes.jpg",
-    activites: ["Visite historique", "Spéléologie", "Mémoire"],
-    saison: "Saison sèche"
+    nom: "Les chutes de Zazalieu",
+    slug: "chutes",
+    type: "Sacré",
+    description: "Lieu hautement spirituel sous la protection des esprits ancestraux, interdit aux visiteurs.",
+    image: "/images/decouverte/zazalieu.jpg",
+    activites: ["Offrande", "Purification", "Mémoire"],
+    saison: "Aucune visite autorisée"
   },
   {
-    nom: "Plantations en terrasses",
-    slug: "plantations",
+    nom: "Lac Tcha-Tcha",
+    slug: "lac",
     type: "Agriculture",
-    description: "Cultures traditionnelles en terrasses sur les pentes des montagnes.",
-    image: "/images/decouverte/plantations.jpg",
-    activites: ["Découverte", "Agriculture", "Dégustation"],
+    description: "Lac naturel entouré d'eucalyptus, source d'eau pour les cultures et lieu de détente.",
+    image: "/images/decouverte/tcha_tcha.jpg",
+    activites: ["Détente", "Agriculture", "Pêche"],
     saison: "Toute l'année"
   }
 ];
@@ -77,7 +77,7 @@ const lieux = [
   <section class="py-16 bg-white">
     <div class="container mx-auto px-6">
       <div class="relative h-96 rounded-2xl overflow-hidden shadow-2xl mb-8">
-        <img src="/images/decouverte/carte-bandenkop.jpg" alt="Carte de Bandenkop" class="w-full h-full object-cover" />
+        <img src="/images/decouverte/carte.jpg" alt="Carte de Bandenkop" class="w-full h-full object-cover" />
         <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
         <div class="absolute bottom-8 left-8 text-white">
           <h2 class="text-3xl font-bold mb-2">Situation Géographique</h2>
@@ -97,7 +97,7 @@ const lieux = [
         </div>
         <div class="bg-orange-50 rounded-xl p-6">
           <h3 class="font-bold text-gray-800 mb-2">Population</h3>
-          <p class="text-2xl text-orange-600">~3000 hab.</p>
+          <p class="text-2xl text-orange-600">~40 000 hab. (85% à l'extérieur)</p>
         </div>
       </div>
     </div>
@@ -165,11 +165,11 @@ const lieux = [
           <ul class="space-y-2">
             <li class="flex justify-between">
               <span>Saison sèche</span>
-              <span class="font-semibold">Novembre - Mars</span>
+              <span class="font-semibold">Novembre - Février</span>
             </li>
             <li class="flex justify-between">
               <span>Saison pluvieuse</span>
-              <span class="font-semibold">Avril - Octobre</span>
+              <span class="font-semibold">Mars - Octobre</span>
             </li>
             <li class="flex justify-between">
               <span>Température moyenne</span>
@@ -189,7 +189,7 @@ const lieux = [
           <ul class="space-y-2">
             <li class="flex justify-between">
               <span>Agriculture</span>
-              <span class="font-semibold">70%</span>
+              <span class="font-semibold">60%</span>
             </li>
             <li class="flex justify-between">
               <span>Élevage</span>
@@ -197,10 +197,14 @@ const lieux = [
             </li>
             <li class="flex justify-between">
               <span>Commerce</span>
-              <span class="font-semibold">10%</span>
+              <span class="font-semibold">18%</span>
             </li>
             <li class="flex justify-between">
               <span>Artisanat</span>
+              <span class="font-semibold">2%</span>
+            </li>
+            <li class="flex justify-between">
+              <span>Autre</span>
               <span class="font-semibold">5%</span>
             </li>
           </ul>
@@ -212,9 +216,9 @@ const lieux = [
           <h3 class="text-xl font-bold mb-4">Éducation</h3>
           <ul class="space-y-2">
             <li>• École primaire publique</li>
-            <li>• Taux de scolarisation : 95%</li>
-            <li>• Bibliothèque communautaire</li>
-            <li>• Programme d'alphabétisation</li>
+            <li>• Collège & Lycée</li>
+            <li>• Centre de formation professionnelle</li>
+            <li>• Taux de scolarisation : 90%</li>
           </ul>
         </div>
 
@@ -223,7 +227,7 @@ const lieux = [
           <div class="text-3xl mb-3">🏥</div>
           <h3 class="text-xl font-bold mb-4">Santé</h3>
           <ul class="space-y-2">
-            <li>• Centre de santé intégré</li>
+            <li>• Centre du centre & Centre de santé de Sin Tsèla</li>
             <li>• Maternité</li>
             <li>• Pharmacie</li>
             <li>• Médecine traditionnelle</li>
@@ -242,17 +246,22 @@ const lieux = [
           <div class="text-center">
             <span class="text-4xl block mb-3">🥾</span>
             <h3 class="font-bold mb-2">Randonnées</h3>
-            <p class="text-sm opacity-90">Sentiers balisés, guides locaux</p>
+            <p class="text-sm opacity-90">Sentiers balisés</p>
+          </div>
+           <div class="text-center">
+            <span class="text-4xl block mb-3">🌿</span>
+            <h3 class="font-bold mb-2">Observation</h3>
+            <p class="text-sm opacity-90">Le Paysage de Dengou</p>
           </div>
           <div class="text-center">
             <span class="text-4xl block mb-3">🏕️</span>
             <h3 class="font-bold mb-2">Camping</h3>
-            <p class="text-sm opacity-90">Chez l'habitant, sites aménagés</p>
+            <p class="text-sm opacity-90">Loung Beli, sites aménagés</p>
           </div>
           <div class="text-center">
             <span class="text-4xl block mb-3">🎨</span>
             <h3 class="font-bold mb-2">Artisanat</h3>
-            <p class="text-sm opacity-90">Ateliers de sculpture, vannerie</p>
+            <p class="text-sm opacity-90">Musé de Bandenkop</p>
           </div>
           <div class="text-center">
             <span class="text-4xl block mb-3">🍲</span>
@@ -262,7 +271,7 @@ const lieux = [
           <div class="text-center">
             <span class="text-4xl block mb-3">🎭</span>
             <h3 class="font-bold mb-2">Spectacles</h3>
-            <p class="text-sm opacity-90">Danses et contes traditionnels</p>
+            <p class="text-sm opacity-90">Danses traditionnels</p>
           </div>
           <div class="text-center">
             <span class="text-4xl block mb-3">📸</span>

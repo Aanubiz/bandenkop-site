@@ -1,12 +1,13 @@
 import express from 'express';
 import Prononciation from '../../models/Prononciation.js';
-import { verifyToken, verifyAdmin } from '../auth.js';
+import { verifyToken, verifyAdmin, verifyAdminPermissionByMethod } from '../auth.js';
 import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
 
 const router = express.Router();
+router.use(verifyToken, verifyAdmin, verifyAdminPermissionByMethod('prononciation'));
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -24,6 +25,21 @@ const storage = multer.diskStorage({
     // Garde l'extension d'origine
     const ext = path.extname(file.originalname);
     cb(null, uniqueSuffix + ext);
+  }
+});
+
+const imageStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadDir = path.join(__dirname, '../../../public/uploads/prononciation/images');
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const ext = path.extname(file.originalname);
+    cb(null, `prononciation-image-${uniqueSuffix}${ext}`);
   }
 });
 
@@ -61,6 +77,22 @@ const upload = multer({
   }
 });
 
+const uploadImage = multer({
+  storage: imageStorage,
+  limits: { fileSize: 10 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const allowedMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
+    const ext = path.extname(file.originalname).toLowerCase();
+    const allowedExts = ['.jpg', '.jpeg', '.png', '.webp', '.gif'];
+
+    if (allowedMimeTypes.includes(file.mimetype) || allowedExts.includes(ext)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Format image non supporté. Utilisez JPG, PNG, WEBP ou GIF.'));
+    }
+  }
+});
+
 // ===== ROUTES D'UPLOAD (DOIVENT ÊTRE EN PREMIER) =====
 router.post('/upload/audio', verifyToken, verifyAdmin, upload.single('audio'), (req, res) => {
   console.log('🔥🔥🔥 ROUTE UPLOAD AUDIO APPELÉE 🔥🔥🔥');
@@ -75,6 +107,15 @@ router.post('/upload/audio', verifyToken, verifyAdmin, upload.single('audio'), (
   const audioUrl = `/uploads/audio/${req.file.filename}`;
   console.log('✅ URL générée:', audioUrl);
   res.json({ audioUrl });
+});
+
+router.post('/upload/image', verifyToken, verifyAdmin, uploadImage.single('image'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'Aucune image uploadée' });
+  }
+
+  const imageUrl = `/uploads/prononciation/images/${req.file.filename}`;
+  return res.json({ imageUrl });
 });
 
 // ===== ROUTES CRUD =====

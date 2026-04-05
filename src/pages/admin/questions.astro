@@ -1,10 +1,14 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import { getApiUrl } from '../../config';
+
+const API_URL = getApiUrl();
 ---
 
 <Layout title="Admin - Gestion des questions">
   <section class="pt-24 pb-12">
     <div class="px-4 max-w-4xl mx-auto">
+      <a href="/admin" class="inline-flex items-center gap-1 text-sm text-orange-600 hover:text-orange-800 mb-4 transition-colors">← Panneau admin</a>
       <h1 class="text-3xl font-bold mb-8">Gestion des questions</h1>
       
       <form id="questionForm" class="bg-white rounded-2xl shadow-xl p-6 space-y-4">

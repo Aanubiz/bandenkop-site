@@ -2,6 +2,9 @@
 import Layout from '../../layouts/Layout.astro';
 import AdminLayout from '../../components/admin/AdminLayout.astro';
 import AuthCheck from '../../components/AuthCheck.astro';
+import { getApiUrl } from '../../config';
+
+const API_URL = getApiUrl();
 ---
 
 <Layout title="Admin - Figures Wiki">
@@ -19,6 +22,7 @@ import AuthCheck from '../../components/AuthCheck.astro';
           <table class="w-full">
             <thead class="bg-gray-50">
                <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">#</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Photo</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nom</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Catégorie</th>
@@ -27,7 +31,7 @@ import AuthCheck from '../../components/AuthCheck.astro';
                </tr>
             </thead>
             <tbody id="figures-list" class="divide-y divide-gray-200">
-              <tr><td colspan="5" class="px-6 py-4 text-center">Chargement...</td></tr>
+              <tr><td colspan="6" class="px-6 py-4 text-center">Chargement...</td></tr>
             </tbody>
           </table>
         </div>
@@ -138,15 +142,17 @@ import AuthCheck from '../../components/AuthCheck.astro';
 
     declare global {
       interface Window {
-        openModal: () => void;
+        openModal: (isEdit?: boolean) => void;
         closeModal: () => void;
         editFigure: (id: string) => Promise<void>;
         deleteFigure: (id: string) => Promise<void>;
+        moveFigure: (id: string, direction: 'up' | 'down') => Promise<void>;
         previewImage: (input: HTMLInputElement) => void;
       }
     }
 
-    const API_URL = 'http://localhost:3001';
+    import { getApiUrl } from '../../config';
+    const API_URL = getApiUrl();
     const token = getToken();
 
     const figuresList = document.getElementById('figures-list') as HTMLElement | null;
@@ -190,18 +196,19 @@ import AuthCheck from '../../components/AuthCheck.astro';
       if (!figuresList) return;
 
       try {
-        const response = await fetch(`${API_URL}/api/figures`, {
+        const response = await fetch(`${API_URL}/api/figures/admin/all`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         const data: FiguresResponse = await response.json();
 
         if (!Array.isArray(data.figures) || data.figures.length === 0) {
-          figuresList.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-gray-500">Aucune figure</td></tr>';
+          figuresList.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500">Aucune figure</td></tr>';
           return;
         }
 
-        figuresList.innerHTML = data.figures.map((figure: FigureItem) => `
+        figuresList.innerHTML = data.figures.map((figure: FigureItem, idx: number) => `
           <tr class="hover:bg-gray-50">
+            <td class="px-6 py-4 text-gray-400 text-sm w-10">${idx + 1}</td>
             <td class="px-6 py-4">
               <img src="${figure.photo || '/images/default-avatar.png'}" alt="${figure.prenom} ${figure.nom}" class="w-12 h-12 rounded-full object-cover">
              </td>
@@ -217,6 +224,8 @@ import AuthCheck from '../../components/AuthCheck.astro';
              </td>
             <td class="px-6 py-4">❤️ ${figure.likes || 0} | 💔 ${figure.dislikes || 0}</td>
             <td class="px-6 py-4 text-right space-x-2">
+              <button onclick="window.moveFigure('${figure._id}', 'up')" class="text-gray-600 hover:text-gray-900 p-1" title="Monter">⬆️</button>
+              <button onclick="window.moveFigure('${figure._id}', 'down')" class="text-gray-600 hover:text-gray-900 p-1" title="Descendre">⬇️</button>
               <button onclick="editFigure('${figure._id}')" class="text-blue-600 hover:text-blue-800">✏️</button>
               <button onclick="deleteFigure('${figure._id}')" class="text-red-600 hover:text-red-800">🗑️</button>
              </td>
@@ -284,6 +293,33 @@ import AuthCheck from '../../components/AuthCheck.astro';
       await loadFigures();
     };
 
+    window.moveFigure = async (id: string, direction: 'up' | 'down') => {
+      console.log('🔄 Tentative de déplacement:', { id, direction });
+      try {
+        const response = await fetch(`${API_URL}/api/figures/admin/${id}/move`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({ direction })
+        });
+
+        console.log('📡 Réponse serveur:', response.status);
+        if (!response.ok) {
+          const err = await response.json().catch(() => ({}));
+          console.error('❌ Erreur serveur:', err);
+          throw new Error(err.error || 'Erreur de réorganisation');
+        }
+
+        console.log('✅ Déplacement réussi, rechargement...');
+        await loadFigures();
+      } catch (error) {
+        console.error('❌ Erreur déplacement:', error);
+        alert(error instanceof Error ? error.message : 'Impossible de déplacer la figure');
+      }
+    };
+
     // Soumission du formulaire avec upload d'image
     figureForm?.addEventListener('submit', async (e: Event) => {
       e.preventDefault();
@@ -318,11 +354,26 @@ import AuthCheck from '../../components/AuthCheck.astro';
             headers: { 'Authorization': `Bearer ${token}` },
             body: formData
           });
+
+          if (!uploadResponse.ok) {
+            let errorMsg = `HTTP ${uploadResponse.status}`;
+            try {
+              const errorData = await uploadResponse.json();
+              errorMsg = errorData.error || errorMsg;
+            } catch {
+              const text = await uploadResponse.text();
+              errorMsg = text.slice(0, 200) || errorMsg;
+            }
+            console.error('❌ Erreur upload:', errorMsg);
+            alert('Erreur lors de l\'upload: ' + errorMsg);
+            return;
+          }
+
           const uploadData: { url?: string } = await uploadResponse.json();
           photoUrl = uploadData.url || photoUrl;
         } catch (error) {
           console.error('Erreur upload image:', error);
-          alert('Erreur lors de l\'upload de l\'image');
+          alert('Erreur de connexion lors de l\'upload');
           return;
         }
       }

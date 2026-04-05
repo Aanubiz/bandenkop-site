@@ -2,10 +2,10 @@
 // src/components/ProjetSection.astro
 const projets = [
   {
-    titre: "Construction d'un centre culturel",
+    titre: "Construction du foyer culturel",
     statut: "En cours",
-    avancement: 65,
-    budget: "50M FCFA",
+    avancement: 70,
+    budget: "-- FCFA",
     description: "Création d'un espace dédié à la préservation et à la transmission de la culture Bandenkop",
     image: "/images/projets/centre-culturel.jpg",
     couleur: "from-orange-500 to-red-500"
@@ -14,46 +14,19 @@ const projets = [
     titre: "Adduction d'eau potable",
     statut: "Planification",
     avancement: 25,
-    budget: "30M FCFA",
+    budget: "-- FCFA",
     description: "Installation de bornes fontaines dans tous les quartiers du village",
     image: "/images/projets/eau.jpg",
     couleur: "from-blue-500 to-cyan-500"
   },
   {
-    titre: "Électrification rurale",
-    statut: "Étude",
-    avancement: 10,
-    budget: "80M FCFA",
-    description: "Extension du réseau électrique aux zones non desservies",
-    image: "/images/projets/electricite.jpg",
-    couleur: "from-yellow-500 to-amber-500"
-  },
-  {
-    titre: "Piste rurale Bangou-Bandenkop",
-    statut: "Financement",
-    avancement: 40,
-    budget: "120M FCFA",
-    description: "Aménagement et bitumage de la route reliant les deux villages",
-    image: "/images/projets/route.jpg",
-    couleur: "from-green-500 to-emerald-500"
-  },
-  {
-    titre: "École des métiers traditionnels",
+    titre: "Musée interactif de l'histoire de Bandenkop",
     statut: "En cours",
     avancement: 55,
-    budget: "25M FCFA",
-    description: "Formation des jeunes aux métiers d'art et à l'artisanat local",
-    image: "/images/projets/ecole.jpg",
+    budget: "-- FCFA",
+    description: "Création d'un musée moderne avec des expositions interactives sur l'histoire de Bandenkop",
+    image: "/images/projets/musee.jpg",
     couleur: "from-purple-500 to-pink-500"
-  },
-  {
-    titre: "Centre de santé modernisé",
-    statut: "Démarrage",
-    avancement: 15,
-    budget: "45M FCFA",
-    description: "Rénovation et équipement du centre de santé existant",
-    image: "/images/projets/sante.jpg",
-    couleur: "from-red-500 to-pink-500"
   }
 ];
 ---
@@ -72,19 +45,19 @@ const projets = [
     <!-- Statistiques globales -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
       <div class="bg-white rounded-xl p-4 text-center shadow-lg">
-        <div class="text-3xl font-bold text-orange-600">6</div>
+        <div class="text-3xl font-bold text-orange-600">3</div>
         <div class="text-sm text-gray-600">Projets en cours</div>
       </div>
       <div class="bg-white rounded-xl p-4 text-center shadow-lg">
-        <div class="text-3xl font-bold text-orange-600">350M</div>
+        <div class="text-3xl font-bold text-orange-600">---</div>
         <div class="text-sm text-gray-600">Budget total FCFA</div>
       </div>
       <div class="bg-white rounded-xl p-4 text-center shadow-lg">
-        <div class="text-3xl font-bold text-orange-600">35%</div>
+        <div class="text-3xl font-bold text-orange-600">55%</div>
         <div class="text-sm text-gray-600">Avancement moyen</div>
       </div>
       <div class="bg-white rounded-xl p-4 text-center shadow-lg">
-        <div class="text-3xl font-bold text-orange-600">200+</div>
+        <div class="text-3xl font-bold text-orange-600">---</div>
         <div class="text-sm text-gray-600">Bénéficiaires directs</div>
       </div>
     </div>
@@ -128,9 +101,9 @@ const projets = [
             </div>
             
             <!-- Bouton soutenir -->
-            <button class="w-full bg-gradient-to-r from-orange-600 to-red-600 text-white py-2 rounded-lg font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-300">
+            <a href="/contact?subject=Projet#contactForm" class="block w-full text-center bg-gradient-to-r from-orange-600 to-red-600 text-white py-2 rounded-lg font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-300">
               Soutenir ce projet
-            </button>
+            </a>
           </div>
         </div>
       ))}
@@ -143,12 +116,12 @@ const projets = [
         Chaque contribution compte pour bâtir un avenir meilleur
       </p>
       <div class="flex justify-center space-x-4">
-        <button class="bg-white text-orange-600 px-8 py-3 rounded-full font-bold hover:bg-orange-100 transition-colors">
+        <a href="/contact?subject=Don#contactForm" class="bg-white text-orange-600 px-8 py-3 rounded-full font-bold hover:bg-orange-100 transition-colors">
           Faire un don
-        </button>
-        <button class="border-2 border-white text-white px-8 py-3 rounded-full font-bold hover:bg-white hover:text-orange-600 transition-colors">
+        </a>
+        <a href="/contact?subject=Projet#contactForm" class="border-2 border-white text-white px-8 py-3 rounded-full font-bold hover:bg-white hover:text-orange-600 transition-colors">
           Devenir partenaire
-        </button>
+        </a>
       </div>
     </div>
   </div>

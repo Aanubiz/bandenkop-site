@@ -2,6 +2,9 @@
 import Layout from '../../layouts/Layout.astro';
 import AdminLayout from '../../components/admin/AdminLayout.astro';
 import { getToken } from '../../utils/auth';
+import { getApiUrl } from '../../config';
+
+const API_URL = getApiUrl();
 ---
 
 <Layout title="Dashboard Admin - Bandenkop">
@@ -113,8 +116,9 @@ import { getToken } from '../../utils/auth';
 
   <script>
     import { getToken } from '../../utils/auth';
+    import { getApiUrl } from '../../config';
 
-    const API_URL = 'http://localhost:3001';
+    const API_URL = getApiUrl();
     const token = getToken();
 
     type ActiviteJour = {

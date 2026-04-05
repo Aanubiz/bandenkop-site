@@ -13,6 +13,8 @@ const ecritureSchema = new mongoose.Schema({
     required: true
   },
   consigne: { type: String, required: true }, // "Complète la phrase..."
+  motFrancais: String,
+  motAnglais: String,
   phraseFrancais: String,
   phraseBandenkop: String,
   motsManquants: [{

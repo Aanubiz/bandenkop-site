@@ -1,0 +1,206 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Site en construction - Bandenkop">
+  <div class="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 flex items-center justify-center py-12 px-4">
+    <div class="max-w-3xl w-full">
+      
+      <!-- Carte principale avec effet glassmorphisme -->
+      <div class="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden border border-white/20">
+        
+        <!-- En-tête décoratif -->
+        <div class="relative h-40 bg-gradient-to-r from-orange-600 to-red-600 overflow-hidden">
+          <div class="absolute inset-0 bg-black/20"></div>
+          <div class="absolute inset-0 flex items-center justify-center">
+            <div class="text-center text-white">
+              <div class="text-6xl mb-2">🚧</div>
+              <h1 class="text-3xl font-bold">Bandenkop en préparation</h1>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Contenu principal -->
+        <div class="p-8 md:p-12 text-center">
+          <!-- Logo -->
+          <div class="flex justify-center mb-6">
+            <div class="w-20 h-20 bg-gradient-to-br from-orange-600 to-red-600 rounded-2xl flex items-center justify-center text-white font-black text-3xl shadow-lg">
+              B
+            </div>
+          </div>
+          
+          <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+            Le site est en maintenance, il arrive bientôt !
+          </h2>
+          
+          <p class="text-gray-600 text-lg mb-8">
+            Nous préparons actuellement une plateforme exceptionnelle pour partager 
+            l'histoire, la culture et les actualités de Bandenkop. 
+            Revenez bientôt pour découvrir notre univers !
+          </p>
+          
+          <!-- Compte à rebours -->
+          <div class="bg-gradient-to-r from-orange-100 to-red-100 rounded-2xl p-6 mb-8">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">🎯 Nous revenons dans</h3>
+            <div class="flex justify-center space-x-3 sm:space-x-6">
+              <div class="text-center">
+                <div class="w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-xl shadow-lg flex items-center justify-center mb-2">
+                  <span class="text-3xl sm:text-4xl font-bold text-orange-600" id="days">00</span>
+                </div>
+                <span class="text-xs text-gray-500">Jours</span>
+              </div>
+              <div class="text-center">
+                <div class="w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-xl shadow-lg flex items-center justify-center mb-2">
+                  <span class="text-3xl sm:text-4xl font-bold text-orange-600" id="hours">00</span>
+                </div>
+                <span class="text-xs text-gray-500">Heures</span>
+              </div>
+              <div class="text-center">
+                <div class="w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-xl shadow-lg flex items-center justify-center mb-2">
+                  <span class="text-3xl sm:text-4xl font-bold text-orange-600" id="minutes">00</span>
+                </div>
+                <span class="text-xs text-gray-500">Minutes</span>
+              </div>
+              <div class="text-center">
+                <div class="w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-xl shadow-lg flex items-center justify-center mb-2">
+                  <span class="text-3xl sm:text-4xl font-bold text-orange-600" id="seconds">00</span>
+                </div>
+                <span class="text-xs text-gray-500">Secondes</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Formule pour être prévenu -->
+          <div class="bg-gray-50 rounded-xl p-6 mb-8">
+            <h3 class="text-lg font-semibold text-gray-800 mb-3 flex items-center justify-center">
+              <span class="text-2xl mr-2">📧</span>
+              Soyez prévenu du lancement
+            </h3>
+            <form id="notifyForm" class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+              <input 
+                type="email" 
+                id="email" 
+                placeholder="Votre email" 
+                class="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                required
+              />
+              <button 
+                type="submit" 
+                class="bg-gradient-to-r from-orange-600 to-red-600 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all whitespace-nowrap"
+              >
+                M'avertir
+              </button>
+            </form>
+            <p class="text-xs text-gray-500 mt-3">
+              Nous ne partagerons jamais votre email. Promis !
+            </p>
+            <div id="notifyMessage" class="mt-3 text-sm hidden"></div>
+          </div>
+          
+          <!-- Contact -->
+          <p class="text-gray-500 text-sm">
+            Une question ? Contactez-nous : 
+            <a href="mailto:contact@bandenkop.com" class="text-orange-600 hover:text-orange-800">contact@bandenkop.com</a>
+          </p>
+        </div>
+      </div>
+      
+      <!-- Avatars flottants (décoration) -->
+      <div class="absolute bottom-8 left-8 opacity-20 hidden lg:block">
+        <div class="flex -space-x-2">
+          <div class="w-12 h-12 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white font-bold animate-float" style="animation-delay: 0s">
+            J
+          </div>
+          <div class="w-12 h-12 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white font-bold animate-float" style="animation-delay: 0.5s">
+            M
+          </div>
+          <div class="w-12 h-12 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white font-bold animate-float" style="animation-delay: 1s">
+            P
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Date de lancement (10 jours à partir d'aujourd'hui)
+    const launchDate = new Date();
+    launchDate.setDate(launchDate.getDate() + 10);
+    launchDate.setHours(0, 0, 0, 0);
+
+    const daysEl = document.getElementById('days');
+    const hoursEl = document.getElementById('hours');
+    const minutesEl = document.getElementById('minutes');
+    const secondsEl = document.getElementById('seconds');
+
+    const notifyForm = document.getElementById('notifyForm') as HTMLFormElement | null;
+    const emailInput = document.getElementById('email') as HTMLInputElement | null;
+    const messageDiv = document.getElementById('notifyMessage') as HTMLElement | null;
+    
+    function updateCountdown() {
+      const now = new Date();
+      const diff = launchDate.getTime() - now.getTime();
+      
+      if (diff > 0) {
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        
+        if (daysEl) daysEl.textContent = days.toString().padStart(2, '0');
+        if (hoursEl) hoursEl.textContent = hours.toString().padStart(2, '0');
+        if (minutesEl) minutesEl.textContent = minutes.toString().padStart(2, '0');
+        if (secondsEl) secondsEl.textContent = seconds.toString().padStart(2, '0');
+      } else {
+        // Le délai est passé, rediriger vers l'accueil
+        window.location.href = '/';
+      }
+    }
+    
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+    
+    // Formulaire de notification
+    notifyForm?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!emailInput || !messageDiv || !notifyForm) return;
+      
+      const email = emailInput.value;
+      
+      try {
+        const response = await fetch('/api/notify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+        
+        if (response.ok) {
+          messageDiv.textContent = '✅ Merci ! Vous serez averti au lancement.';
+          messageDiv.classList.remove('text-red-600');
+          messageDiv.classList.add('text-green-600');
+          messageDiv.classList.remove('hidden');
+          notifyForm.reset();
+          setTimeout(() => messageDiv.classList.add('hidden'), 5000);
+        } else {
+          throw new Error();
+        }
+      } catch (error) {
+        messageDiv.textContent = '❌ Erreur, veuillez réessayer.';
+        messageDiv.classList.remove('text-green-600');
+        messageDiv.classList.add('text-red-600');
+        messageDiv.classList.remove('hidden');
+        setTimeout(() => messageDiv.classList.add('hidden'), 3000);
+      }
+    });
+  </script>
+  
+  <style is:global>
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    .animate-float {
+      animation: float 3s ease-in-out infinite;
+    }
+  </style>
+</Layout>

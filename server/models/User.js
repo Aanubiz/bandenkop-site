@@ -21,6 +21,29 @@ const userSchema = new mongoose.Schema({
   dateNaissance: Date,
   telephone: String,
   role: { type: String, enum: ['user', 'admin'], default: 'user' },
+  // super: accès total à l'administration
+  // limited: accès uniquement selon adminPermissions
+  adminScope: { type: String, enum: ['super', 'limited'], default: 'super' },
+  // Permissions fines: ressource:action
+  // ex: quiz:view, quiz:edit, utilisateurs:view, utilisateurs:edit
+  adminPermissions: {
+    type: [String],
+    enum: [
+      'quiz:view', 'quiz:edit',
+      'prononciation:view', 'prononciation:edit',
+      'association:view', 'association:edit',
+      'ecriture:view', 'ecriture:edit',
+      'phonetique:view', 'phonetique:edit',
+      'histoire:view', 'histoire:edit',
+      'culture:view', 'culture:edit',
+      'articles:view', 'articles:edit',
+      'figures:view', 'figures:edit',
+      'utilisateurs:view', 'utilisateurs:edit'
+    ],
+    default: []
+  },
+  // Incrémenté pour invalider immédiatement les anciens JWT
+  tokenVersion: { type: Number, default: 0 },
   statistiques: {
     totalPoints: { type: Number, default: 0 },
     joursConsecutifs: { type: Number, default: 0 },

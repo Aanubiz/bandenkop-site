@@ -1,8 +1,8 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { getToken } from '../../utils/auth';
+import { getApiUrl } from '../../config';
 
-const API_URL = 'http://localhost:3001';
+const API_URL = getApiUrl();
 const page = Astro.url.searchParams.get('page') || 1;
 const categorie = Astro.url.searchParams.get('categorie') || '';
 const recherche = Astro.url.searchParams.get('recherche') || '';
@@ -78,6 +78,30 @@ const recherche = Astro.url.searchParams.get('recherche') || '';
                 }`}
               >
                 Culture
+              </a>
+              <a 
+                href="/actualite?categorie=Santé" 
+                class={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors flex-shrink-0 ${
+                  categorie === 'Santé' ? 'bg-orange-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-orange-100'
+                }`}
+              >
+                Santé
+              </a>
+              <a 
+                href="/actualite?categorie=Sport" 
+                class={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors flex-shrink-0 ${
+                  categorie === 'Sport' ? 'bg-orange-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-orange-100'
+                }`}
+              >
+                Sport
+              </a>
+              <a 
+                href="/actualite?categorie=Éducation" 
+                class={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors flex-shrink-0 ${
+                  categorie === 'Éducation' ? 'bg-orange-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-orange-100'
+                }`}
+              >
+                Éducation
               </a>
             </div>
           </div>
@@ -160,7 +184,9 @@ const recherche = Astro.url.searchParams.get('recherche') || '';
   </style>
 
   <script>
-    const API_URL = 'http://localhost:3001';
+    import { getApiUrl } from '../../config';
+
+    const API_URL = getApiUrl();
 
     type Article = {
       _id: string;

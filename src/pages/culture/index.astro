@@ -9,10 +9,10 @@ const categoriesCulture = [
     icone: "💃",
     description: "Les danses qui rythment la vie du village",
     elements: [
-      "Nkah - Danse des notables",
-      "Mfeh - Danse des femmes",
-      "Khe - Danse guerrière",
-      "Mengo - Danse d'initiation"
+      "Kang - Danse initiatique",
+      "Dimassale - Danse des femmes",
+      "Messoh - La plus belle parade",
+      "Kougnag - Danse mystique"
     ]
   },
   {
@@ -21,10 +21,10 @@ const categoriesCulture = [
     icone: "👑",
     description: "L'organisation sociale traditionnelle",
     elements: [
-      "Le chef (Fo'o)",
-      "Les neuf notables",
-      "Les chefs de quartier",
-      "Les dignitaires religieux"
+      "Le chef (Fé)",
+      "Le conseil des neuf notables )",
+      "Le conseil des sept notables",
+      "Les notables"
     ]
   },
   {
@@ -33,10 +33,9 @@ const categoriesCulture = [
     icone: "🎩",
     description: "La symbolique des couvre-chefs",
     elements: [
-      "Tchagha - Chapeau royal",
-      "Mfo - Chapeau des notables",
-      "Nkap - Chapeau des guerriers",
-      "Ndeng - Chapeau des sages"
+      "Le mètang - Chapeau royal",
+      "Le tchêu pfè - Chapeau des retraités",
+      "Le tchêu phum- Chapeau des Tcheufé"
     ]
   },
   {
@@ -45,10 +44,8 @@ const categoriesCulture = [
     icone: "🪑",
     description: "Les sièges du pouvoir",
     elements: [
-      "Kpu - Trône royal",
-      "Tchop - Chaise à porteur",
-      "Ngong - Tabouret des notables",
-      "Foh - Chaise des anciens"
+      "le Leng",
+      "Le kouoh kouè"
     ]
   },
   {
@@ -57,13 +54,13 @@ const categoriesCulture = [
     icone: "🎉",
     description: "Les grands moments communautaires",
     elements: [
-      "Intronisation du chef",
-      "Funérailles des notables",
-      "Cérémonies de récolte",
-      "Rituels de purification"
+      "Le veuvage",
+      "La purification",
+      "La présentation des jumeaux",
+      "Le mariage"
     ]
   },
-  {
+  /*{
     titre: "Initiation",
     slug: "initiation",
     icone: "🔮",
@@ -74,7 +71,7 @@ const categoriesCulture = [
       "Initiation des femmes",
       "Apprentissage des traditions"
     ]
-  }
+  }*/
 ];
 ---
 
@@ -165,10 +162,10 @@ const categoriesCulture = [
         <a href="/culture/divinite" class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-8 hover:shadow-xl transition-all duration-300">
           <h2 class="text-3xl font-bold text-gray-800 mb-4 flex items-center">
             <span class="text-4xl mr-3">🙏</span>
-            Si - La Divinité
+            Sieh - La Divinité
           </h2>
           <p class="text-gray-600 leading-relaxed">
-            Si est la force suprême, le créateur de toutes choses. Présent partout et en chacun, 
+            Sieh est la force suprême, le créateur de toutes choses. Présent partout et en chacun, 
             il est honoré à travers les ancêtres qui servent d'intermédiaires entre le monde visible 
             et l'invisible. Les rites et sacrifices lui sont offerts pour maintenir l'harmonie entre 
             les vivants, les morts et les générations futures.
@@ -191,23 +188,23 @@ const categoriesCulture = [
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
         <a href="/culture/semaines" class="bg-white rounded-xl p-4 text-center shadow-lg hover:shadow-xl transition-all duration-300">
           <span class="text-2xl block mb-2">🌞</span>
-          <h3 class="font-bold">Nkwe'</h3>
+          <h3 class="font-bold">Liegang</h3>
           <p class="text-xs text-gray-600">Jour du marché</p>
         </a>
         <a href="/culture/semaines" class="bg-white rounded-xl p-4 text-center shadow-lg hover:shadow-xl transition-all duration-300">
           <span class="text-2xl block mb-2">🌅</span>
-          <h3 class="font-bold">Mfou'</h3>
-          <p class="text-xs text-gray-600">Jour de repos</p>
+          <h3 class="font-bold">Djedjeu & Chepteh</h3>
+          <p class="text-xs text-gray-600">Jours de repos</p>
         </a>
         <a href="/culture/semaines" class="bg-white rounded-xl p-4 text-center shadow-lg hover:shadow-xl transition-all duration-300">
           <span class="text-2xl block mb-2">🌄</span>
-          <h3 class="font-bold">Nka'</h3>
-          <p class="text-xs text-gray-600">Jour sacré</p>
+          <h3 class="font-bold">Liekouong</h3>
+          <p class="text-xs text-gray-600">Jour de festivité</p>
         </a>
         <a href="/culture/semaines" class="bg-white rounded-xl p-4 text-center shadow-lg hover:shadow-xl transition-all duration-300">
           <span class="text-2xl block mb-2">🌙</span>
-          <h3 class="font-bold">Tchou'</h3>
-          <p class="text-xs text-gray-600">Jour des ancêtres</p>
+          <h3 class="font-bold">Temgou</h3>
+          <p class="text-xs text-gray-600">Jour des sociétés secrètes</p>
         </a>
       </div>
     </div>
@@ -217,43 +214,43 @@ const categoriesCulture = [
   <section class="py-16 bg-white">
     <div class="container mx-auto px-6">
       <div class="grid md:grid-cols-2 gap-8">
-        <a href="/culture/interdits" class="group">
-          <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center group-hover:text-orange-600 transition-colors">
+        <div class="group cursor-default select-none" aria-disabled="true">
+          <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
             Les interdits (Tabous)
-            <svg class="w-5 h-5 ml-2 opacity-0 group-hover:opacity-100 transform group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 ml-2 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
             </svg>
           </h2>
           <ul class="space-y-3">
             <li class="flex items-start space-x-3">
               <span class="text-red-600 font-bold">•</span>
-              <span>Ne pas désigner le chef par son nom</span>
+              <span>On ne porte pas son chapeau devant le chef</span>
             </li>
             <li class="flex items-start space-x-3">
               <span class="text-red-600 font-bold">•</span>
-              <span>Interdiction de certaines nourritures aux initiés</span>
+              <span>On ne tend pas la main à un aîné</span>
             </li>
             <li class="flex items-start space-x-3">
               <span class="text-red-600 font-bold">•</span>
-              <span>Ne pas traverser la forêt sacrée sans autorisation</span>
+              <span>Il est interdit de dépasser son père dans la notabilité</span>
             </li>
             <li class="flex items-start space-x-3">
               <span class="text-red-600 font-bold">•</span>
-              <span>Respect des jours sacrés sans travail agricole</span>
+              <span>Il est interdit de détourner une succession</span>
             </li>
           </ul>
-        </a>
-        <a href="/culture/rites" class="group">
-          <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center group-hover:text-orange-600 transition-colors">
+        </div>
+        <div class="group cursor-default select-none" aria-disabled="true">
+          <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
             Les rites essentiels
-            <svg class="w-5 h-5 ml-2 opacity-0 group-hover:opacity-100 transform group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 ml-2 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
             </svg>
           </h2>
           <ul class="space-y-3">
             <li class="flex items-start space-x-3">
               <span class="text-orange-600 font-bold">•</span>
-              <span>Rites de naissance et imposition du nom</span>
+              <span>L'initiation à la danse kang</span>
             </li>
             <li class="flex items-start space-x-3">
               <span class="text-orange-600 font-bold">•</span>
@@ -261,14 +258,14 @@ const categoriesCulture = [
             </li>
             <li class="flex items-start space-x-3">
               <span class="text-orange-600 font-bold">•</span>
-              <span>Rites funéraires et veillées</span>
+              <span>Les rite veuvage</span>
             </li>
             <li class="flex items-start space-x-3">
               <span class="text-orange-600 font-bold">•</span>
-              <span>Rites agraires pour les récoltes</span>
+              <span>Le rite de purification</span>
             </li>
           </ul>
-        </a>
+        </div>
       </div>
     </div>
   </section>
